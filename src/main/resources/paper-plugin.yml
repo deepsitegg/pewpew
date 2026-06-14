@@ -1,0 +1,6 @@
+name: Pewpew
+version: '${version}'
+main: gg.deepsite.pewpew.PewpewPlugin
+api-version: '1.21'
+authors: [ ThebigTijn ]
+website: https://deepsite.gg

@@ -1,0 +1,59 @@
+frag_grenade:
+  type: THROWABLE
+  name: "<gray>Frag Grenade"
+  lore:
+    - "<dark_gray>Pull pin, throw, duck."
+  customModelData: 2001
+  itemModel: "minecraft:iron_nugget"
+  fuseTime: 60
+  blastRadius: 5.0
+  throwForce: 1.8
+  effect: EXPLOSION
+
+smoke_grenade:
+  type: THROWABLE
+  name: "<gray>Smoke Grenade"
+  lore:
+    - "<dark_gray>Cover your push."
+  customModelData: 2002
+  itemModel: "minecraft:iron_nugget"
+  fuseTime: 40
+  blastRadius: 5.0
+  throwForce: 1.6
+  effect: SMOKE
+
+flashbang:
+  type: THROWABLE
+  name: "<gray>Flashbang"
+  lore:
+    - "<dark_gray>Look away."
+  customModelData: 2003
+  itemModel: "minecraft:iron_nugget"
+  fuseTime: 30
+  blastRadius: 6.0
+  throwForce: 1.7
+  effect: FLASH
+
+poison_grenade:
+  type: THROWABLE
+  name: "<gray>Poison Grenade"
+  lore:
+    - "<dark_gray>Area denial."
+  customModelData: 2004
+  itemModel: "minecraft:iron_nugget"
+  fuseTime: 40
+  blastRadius: 4.0
+  throwForce: 1.6
+  effect: POISON
+
+incendiary_grenade:
+  type: THROWABLE
+  name: "<gray>Incendiary Grenade"
+  lore:
+    - "<dark_gray>Burn them out."
+  customModelData: 2005
+  itemModel: "minecraft:iron_nugget"
+  fuseTime: 40
+  blastRadius: 4.0
+  throwForce: 1.6
+  effect: FIRE

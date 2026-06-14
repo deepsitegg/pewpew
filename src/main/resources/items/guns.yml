@@ -1,0 +1,173 @@
+ak47:
+  type: GUN
+  maxStack: 1
+  name: "<gray>AK-47"
+  lore:
+    - "<dark_gray>7.62x39mm"
+  customModelData: 1001
+  itemModel: "minecraft:iron_horse_armor"
+  baseDamage: 8.5
+  fireRate: 4
+  reloadTime: 60
+  ammoType: rifle_round
+  maxAmmo: 30
+  consumesAmmo: true
+  automatic: true
+  firingMode: PROJECTILE
+  projectileSpeed: 3.5
+  range: 64.0
+  spread: 2.0
+  recoil: 1.2
+  bulletDrop: 1.0
+  headshotMultiplier: 1.5
+  critChance: 0.15
+  critMultiplier: 2.0
+  deathMessage: "<gray>%victim% <error>was gunned down by <gray>%killer%"
+  allowedAttachmentSlots:
+    - SCOPE
+    - BARREL
+    - GRIP
+    - MAGAZINE
+
+m16:
+  type: GUN
+  maxStack: 1
+  name: "<gray>M16"
+  lore:
+    - "<dark_gray>5.56x45mm"
+  customModelData: 1002
+  itemModel: "minecraft:golden_horse_armor"
+  baseDamage: 7.0
+  fireRate: 6
+  reloadTime: 8
+  reloadType: SINGLE
+  maxAmmo: 30
+  firingMode: HITSCAN
+  range: 70.0
+  spread: 1.0
+  recoil: 0.8
+  burstCount: 3
+  victimEffects:
+    - "POISON:60:0"
+    - "SLOWNESS:40:1"
+  shooterEffects:
+    - "SPEED:30:0"
+  allowedAttachmentSlots:
+    - SCOPE
+    - BARREL
+    - GRIP
+    - MAGAZINE
+
+glock:
+  type: GUN
+  maxStack: 1
+  name: "<gray>Glock 17"
+  lore:
+    - "<dark_gray>9x19mm sidearm"
+  customModelData: 1005
+  itemModel: "minecraft:golden_horse_armor"
+  baseDamage: 5.5
+  fireRate: 5
+  reloadTime: 40
+  ammoType: pistol_round
+  maxAmmo: 17
+  consumesAmmo: true
+  firingMode: HITSCAN
+  range: 45.0
+  spread: 1.5
+  recoil: 0.6
+  headshotMultiplier: 1.8
+  allowedAttachmentSlots:
+    - BARREL
+    - MAGAZINE
+
+mp5:
+  type: GUN
+  maxStack: 1
+  name: "<gray>MP5"
+  lore:
+    - "<dark_gray>9x19mm SMG"
+  customModelData: 1006
+  itemModel: "minecraft:golden_horse_armor"
+  baseDamage: 5.0
+  fireRate: 2
+  reloadTime: 45
+  ammoType: pistol_round
+  maxAmmo: 30
+  consumesAmmo: true
+  automatic: true
+  firingMode: HITSCAN
+  range: 50.0
+  spread: 2.5
+  recoil: 0.7
+  allowedAttachmentSlots:
+    - SCOPE
+    - BARREL
+    - GRIP
+    - MAGAZINE
+
+remington:
+  type: GUN
+  maxStack: 1
+  name: "<gray>Remington 870"
+  lore:
+    - "<dark_gray>12-Gauge"
+  customModelData: 1003
+  itemModel: "minecraft:diamond_horse_armor"
+  baseDamage: 4.0
+  fireRate: 6
+  actionOpenTime: 4
+  actionCloseTime: 4
+  reloadTime: 12
+  reloadType: SINGLE
+  ammoType: shotgun_shell
+  maxAmmo: 6
+  consumesAmmo: true
+  firingMode: HITSCAN
+  range: 22.0
+  falloffStart: 8.0
+  falloffEnd: 20.0
+  falloffMinMultiplier: 0.25
+  bulletCount: 8
+  spread: 6.0
+  recoil: 3.5
+  shieldDisableTime: 100
+  allowedAttachmentSlots:
+    - BARREL
+    - GRIP
+
+awp:
+  type: GUN
+  maxStack: 1
+  name: "<gray>AWP"
+  lore:
+    - "<dark_gray>.338 Lapua Magnum"
+  customModelData: 1004
+  itemModel: "minecraft:iron_horse_armor"
+  baseDamage: 45.0
+  fireRate: 18
+  actionOpenTime: 6
+  actionCloseTime: 6
+  reloadTime: 70
+  ammoType: sniper_round
+  maxAmmo: 5
+  consumesAmmo: true
+  firingMode: HITSCAN
+  range: 250.0
+  spread: 0.0
+  recoil: 6.0
+  bulletDrop: 0.04
+  headshotMultiplier: 2.5
+  trailParticle: "FLAME"
+  impactParticle: "LARGE_SMOKE"
+  fireSound:
+    key: "ENTITY_GENERIC_EXPLODE"
+    volume: 1.0
+    pitch: 1.4
+  hitSound: "ENTITY_ARROW_HIT_PLAYER"
+  hitMessage: "<error>Hit <gray>%victim% <error>for <gray>%damage%"
+  deathMessage: "<gray>%victim% <error>was sniped by <gray>%killer% <error>with a <reset>%weapon%"
+  allowedAttachmentSlots:
+    - SCOPE
+    - BARREL
+    - GRIP

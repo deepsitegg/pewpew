@@ -1,0 +1,51 @@
+# roundsPerItem: 1 = one round, N = a box of N, 0 = one item refills the whole magazine.
+
+rifle_round:
+  type: AMMO
+  name: "<gray>7.62x39mm Round"
+  lore:
+    - "<dark_gray>Loose rifle round"
+  customModelData: 4001
+  itemModel: "minecraft:iron_nugget"
+  ammoType: rifle_round
+  roundsPerItem: 1
+
+rifle_magazine:
+  type: AMMO
+  name: "<gray>AK Magazine"
+  lore:
+    - "<dark_gray>Refills the whole magazine"
+  customModelData: 4002
+  itemModel: "minecraft:iron_ingot"
+  ammoType: rifle_round
+  roundsPerItem: 0
+
+pistol_round:
+  type: AMMO
+  name: "<gray>9x19mm Round"
+  lore:
+    - "<dark_gray>Pistol and SMG round"
+  customModelData: 4005
+  itemModel: "minecraft:iron_nugget"
+  ammoType: pistol_round
+  roundsPerItem: 1
+
+shotgun_shell:
+  type: AMMO
+  name: "<gray>12-Gauge Shell"
+  lore:
+    - "<dark_gray>Loaded one at a time"
+  customModelData: 4003
+  itemModel: "minecraft:firework_star"
+  ammoType: shotgun_shell
+  roundsPerItem: 1
+
+sniper_round:
+  type: AMMO
+  name: "<gray>.338 Lapua Round"
+  lore:
+    - "<dark_gray>Heavy long-range round"
+  customModelData: 4004
+  itemModel: "minecraft:gold_nugget"
+  ammoType: sniper_round
+  roundsPerItem: 1

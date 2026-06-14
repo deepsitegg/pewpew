@@ -1,0 +1,124 @@
+red_dot:
+  type: ATTACHMENT
+  name: "<gray>Red Dot Sight"
+  lore:
+    - "<dark_gray>Light optic for fast aiming."
+  customModelData: 3001
+  itemModel: "minecraft:redstone_torch"
+  attachmentType: SCOPE
+  zoom: 1.5
+  adsSpeedModifier: 0.9
+  aimSpreadMultiplier: 0.5
+  aimRecoilMultiplier: 0.5
+
+holographic:
+  type: ATTACHMENT
+  name: "<gray>Holographic Sight"
+  lore:
+    - "<dark_gray>Clean reticle, steady aim."
+  customModelData: 3006
+  itemModel: "minecraft:redstone_torch"
+  attachmentType: SCOPE
+  zoom: 2.0
+  adsSpeedModifier: 0.8
+  aimSpreadMultiplier: 0.25
+  aimRecoilMultiplier: 0.4
+
+acog:
+  type: ATTACHMENT
+  name: "<gray>ACOG Scope"
+  lore:
+    - "<dark_gray>4x magnification."
+  customModelData: 3005
+  itemModel: "minecraft:spyglass"
+  attachmentType: SCOPE
+  zoom: 3.0
+  adsSpeedModifier: 0.6
+  aimSpreadMultiplier: 0.0
+  aimRecoilMultiplier: 0.0
+
+long_barrel:
+  type: ATTACHMENT
+  name: "<gray>Long Barrel"
+  lore:
+    - "<dark_gray>Extended barrel for reach."
+  customModelData: 3002
+  itemModel: "minecraft:iron_nugget"
+  attachmentType: BARREL
+  damageModifier: 1.25
+  rangeModifier: 1.4
+
+suppressor:
+  type: ATTACHMENT
+  name: "<gray>Suppressor"
+  lore:
+    - "<dark_gray>Quieter, shorter range."
+  customModelData: 3003
+  itemModel: "minecraft:iron_nugget"
+  attachmentType: BARREL
+  damageModifier: 0.9
+  rangeModifier: 0.75
+
+muzzle_brake:
+  type: ATTACHMENT
+  name: "<gray>Muzzle Brake"
+  lore:
+    - "<dark_gray>Tames climb, hurts range."
+  customModelData: 3007
+  itemModel: "minecraft:iron_nugget"
+  attachmentType: BARREL
+  damageModifier: 1.0
+  rangeModifier: 0.85
+
+vertical_grip:
+  type: ATTACHMENT
+  name: "<gray>Vertical Grip"
+  lore:
+    - "<dark_gray>Cuts recoil hard."
+  customModelData: 3004
+  itemModel: "minecraft:stick"
+  attachmentType: GRIP
+  recoilModifier: 0.5
+
+angled_grip:
+  type: ATTACHMENT
+  name: "<gray>Angled Grip"
+  lore:
+    - "<dark_gray>Lighter recoil trim."
+  customModelData: 3008
+  itemModel: "minecraft:stick"
+  attachmentType: GRIP
+  recoilModifier: 0.75
+
+extended_mag:
+  type: ATTACHMENT
+  name: "<gray>Extended Magazine"
+  lore:
+    - "<dark_gray>Bigger mag, slower swap."
+  customModelData: 3009
+  itemModel: "minecraft:iron_ingot"
+  attachmentType: MAGAZINE
+  ammoBonus: 10
+  reloadModifier: 1.15
+
+drum_mag:
+  type: ATTACHMENT
+  name: "<gray>Drum Magazine"
+  lore:
+    - "<dark_gray>Huge capacity, heavy reload."
+  customModelData: 3010
+  itemModel: "minecraft:iron_ingot"
+  attachmentType: MAGAZINE
+  ammoBonus: 30
+  reloadModifier: 1.4
+
+quickload_mag:
+  type: ATTACHMENT
+  name: "<gray>Quickload Magazine"
+  lore:
+    - "<dark_gray>Faster reloads, same size."
+  customModelData: 3011
+  itemModel: "minecraft:iron_ingot"
+  attachmentType: MAGAZINE
+  ammoBonus: 0
+  reloadModifier: 0.6
