@@ -1,1 +1,0 @@
-- [build.gradle.kts junk io import](build-gradle-junk-io-import.md) — recurring build break: IDE auto-adds bad `Logger.io` import shadowing `io.papermc`
