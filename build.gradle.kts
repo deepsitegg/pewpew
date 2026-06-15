@@ -43,29 +43,34 @@ dependencies {
     /* Inventory Library */
     implementation("com.github.deepsitegg.inventorylib:spigot:main-SNAPSHOT")
 
-    /* Configuration */
-    implementation("org.spongepowered:configurate-yaml:4.1.2")
-    implementation("org.spongepowered:configurate-core:4.1.2")
-    implementation("commons-io:commons-io:2.15.1")
-
-    implementation("org.javassist:javassist:3.30.2-GA")
+    compileOnly("org.spongepowered:configurate-yaml:4.1.2")
+    compileOnly("org.spongepowered:configurate-core:4.1.2")
+    compileOnly("commons-io:commons-io:2.15.1")
 
 }
 
 tasks.withType<ShadowJar> {
     archiveFileName.set("pewpew.jar")
 
-    // Configurate is a multi-release jar; relocation moves its versioned classes to
-    // META-INF/versions/<n>/gg/deepsite/... which hijacks classloader resource lookup
-    // for our own package and breaks ModuleManager's Reflections scan. Base copies of
-    // these classes exist in the main tree, so dropping the versioned tree is safe.
-    exclude("META-INF/versions/**")
-
     relocate("com.jazzkuh.modulemanager", "gg.deepsite.pewpew.libs.modulemanager")
     relocate("com.jazzkuh.commandlib", "gg.deepsite.pewpew.libs.commandlib")
     relocate("com.jazzkuh.inventorylib", "gg.deepsite.pewpew.libs.inventorylib")
-    relocate("org.spongepowered.configurate", "gg.deepsite.pewpew.libs.configurate")
-    relocate("org.apache.commons.io", "gg.deepsite.pewpew.libs.commonsio")
+
+    // Provided by Paper at runtime
+    exclude("net/kyori/**")
+    exclude("org/slf4j/**")
+    // Loaded by PewpewPluginLoader at runtime
+    exclude("javassist/**")
+    exclude("org/reflections/**")
+    // Compile-time-only annotations, not needed at runtime
+    exclude("javax/**")
+    exclude("org/jetbrains/**")
+    exclude("org/intellij/**")
+    exclude("org/jspecify/**")
+    // Dependency metadata / module descriptors
+    exclude("META-INF/maven/**")
+    exclude("META-INF/versions/**")
+    exclude("module-info.class")
 
     manifest {
         attributes["Main-Class"] = "gg.deepsite.pewpew.PewpewPlugin"
