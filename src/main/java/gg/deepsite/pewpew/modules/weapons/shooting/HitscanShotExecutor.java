@@ -1,5 +1,6 @@
 package gg.deepsite.pewpew.modules.weapons.shooting;
 
+import gg.deepsite.pewpew.api.events.PewpewHitEvent;
 import gg.deepsite.pewpew.api.objects.PewpewGunItem;
 import gg.deepsite.pewpew.modules.weapons.attachment.AttachmentUtil;
 import org.bukkit.FluidCollisionMode;
@@ -96,6 +97,10 @@ public class HitscanShotExecutor implements ShotExecutor {
 		damage *= Ballistics.falloffMultiplier(distance, gun.getFalloffStart(), gun.getFalloffEnd(), gun.getFalloffMinMultiplier());
 		if (headshot) damage *= gun.getHeadshotMultiplier();
 		if (crit) damage *= gun.getCritMultiplier();
+
+		PewpewHitEvent hitEvent = new PewpewHitEvent(shooter, gun, target, damage, headshot, crit, distance);
+		if (!hitEvent.callEvent()) return;
+		damage = hitEvent.getDamage();
 
 		GunHitTracker.record(target, shooter, gun);
 		Ballistics.dealProjectileDamage(target, damage, shooter, shooter);

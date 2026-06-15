@@ -47,13 +47,25 @@ public final class ItemsCommand {
 	}
 
 	public static void give(Player sender, String id, Integer amount) {
-		PewPewItem item = module().get(id);
-		if (item == null) {
+		int count = Math.max(1, amount != null ? amount : 1);
+		ItemStack stack = createItem(id, count);
+		if (stack == null) {
 			sender.sendMessage(ChatUtils.prefix("<error>Unknown item id: <gray>" + id));
 			return;
 		}
 
-		int count = Math.max(1, amount != null ? amount : 1);
+		sender.getInventory().addItem(stack);
+		sender.sendMessage(ChatUtils.prefix("<success>Given <gray>" + count + "x " + id + "<success>."));
+	}
+
+	/**
+	 * Builds a ready-to-give ItemStack for the registered item with the given id,
+	 * fully initialised (ammo, cooldown, lore). Returns {@code null} for unknown ids.
+	 */
+	@org.jetbrains.annotations.Nullable
+	public static ItemStack createItem(String id, int amount) {
+		PewPewItem item = module().get(id);
+		if (item == null) return null;
 
 		ItemStack stack = ItemFactory.build(item);
 		if (item instanceof PewpewGunItem gun) {
@@ -62,9 +74,7 @@ public final class ItemsCommand {
 			GunLoreRenderer.apply(stack, gun);
 		}
 		if (item instanceof PewpewAmmoItem ammo) AmmoUtil.stampAmmo(stack, ammo.getAmmoType(), ammo.getRoundsPerItem());
-		stack.setAmount(count);
-
-		sender.getInventory().addItem(stack);
-		sender.sendMessage(ChatUtils.prefix("<success>Given <gray>" + count + "x " + item.getId() + "<success>."));
+		stack.setAmount(Math.max(1, amount));
+		return stack;
 	}
 }

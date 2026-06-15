@@ -12,6 +12,7 @@ import gg.deepsite.pewpew.modules.weapons.shooting.ShootingHandler;
 import gg.deepsite.pewpew.modules.weapons.throwing.ThrowableHandler;
 import lombok.Getter;
 
+@SuppressWarnings("unused")
 public class WeaponsModule extends SpigotModule<PewpewPlugin> {
 
 	@Getter

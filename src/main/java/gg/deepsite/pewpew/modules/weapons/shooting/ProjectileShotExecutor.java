@@ -1,6 +1,7 @@
 package gg.deepsite.pewpew.modules.weapons.shooting;
 
 import gg.deepsite.pewpew.PewpewPlugin;
+import gg.deepsite.pewpew.api.events.PewpewHitEvent;
 import gg.deepsite.pewpew.api.objects.PewpewGunItem;
 import gg.deepsite.pewpew.modules.weapons.attachment.AttachmentUtil;
 import org.bukkit.Bukkit;
@@ -74,24 +75,29 @@ public class ProjectileShotExecutor implements ShotExecutor {
 		boolean headshot = gun.getHeadshotMultiplier() > 1.0
 				&& Ballistics.isHeadshot(target, projectile.getLocation().getY());
 		boolean crit = Ballistics.rollCrit(gun.getCritChance());
-		if (projectile.getOrigin() != null) {
-			double distance = projectile.getLocation().distance(projectile.getOrigin());
+		double distance = projectile.getOrigin() != null ? projectile.getLocation().distance(projectile.getOrigin()) : 0;
+		if (distance > 0) {
 			damage *= Ballistics.falloffMultiplier(distance, gun.getFalloffStart(), gun.getFalloffEnd(), gun.getFalloffMinMultiplier());
 		}
 		if (headshot) damage *= gun.getHeadshotMultiplier();
 		if (crit) damage *= gun.getCritMultiplier();
 
-		Entity causing = projectile.getShooter() instanceof Player shooter ? shooter : projectile;
-		if (projectile.getShooter() instanceof Player shooter) {
-			GunHitTracker.record(target, shooter, gun);
+		Player shooterPlayer = projectile.getShooter() instanceof Player p ? p : null;
+		PewpewHitEvent hitEvent = new PewpewHitEvent(shooterPlayer, gun, target, damage, headshot, crit, distance);
+		if (!hitEvent.callEvent()) return;
+		damage = hitEvent.getDamage();
+
+		Entity causing = shooterPlayer != null ? shooterPlayer : projectile;
+		if (shooterPlayer != null) {
+			GunHitTracker.record(target, shooterPlayer, gun);
 		}
 		Ballistics.dealProjectileDamage(target, damage, causing, projectile);
 		Ballistics.disableShield(target, gun.getShieldDisableTime());
 		Ballistics.applyEffects(target, gun.getVictimEffects());
-		if (projectile.getShooter() instanceof Player shooter) {
-			Ballistics.applyEffects(shooter, gun.getShooterEffects());
-			Ballistics.hitFeedback(shooter, gun, target, damage, headshot);
-			if (crit) Ballistics.critEffect(shooter, target);
+		if (shooterPlayer != null) {
+			Ballistics.applyEffects(shooterPlayer, gun.getShooterEffects());
+			Ballistics.hitFeedback(shooterPlayer, gun, target, damage, headshot);
+			if (crit) Ballistics.critEffect(shooterPlayer, target);
 		}
 	}
 }

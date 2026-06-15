@@ -13,7 +13,7 @@ plugins {
 }
 
 group = "gg.deepsite"
-version = "26.0.1"
+version = "26.0.2"
 val MAINTAINERS = listOf("ThebigTijn")
 
 paperweight.reobfArtifactConfiguration = io.papermc.paperweight.userdev.ReobfArtifactConfiguration.MOJANG_PRODUCTION
@@ -26,8 +26,21 @@ repositories {
     mavenLocal()
     mavenCentral()
     maven("https://repo.papermc.io/repository/maven-public/")
+    maven("https://repo.skriptlang.org/releases")
     maven("https://jitpack.io")
+}
 
+/**
+ * Resolves a gg.deepsite library from Maven Local when its jar is present in
+ * ~/.m2, otherwise falls back to the remote (jitpack) build. Both sources ship
+ * the same com.jazzkuh.* packages, so the choice is transparent — this just lets
+ * local builds work when the remote is slow or unreachable.
+ */
+fun deepsiteLib(local: String, remote: String): String {
+    val (group, name, version) = local.split(":")
+    val jar = File(System.getProperty("user.home"),
+            ".m2/repository/${group.replace('.', '/')}/$name/$version/$name-$version.jar")
+    return if (jar.exists()) local else remote
 }
 
 dependencies {
@@ -35,17 +48,24 @@ dependencies {
     paperweight.paperDevBundle("1.21.11-R0.1-SNAPSHOT")
 
     /* Modules */
-    implementation("com.github.deepsitegg.modulemanager:spigot:main-SNAPSHOT")
+    implementation(deepsiteLib("com.jazzkuh.modulemanager:spigot:1.0-SNAPSHOT",
+            "gg.deepsite.modulemanager:spigot:07029d76d8"))
 
     /* Command Library */
-    implementation("com.github.deepsitegg.commandlibrary:spigot:adcdc9ba10")
+    implementation(deepsiteLib("com.jazzkuh.commandlib:spigot:1.0-SNAPSHOT",
+            "gg.deepsite.commandlibrary:spigot:adcdc9ba10"))
 
     /* Inventory Library */
-    implementation("com.github.deepsitegg.inventorylib:spigot:main-SNAPSHOT")
+    implementation(deepsiteLib("com.jazzkuh.inventorylib:spigot:1.1-SNAPSHOT",
+            "gg.deepsite.inventorylib:spigot:f207f77259"))
 
+    /* Other (Provided by Loader) */
     compileOnly("org.spongepowered:configurate-yaml:4.1.2")
     compileOnly("org.spongepowered:configurate-core:4.1.2")
     compileOnly("commons-io:commons-io:2.15.1")
+
+    /* Other (Provided by other plugins) */
+    compileOnly("com.github.SkriptLang:Skript:2.15.3")
 
 }
 
@@ -56,18 +76,17 @@ tasks.withType<ShadowJar> {
     relocate("com.jazzkuh.commandlib", "gg.deepsite.pewpew.libs.commandlib")
     relocate("com.jazzkuh.inventorylib", "gg.deepsite.pewpew.libs.inventorylib")
 
-    // Provided by Paper at runtime
+    /* Provided by Paper at runtime */
     exclude("net/kyori/**")
     exclude("org/slf4j/**")
-    // Loaded by PewpewPluginLoader at runtime
+    /* Provided by Loader at runtime */
     exclude("javassist/**")
-    exclude("org/reflections/**")
-    // Compile-time-only annotations, not needed at runtime
+    /* Compile-time-only annotations, not needed at runtime */
     exclude("javax/**")
     exclude("org/jetbrains/**")
     exclude("org/intellij/**")
     exclude("org/jspecify/**")
-    // Dependency metadata / module descriptors
+    /* Dependency metadata / module descriptors */
     exclude("META-INF/maven/**")
     exclude("META-INF/versions/**")
     exclude("module-info.class")
@@ -90,10 +109,13 @@ tasks {
     runServer {
         minecraftVersion("1.21.11")
         jvmArgs("-Dcom.mojang.eula.agree=true", "-Dfile.encoding=UTF-8")
+        downloadPlugins {
+            modrinth("Skript", "2.15.3")
+        }
     }
 }
 
-val targetJavaVersion = 25
+val targetJavaVersion = 21
 java {
     val javaVersion = JavaVersion.toVersion(targetJavaVersion)
     sourceCompatibility = javaVersion

@@ -5,3 +5,8 @@ loader: gg.deepsite.pewpew.PewpewPluginLoader
 api-version: '1.21'
 authors: [ ThebigTijn ]
 website: https://deepsite.gg
+dependencies:
+  server:
+    Skript:
+      load: BEFORE
+      required: false

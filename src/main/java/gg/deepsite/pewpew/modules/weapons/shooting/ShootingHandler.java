@@ -1,6 +1,8 @@
 package gg.deepsite.pewpew.modules.weapons.shooting;
 
 import gg.deepsite.pewpew.PewpewPlugin;
+import gg.deepsite.pewpew.api.events.PewpewReloadEvent;
+import gg.deepsite.pewpew.api.events.PewpewShootEvent;
 import gg.deepsite.pewpew.api.enums.FiringMode;
 import gg.deepsite.pewpew.api.enums.ReloadType;
 import gg.deepsite.pewpew.api.objects.PewPewItem;
@@ -147,6 +149,8 @@ public class ShootingHandler {
 			return;
 		}
 
+		if (!new PewpewReloadEvent(player, gun, weapon).callEvent()) return;
+
 		int reloadTicks = AttachmentUtil.effectiveReloadTime(gun, weapon);
 		reloading.add(id);
 		player.sendActionBar(ChatUtils.format("<color>● <gray>Reloading...", ChatUtils.PRIMARY));
@@ -243,6 +247,8 @@ public class ShootingHandler {
 	private void fireShot(Player player, PewpewGunItem gun) {
 		ItemStack held = player.getInventory().getItemInMainHand();
 		if (!isSameGun(held, gun)) return;
+
+		if (!new PewpewShootEvent(player, gun, held).callEvent()) return;
 
 		if (AmmoUtil.usesAmmo(gun)) {
 			int ammo = AmmoUtil.get(held);

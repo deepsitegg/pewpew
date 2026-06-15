@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+@SuppressWarnings("unused")
 public class ItemsModule extends SpigotModule<PewpewPlugin> {
 
 	private static final String[] BUNDLED_FILES = {"guns.yml", "throwables.yml", "attachments.yml", "ammo.yml"};

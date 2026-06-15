@@ -1,6 +1,8 @@
 package gg.deepsite.pewpew.modules.weapons.throwing;
 
 import gg.deepsite.pewpew.api.enums.ThrowableEffect;
+import gg.deepsite.pewpew.api.events.PewpewThrowEvent;
+import gg.deepsite.pewpew.api.events.PewpewThrowableDetonateEvent;
 import gg.deepsite.pewpew.api.objects.PewpewThrowableItem;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -45,6 +47,8 @@ public class ThrowableHandler {
 		UUID id = player.getUniqueId();
 		long now = System.currentTimeMillis();
 		if (now < nextThrowAt.getOrDefault(id, 0L)) return;
+
+		if (!new PewpewThrowEvent(player, throwable, held).callEvent()) return;
 		nextThrowAt.put(id, now + THROW_COOLDOWN_MILLIS);
 
 		consumeOne(player, held);
@@ -73,8 +77,10 @@ public class ThrowableHandler {
 		if (thrown.isDead() || !thrown.isValid()) return;
 		Location loc = thrown.getLocation();
 		World world = loc.getWorld();
+
+		boolean detonate = new PewpewThrowableDetonateEvent(thrown, throwable, loc).callEvent();
 		thrown.remove();
-		if (world == null) return;
+		if (!detonate || world == null) return;
 
 		switch (throwable.getEffect()) {
 			case EXPLOSION -> explosion(world, loc, throwable.getBlastRadius());
