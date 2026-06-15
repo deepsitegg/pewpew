@@ -8,6 +8,7 @@ import gg.deepsite.pewpew.configuration.DefaultConfiguration;
 import gg.deepsite.pewpew.modules.items.ItemsModule;
 import gg.deepsite.pewpew.modules.items.commands.ItemsCommand;
 import gg.deepsite.pewpew.utils.ChatUtils;
+import gg.deepsite.pewpew.utils.UpdateChecker;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -54,6 +55,10 @@ public class PewpewCommand extends AnnotationCommand {
 			sender.sendMessage(ChatUtils.format("<color_alt>Version:</color_alt> %1",       ChatUtils.PRIMARY, version     != null ? version     : "<error>Unknown"));
 			sender.sendMessage(ChatUtils.format("<color_alt>Build Date:</color_alt> %1",    ChatUtils.PRIMARY, buildTime   != null ? buildTime   : "<error>Unknown"));
 			sender.sendMessage(ChatUtils.format("<color_alt>Maintained by:</color_alt> %1", ChatUtils.PRIMARY, maintainers != null ? maintainers : "<error>Unknown"));
+			if (UpdateChecker.isUpdateAvailable()) {
+				sender.sendMessage(ChatUtils.format("<warning>Update available: %1 — %2", ChatUtils.PRIMARY,
+						UpdateChecker.getLatestVersion(), UpdateChecker.RELEASES_URL));
+			}
 			sender.sendMessage("");
 		}
 	}
