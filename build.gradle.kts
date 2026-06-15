@@ -30,12 +30,6 @@ repositories {
     maven("https://jitpack.io")
 }
 
-/**
- * Resolves a gg.deepsite library from Maven Local when its jar is present in
- * ~/.m2, otherwise falls back to the remote (jitpack) build. Both sources ship
- * the same com.jazzkuh.* packages, so the choice is transparent — this just lets
- * local builds work when the remote is slow or unreachable.
- */
 fun deepsiteLib(local: String, remote: String): String {
     val (group, name, version) = local.split(":")
     val jar = File(System.getProperty("user.home"),
@@ -44,27 +38,21 @@ fun deepsiteLib(local: String, remote: String): String {
 }
 
 dependencies {
-    /* Paper */
     paperweight.paperDevBundle("1.21.11-R0.1-SNAPSHOT")
 
-    /* Modules */
     implementation(deepsiteLib("com.jazzkuh.modulemanager:spigot:1.0-SNAPSHOT",
             "gg.deepsite.modulemanager:spigot:07029d76d8"))
 
-    /* Command Library */
     implementation(deepsiteLib("com.jazzkuh.commandlib:spigot:1.0-SNAPSHOT",
             "gg.deepsite.commandlibrary:spigot:adcdc9ba10"))
 
-    /* Inventory Library */
     implementation(deepsiteLib("com.jazzkuh.inventorylib:spigot:1.1-SNAPSHOT",
             "gg.deepsite.inventorylib:spigot:f207f77259"))
 
-    /* Other (Provided by Loader) */
     compileOnly("org.spongepowered:configurate-yaml:4.1.2")
     compileOnly("org.spongepowered:configurate-core:4.1.2")
     compileOnly("commons-io:commons-io:2.15.1")
 
-    /* Other (Provided by other plugins) */
     compileOnly("com.github.SkriptLang:Skript:2.15.3")
 
 }
@@ -76,17 +64,13 @@ tasks.withType<ShadowJar> {
     relocate("com.jazzkuh.commandlib", "gg.deepsite.pewpew.libs.commandlib")
     relocate("com.jazzkuh.inventorylib", "gg.deepsite.pewpew.libs.inventorylib")
 
-    /* Provided by Paper at runtime */
     exclude("net/kyori/**")
     exclude("org/slf4j/**")
-    /* Provided by Loader at runtime */
     exclude("javassist/**")
-    /* Compile-time-only annotations, not needed at runtime */
     exclude("javax/**")
     exclude("org/jetbrains/**")
     exclude("org/intellij/**")
     exclude("org/jspecify/**")
-    /* Dependency metadata / module descriptors */
     exclude("META-INF/maven/**")
     exclude("META-INF/versions/**")
     exclude("module-info.class")
