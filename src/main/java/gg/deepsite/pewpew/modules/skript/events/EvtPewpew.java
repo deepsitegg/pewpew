@@ -13,13 +13,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
-/**
- * Registers the Pewpew Bukkit events as Skript events plus their event-values
- * ({@code event-player}, {@code event-entity}, {@code event-location}).
- * <p>
- * Loaded by {@link gg.deepsite.pewpew.modules.skript.SkriptModule} via reflection;
- * the static initialiser runs on load.
- */
 @SuppressWarnings({"unused", "deprecation", "removal"})
 public final class EvtPewpew {
 
@@ -51,7 +44,6 @@ public final class EvtPewpew {
 				.examples("on pewpew detonate:", "\tstrike lightning at event-location")
 				.since("1.0");
 
-		// event-player
 		EventValues.registerEventValue(PewpewShootEvent.class, Player.class,
 				PewpewShootEvent::getShooter, EventValues.TIME_NOW);
 		EventValues.registerEventValue(PewpewHitEvent.class, Player.class,
@@ -61,13 +53,11 @@ public final class EvtPewpew {
 		EventValues.registerEventValue(PewpewThrowEvent.class, Player.class,
 				PewpewThrowEvent::getPlayer, EventValues.TIME_NOW);
 
-		// event-entity
 		EventValues.registerEventValue(PewpewHitEvent.class, LivingEntity.class,
 				PewpewHitEvent::getTarget, EventValues.TIME_NOW);
 		EventValues.registerEventValue(PewpewThrowableDetonateEvent.class, Entity.class,
 				PewpewThrowableDetonateEvent::getEntity, EventValues.TIME_NOW);
 
-		// event-location
 		EventValues.registerEventValue(PewpewThrowableDetonateEvent.class, Location.class,
 				PewpewThrowableDetonateEvent::getLocation, EventValues.TIME_NOW);
 	}

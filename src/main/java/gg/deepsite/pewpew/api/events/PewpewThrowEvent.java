@@ -10,12 +10,6 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * Fired when a player throws a throwable, after the throw cooldown check passes
- * but before the item is consumed and launched.
- * <p>
- * Cancelling stops the throw: nothing is consumed or spawned.
- */
 @Getter
 public class PewpewThrowEvent extends Event implements Cancellable {
 
@@ -23,7 +17,6 @@ public class PewpewThrowEvent extends Event implements Cancellable {
 
     private final Player player;
     private final PewpewThrowableItem throwable;
-    /** The throwable ItemStack in the player's hand. */
     private final ItemStack item;
     @Setter
     private boolean cancelled;

@@ -11,10 +11,6 @@ import gg.deepsite.pewpew.api.events.PewpewHitEvent;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * {@code [the] pewpew damage} — the final damage of a pewpew hit. Settable,
- * addable and removable; only usable inside a {@code pewpew hit} event.
- */
 @SuppressWarnings({"unused", "deprecation", "removal"})
 public class ExprPewpewDamage extends SimpleExpression<Number> {
 

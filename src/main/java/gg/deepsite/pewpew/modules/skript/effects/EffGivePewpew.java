@@ -11,10 +11,6 @@ import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * {@code give [%-number% [of]] pewpew item[s] %string% to %players%} — gives the
- * registered Pewpew item with the given id to the players, fully initialised.
- */
 @SuppressWarnings({"unused", "deprecation", "removal"})
 public class EffGivePewpew extends Effect {
 

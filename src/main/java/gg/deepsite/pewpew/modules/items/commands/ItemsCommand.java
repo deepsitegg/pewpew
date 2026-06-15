@@ -58,10 +58,6 @@ public final class ItemsCommand {
 		sender.sendMessage(ChatUtils.prefix("<success>Given <gray>" + count + "x " + id + "<success>."));
 	}
 
-	/**
-	 * Builds a ready-to-give ItemStack for the registered item with the given id,
-	 * fully initialised (ammo, cooldown, lore). Returns {@code null} for unknown ids.
-	 */
 	@org.jetbrains.annotations.Nullable
 	public static ItemStack createItem(String id, int amount) {
 		PewPewItem item = module().get(id);

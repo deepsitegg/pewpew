@@ -14,10 +14,6 @@ import gg.deepsite.pewpew.api.events.PewpewThrowableDetonateEvent;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * {@code [the] pewpew item id} — the registered id of the gun or throwable
- * involved in the current pewpew event. Usable in any pewpew event.
- */
 @SuppressWarnings({"unused", "deprecation", "removal"})
 public class ExprPewpewItemId extends SimpleExpression<String> {
 

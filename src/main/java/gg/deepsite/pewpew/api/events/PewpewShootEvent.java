@@ -10,13 +10,6 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * Fired right before a gun fires a single shot, after ammo/cooldown checks pass
- * but before ammo is consumed and the shot is executed. For burst weapons this
- * fires once per shot in the burst.
- * <p>
- * Cancelling prevents the shot: no ammo is consumed, no projectile/ray is fired.
- */
 @Getter
 public class PewpewShootEvent extends Event implements Cancellable {
 
@@ -24,7 +17,6 @@ public class PewpewShootEvent extends Event implements Cancellable {
 
     private final Player shooter;
     private final PewpewGunItem gun;
-    /** The gun ItemStack in the shooter's hand. */
     private final ItemStack weapon;
     @Setter
     private boolean cancelled;

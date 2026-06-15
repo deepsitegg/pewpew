@@ -15,11 +15,6 @@ import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * {@code (force|make) %players% [to] reload [their] [pewpew] gun} — starts a
- * reload on the Pewpew gun each player is holding, as if they pressed the
- * reload key. Players not holding a gun are ignored.
- */
 @SuppressWarnings({"unused", "deprecation", "removal"})
 public class EffReloadGun extends Effect {
 

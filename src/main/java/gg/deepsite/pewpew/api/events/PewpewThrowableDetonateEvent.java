@@ -11,22 +11,13 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * Fired when a thrown item reaches its fuse and is about to detonate, before its
- * effect (explosion, smoke, flash, poison, fire) is applied. The thrown item
- * entity is still present at this point.
- * <p>
- * Cancelling skips the effect; the thrown item is still removed.
- */
 @Getter
 public class PewpewThrowableDetonateEvent extends Event implements Cancellable {
 
     private static final HandlerList HANDLERS = new HandlerList();
 
-    /** The thrown item entity (still valid until the effect resolves). */
     private final Item entity;
     private final PewpewThrowableItem throwable;
-    /** Where the detonation happens. */
     private final Location location;
     @Setter
     private boolean cancelled;

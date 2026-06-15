@@ -11,11 +11,6 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * {@code [the] pewpew (victim|target)} — the living entity hit by a pewpew shot.
- * Use this instead of {@code event-entity}, which is ambiguous in a pewpew hit
- * event because the shooter is also an entity. Only usable in a pewpew hit event.
- */
 @SuppressWarnings({"unused", "deprecation", "removal"})
 public class ExprPewpewVictim extends SimpleExpression<LivingEntity> {
 

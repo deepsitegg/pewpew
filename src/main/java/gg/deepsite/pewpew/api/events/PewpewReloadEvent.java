@@ -10,12 +10,6 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * Fired when a player starts reloading a gun, after the "already full" and
- * "no ammo in inventory" checks pass but before the reload timer starts.
- * <p>
- * Cancelling stops the reload from starting.
- */
 @Getter
 public class PewpewReloadEvent extends Event implements Cancellable {
 
