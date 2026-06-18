@@ -105,6 +105,8 @@ mp5:
     - BARREL
     - GRIP
     - MAGAZINE
+  defaultAttachments:
+    SCOPE: red_dot
 
 remington:
   type: GUN
@@ -171,3 +173,7 @@ awp:
     - SCOPE
     - BARREL
     - GRIP
+  defaultAttachments:
+    SCOPE:
+      id: acog
+      forced: true

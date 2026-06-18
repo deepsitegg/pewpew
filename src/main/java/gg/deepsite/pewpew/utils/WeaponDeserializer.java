@@ -11,6 +11,7 @@ import gg.deepsite.pewpew.api.objects.PewPewItem;
 import gg.deepsite.pewpew.api.objects.PewpewAmmoItem;
 import gg.deepsite.pewpew.api.objects.PewpewGunItem;
 import gg.deepsite.pewpew.api.objects.PewpewThrowableItem;
+import gg.deepsite.pewpew.api.objects.attachment.DefaultAttachment;
 import gg.deepsite.pewpew.api.objects.attachment.PewpewAttachment;
 import gg.deepsite.pewpew.api.objects.attachment.PewpewBarrelAttachment;
 import gg.deepsite.pewpew.api.objects.attachment.PewpewGripAttachment;
@@ -195,6 +196,37 @@ public class WeaponDeserializer {
             }
         }
 
+        List<DefaultAttachment> defaultAttachments = new ArrayList<>();
+        for (var entry : node.node("defaultAttachments").childrenMap().entrySet()) {
+            String slotRaw = String.valueOf(entry.getKey());
+            AttachmentType slot;
+            try {
+                slot = AttachmentType.valueOf(slotRaw.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                warn(fileName, id, "unknown defaultAttachment slot '" + slotRaw + "', skipping");
+                continue;
+            }
+            if (!allowedAttachmentSlots.contains(slot)) {
+                warn(fileName, id, "defaultAttachment slot '" + slot + "' is not in allowedAttachmentSlots, skipping");
+                continue;
+            }
+            ConfigurationNode entryNode = entry.getValue();
+            String attachmentId;
+            boolean forced;
+            if (entryNode.isMap()) {
+                attachmentId = entryNode.node("id").getString();
+                forced = entryNode.node("forced").getBoolean(false);
+            } else {
+                attachmentId = entryNode.getString();
+                forced = false;
+            }
+            if (attachmentId == null || attachmentId.isBlank()) {
+                warn(fileName, id, "defaultAttachment slot '" + slot + "' is missing an attachment id, skipping");
+                continue;
+            }
+            defaultAttachments.add(new DefaultAttachment(slot, attachmentId, forced));
+        }
+
         return PewpewGunItem.builder()
                 .id(id)
                 .name(name)
@@ -236,6 +268,7 @@ public class WeaponDeserializer {
                 .fireSound(fireSound)
                 .hitSound(hitSound)
                 .hitMessage(hitMessage)
+                .defaultAttachments(defaultAttachments)
                 .build();
     }
 

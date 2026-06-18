@@ -5,8 +5,10 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import gg.deepsite.pewpew.api.enums.AttachmentType;
 import gg.deepsite.pewpew.api.enums.FiringMode;
 import gg.deepsite.pewpew.api.enums.ReloadType;
+import gg.deepsite.pewpew.api.objects.attachment.DefaultAttachment;
 import org.bukkit.Particle;
 import org.bukkit.potion.PotionEffect;
 
@@ -46,4 +48,13 @@ public class PewpewGunItem extends PewpewWeaponItem {
     private PewpewSound fireSound;
     private PewpewSound hitSound;
     private String hitMessage;
+    private List<DefaultAttachment> defaultAttachments;
+
+    public boolean isForcedSlot(AttachmentType slot) {
+        if (defaultAttachments == null) return false;
+        for (DefaultAttachment def : defaultAttachments) {
+            if (def.getSlot() == slot) return def.isForced();
+        }
+        return false;
+    }
 }

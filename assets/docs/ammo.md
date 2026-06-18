@@ -4,7 +4,7 @@ Plus the [common fields](common-fields.md). Ammo items are consumed when a gun w
 
 | Field | Type | Default | Required | Description |
 |-------|------|---------|----------|-------------|
-| `ammoType` | string | — | yes | The type tag a gun matches against (e.g. `rifle_round`). A gun pulls only ammo whose `ammoType` equals its own. |
+| `ammoType` | string | - | yes | The type tag a gun matches against (e.g. `rifle_round`). A gun pulls only ammo whose `ammoType` equals its own. |
 | `roundsPerItem` | int | `1` | no | How many rounds one consumed item loads. `1` = a single round, `N` = a box of N, `0` = one item refills the **whole magazine** (a spare mag). |
 
 ## Examples

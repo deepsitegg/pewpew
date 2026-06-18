@@ -6,13 +6,13 @@ Plus the [common fields](common-fields.md). All times are in **ticks** (20 ticks
 
 | Field | Type | Default | Required | Description |
 |-------|------|---------|----------|-------------|
-| `baseDamage` | double | — | yes | Damage per shot before modifiers. For multi-pellet guns this is **per pellet**. |
-| `fireRate` | int (ticks) | — | yes | Ticks between trigger pulls. Lower = faster. |
-| `reloadTime` | int (ticks) | — | yes | Reload duration. With `reloadType: SINGLE` this is the delay **per round**. |
-| `maxAmmo` | int | — | yes | Magazine size. `0` makes the gun infinite-ammo (never reloads, no durability bar). |
-| `range` | double | — | yes | Maximum hitscan trace distance, or projectile reach. |
-| `firingMode` | enum | — | yes | `HITSCAN` (instant ray) or `PROJECTILE` (thrown snowball). |
-| `projectileSpeed` | double | — | only for `PROJECTILE` | Launch velocity of the projectile. |
+| `baseDamage` | double | - | yes | Damage per shot before modifiers. For multi-pellet guns this is **per pellet**. |
+| `fireRate` | int (ticks) | - | yes | Ticks between trigger pulls. Lower = faster. |
+| `reloadTime` | int (ticks) | - | yes | Reload duration. With `reloadType: SINGLE` this is the delay **per round**. |
+| `maxAmmo` | int | - | yes | Magazine size. `0` makes the gun infinite-ammo (never reloads, no durability bar). |
+| `range` | double | - | yes | Maximum hitscan trace distance, or projectile reach. |
+| `firingMode` | enum | - | yes | `HITSCAN` (instant ray) or `PROJECTILE` (thrown snowball). |
+| `projectileSpeed` | double | - | only for `PROJECTILE` | Launch velocity of the projectile. |
 
 ## Ammo & reloading
 

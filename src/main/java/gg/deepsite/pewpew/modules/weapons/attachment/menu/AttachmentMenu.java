@@ -47,7 +47,11 @@ public class AttachmentMenu extends AbstractGunMenu {
 			if (allowed != null && allowed.contains(type)) {
 				PewpewAttachment fitted = AttachmentUtil.get(gun, type);
 				if (fitted != null) {
-					addItem(new Icon(slot, ItemFactory.build(fitted), true, event -> detach(type)));
+					if (gunItem.isForcedSlot(type)) {
+						addItem(new Icon(slot, lockedAttachment(fitted)));
+					} else {
+						addItem(new Icon(slot, ItemFactory.build(fitted), true, event -> detach(type)));
+					}
 				} else {
 					addItem(new Icon(slot, emptyPane(type)));
 				}
@@ -84,6 +88,11 @@ public class AttachmentMenu extends AbstractGunMenu {
 			return;
 		}
 
+		if (gunItem.isForcedSlot(type)) {
+			viewer.sendMessage(ChatUtils.prefix("<error>The " + label(type) + " slot is locked and cannot be changed."));
+			return;
+		}
+
 		if (!consumeOne(attachment.getId())) return;
 
 		PewpewAttachment existing = AttachmentUtil.get(gun, type);
@@ -101,6 +110,12 @@ public class AttachmentMenu extends AbstractGunMenu {
 		if (gun == null) {
 			viewer.closeInventory();
 			viewer.sendMessage(ChatUtils.prefix("<error>You must hold the gun to edit its attachments."));
+			return;
+		}
+
+		PewpewGunItem gunItem = (PewpewGunItem) itemsModule().fromItemStack(gun);
+		if (gunItem.isForcedSlot(type)) {
+			viewer.sendMessage(ChatUtils.prefix("<error>This " + label(type) + " is locked and cannot be removed."));
 			return;
 		}
 
@@ -136,6 +151,14 @@ public class AttachmentMenu extends AbstractGunMenu {
 		return false;
 	}
 
+	private ItemStack lockedAttachment(PewpewAttachment attachment) {
+		ItemStack stack = ItemFactory.build(attachment);
+		return new ItemBuilder(stack)
+				.addLoreLine("")
+				.addLoreLine("<red>🔒 Locked <dark_gray>| built into this weapon")
+				.toItemStack();
+	}
+
 	private ItemStack emptyPane(AttachmentType type) {
 		return new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE)
 				.setName("<color>Empty " + label(type) + " Slot")
@@ -145,6 +168,6 @@ public class AttachmentMenu extends AbstractGunMenu {
 	}
 
 	private ItemStack filler() {
-		return new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).setName("<dark_gray>—").toItemStack();
+		return new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).setName("<dark_gray>-").toItemStack();
 	}
 }

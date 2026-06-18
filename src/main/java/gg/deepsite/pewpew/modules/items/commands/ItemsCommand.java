@@ -9,6 +9,7 @@ import gg.deepsite.pewpew.api.objects.attachment.PewpewAttachment;
 import gg.deepsite.pewpew.modules.items.ItemsModule;
 import gg.deepsite.pewpew.modules.weapons.CooldownUtil;
 import gg.deepsite.pewpew.modules.weapons.ammo.AmmoUtil;
+import gg.deepsite.pewpew.modules.weapons.attachment.AttachmentUtil;
 import gg.deepsite.pewpew.modules.weapons.lore.GunLoreRenderer;
 import gg.deepsite.pewpew.utils.ChatUtils;
 import gg.deepsite.pewpew.utils.item.ItemFactory;
@@ -67,6 +68,7 @@ public final class ItemsCommand {
 		if (item instanceof PewpewGunItem gun) {
 			AmmoUtil.init(stack, gun);
 			CooldownUtil.stamp(stack, gun);
+			AttachmentUtil.applyDefaults(stack, gun);
 			GunLoreRenderer.apply(stack, gun);
 		}
 		if (item instanceof PewpewAmmoItem ammo) AmmoUtil.stampAmmo(stack, ammo.getAmmoType(), ammo.getRoundsPerItem());

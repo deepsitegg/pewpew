@@ -4,6 +4,7 @@ import gg.deepsite.pewpew.PewpewPlugin;
 import gg.deepsite.pewpew.api.enums.AttachmentType;
 import gg.deepsite.pewpew.api.objects.PewPewItem;
 import gg.deepsite.pewpew.api.objects.PewpewGunItem;
+import gg.deepsite.pewpew.api.objects.attachment.DefaultAttachment;
 import gg.deepsite.pewpew.api.objects.attachment.PewpewAttachment;
 import gg.deepsite.pewpew.api.objects.attachment.PewpewBarrelAttachment;
 import gg.deepsite.pewpew.api.objects.attachment.PewpewGripAttachment;
@@ -34,6 +35,16 @@ public class AttachmentUtil {
 		if (meta == null) return;
 		meta.getPersistentDataContainer().set(key(slot), PersistentDataType.STRING, attachmentId);
 		gun.setItemMeta(meta);
+	}
+
+	public static void applyDefaults(@NotNull ItemStack gun, @NotNull PewpewGunItem gunItem) {
+		if (gunItem.getDefaultAttachments() == null) return;
+		for (DefaultAttachment def : gunItem.getDefaultAttachments()) {
+			PewPewItem item = items().get(def.getAttachmentId());
+			if (item instanceof PewpewAttachment attachment && attachment.getSlot() == def.getSlot()) {
+				set(gun, def.getSlot(), def.getAttachmentId());
+			}
+		}
 	}
 
 	public static void clear(@NotNull ItemStack gun, @NotNull AttachmentType slot) {
