@@ -20,29 +20,29 @@ public final class EvtPewpew {
 		Skript.registerEvent("Pewpew Shoot", SimpleEvent.class, PewpewShootEvent.class, "pewpew shoot[ing]")
 				.description("Called when a player fires a Pewpew gun, once per shot. Cancellable.")
 				.examples("on pewpew shoot:", "\tsend \"pew!\" to event-player")
-				.since("1.0");
+				.since("26.0.2");
 
 		Skript.registerEvent("Pewpew Hit", SimpleEvent.class, PewpewHitEvent.class, "pewpew (hit|damage)")
 				.description("Called when a Pewpew shot lands on a living entity. "
 						+ "event-entity is the target, event-player the shooter. Cancellable.")
 				.examples("on pewpew hit:", "\tset pewpew damage to pewpew damage * 2")
-				.since("1.0");
+				.since("26.0.2");
 
 		Skript.registerEvent("Pewpew Reload", SimpleEvent.class, PewpewReloadEvent.class, "pewpew reload[ing]")
 				.description("Called when a player starts reloading a Pewpew gun. Cancellable.")
 				.examples("on pewpew reload:", "\tsend action bar \"reloading...\" to event-player")
-				.since("1.0");
+				.since("26.0.2");
 
 		Skript.registerEvent("Pewpew Throw", SimpleEvent.class, PewpewThrowEvent.class, "pewpew throw[ing]")
 				.description("Called when a player throws a Pewpew throwable. Cancellable.")
 				.examples("on pewpew throw:", "\tsend \"fire in the hole!\" to event-player")
-				.since("1.0");
+				.since("26.0.2");
 
 		Skript.registerEvent("Pewpew Detonate", SimpleEvent.class, PewpewThrowableDetonateEvent.class,
 						"pewpew (detonat(e|ion)|explo(de|sion))")
 				.description("Called when a Pewpew throwable detonates. event-location is the blast point. Cancellable.")
 				.examples("on pewpew detonate:", "\tstrike lightning at event-location")
-				.since("1.0");
+				.since("26.0.2");
 
 		EventValues.registerEventValue(PewpewShootEvent.class, Player.class,
 				PewpewShootEvent::getShooter, EventValues.TIME_NOW);

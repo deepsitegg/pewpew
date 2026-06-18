@@ -13,7 +13,7 @@ plugins {
 }
 
 group = "gg.deepsite"
-version = "26.0.2"
+version = "26.0.3-snaphot"
 val MAINTAINERS = listOf("ThebigTijn")
 
 paperweight.reobfArtifactConfiguration = io.papermc.paperweight.userdev.ReobfArtifactConfiguration.MOJANG_PRODUCTION
@@ -41,13 +41,13 @@ dependencies {
     paperweight.paperDevBundle("1.21.11-R0.1-SNAPSHOT")
 
     implementation(deepsiteLib("com.jazzkuh.modulemanager:spigot:1.0-SNAPSHOT",
-            "gg.deepsite.modulemanager:spigot:07029d76d8"))
+            "gg.deepsite.modulemanager:spigot:main-SNAPSHOT"))
 
     implementation(deepsiteLib("com.jazzkuh.commandlib:spigot:1.0-SNAPSHOT",
-            "gg.deepsite.commandlibrary:spigot:adcdc9ba10"))
+            "gg.deepsite.commandlibrary:spigot:main-SNAPSHOT"))
 
     implementation(deepsiteLib("com.jazzkuh.inventorylib:spigot:1.1-SNAPSHOT",
-            "gg.deepsite.inventorylib:spigot:f207f77259"))
+            "gg.deepsite.inventorylib:spigot:main-SNAPSHOT"))
 
     compileOnly("org.spongepowered:configurate-yaml:4.1.2")
     compileOnly("org.spongepowered:configurate-core:4.1.2")

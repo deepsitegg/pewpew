@@ -2,6 +2,7 @@ package gg.deepsite.pewpew.modules.dummy.menu;
 
 import com.jazzkuh.inventorylib.objects.Menu;
 import com.jazzkuh.inventorylib.objects.icon.Icon;
+import gg.deepsite.pewpew.modules.dummy.listeners.DummyListener;
 import gg.deepsite.pewpew.utils.ChatUtils;
 import gg.deepsite.pewpew.utils.item.ItemBuilder;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -91,6 +92,7 @@ public class DummyArmorMenu extends Menu {
 	}
 
 	private void refresh() {
+		DummyListener.updateShield(dummy);
 		build();
 		update();
 	}

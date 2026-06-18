@@ -19,6 +19,7 @@ import java.util.jar.Manifest;
 public class PewpewCommand extends AnnotationCommand {
 
 	@Main
+	@Alias("pp")
 	@Description("The pewpew command.")
 	@Usage("<subcommand>")
 	public void main(CommandSender sender) {

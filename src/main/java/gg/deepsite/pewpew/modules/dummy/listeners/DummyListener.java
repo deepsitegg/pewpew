@@ -5,6 +5,7 @@ import gg.deepsite.pewpew.utils.ChatUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
@@ -21,6 +22,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
@@ -44,6 +46,12 @@ public class DummyListener implements Listener {
 	public void onDamage(EntityDamageEvent event) {
 		Entity entity = event.getEntity();
 		if (!(entity instanceof LivingEntity dummy) || !isDummy(dummy)) return;
+
+		if (event.isApplicable(EntityDamageEvent.DamageModifier.BLOCKING)
+				&& event.getDamage(EntityDamageEvent.DamageModifier.BLOCKING) != 0.0) {
+			keepAlive(dummy);
+			return;
+		}
 
 		double damage = event.getFinalDamage();
 
@@ -149,6 +157,30 @@ public class DummyListener implements Listener {
 			AttributeInstance maxHealth = dummy.getAttribute(Attribute.MAX_HEALTH);
 			dummy.setHealth(maxHealth != null ? maxHealth.getValue() : DUMMY_HEALTH);
 			dummy.setFireTicks(0);
+			updateShield(dummy);
 		});
+	}
+
+	public static void updateShield(LivingEntity dummy) {
+		EntityEquipment equipment = dummy.getEquipment();
+		if (equipment == null) return;
+
+		EquipmentSlot slot = null;
+		if (equipment.getItemInOffHand().getType() == Material.SHIELD) {
+			slot = EquipmentSlot.OFF_HAND;
+		} else if (equipment.getItemInMainHand().getType() == Material.SHIELD) {
+			slot = EquipmentSlot.HAND;
+		}
+
+		if (slot == null) {
+			if (dummy.hasActiveItem()) dummy.clearActiveItem();
+			return;
+		}
+
+		dummy.setShieldBlockingDelay(0);
+		if (!dummy.hasActiveItem() || dummy.getActiveItemHand() != slot) {
+			dummy.startUsingItem(slot);
+		}
+		dummy.setActiveItemRemainingTime(72000);
 	}
 }

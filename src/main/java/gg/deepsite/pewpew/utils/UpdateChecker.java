@@ -1,6 +1,7 @@
 package gg.deepsite.pewpew.utils;
 
 import gg.deepsite.pewpew.PewpewPlugin;
+import lombok.Getter;
 import lombok.experimental.UtilityClass;
 
 import java.net.URI;
@@ -19,16 +20,10 @@ public final class UpdateChecker {
 
 	private static final Pattern TAG_NAME = Pattern.compile("\"tag_name\"\\s*:\\s*\"([^\"]+)\"");
 
+	@Getter
 	private static volatile boolean updateAvailable;
+	@Getter
 	private static volatile String latestVersion;
-
-	public static boolean isUpdateAvailable() {
-		return updateAvailable;
-	}
-
-	public static String getLatestVersion() {
-		return latestVersion;
-	}
 
 	public static void check(PewpewPlugin plugin) {
 		String current = plugin.getPluginMeta().getVersion();
