@@ -23,7 +23,6 @@ import java.util.concurrent.ThreadLocalRandom;
 @UtilityClass
 public class Ballistics {
 
-    private static final double HORIZONTAL_RECOIL_RATIO = 0.3;
     private static final double HEADSHOT_BAND = 0.3;
 
     @NotNull
@@ -96,11 +95,4 @@ public class Ballistics {
         shooter.playSound(shooter, Sound.ENTITY_PLAYER_ATTACK_CRIT, 1.0f, 1.2f);
     }
 
-    public static void applyRecoil(@NotNull Player shooter, double verticalDegrees) {
-        if (verticalDegrees <= 0) return;
-        Location loc = shooter.getLocation();
-        float newPitch = (float) Math.max(-90.0, loc.getPitch() - verticalDegrees);
-        double sway = (ThreadLocalRandom.current().nextDouble() * 2 - 1) * verticalDegrees * HORIZONTAL_RECOIL_RATIO;
-        shooter.setRotation(loc.getYaw() + (float) sway, newPitch);
-    }
 }

@@ -12,6 +12,7 @@ import gg.deepsite.pewpew.modules.items.ItemsModule;
 import gg.deepsite.pewpew.modules.weapons.ammo.AmmoUtil;
 import gg.deepsite.pewpew.modules.weapons.attachment.AttachmentUtil;
 import gg.deepsite.pewpew.modules.weapons.lore.GunLoreRenderer;
+import gg.deepsite.pewpew.modules.weapons.shooting.recoil.RecoilManager;
 import gg.deepsite.pewpew.utils.ChatUtils;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
@@ -42,11 +43,14 @@ public class ShootingHandler {
 	private final Map<FiringMode, ShotExecutor> executors = new EnumMap<>(FiringMode.class);
 
 	@Getter
-	private final ProjectileShotExecutor projectileExecutor = new ProjectileShotExecutor();
+	private final ProjectileShotExecutor projectileExecutor;
+	private final RecoilManager recoilManager;
 
 	public ShootingHandler(@NotNull Plugin plugin) {
 		this.plugin = plugin;
-		executors.put(FiringMode.HITSCAN, new HitscanShotExecutor());
+		this.recoilManager = new RecoilManager(plugin);
+		this.projectileExecutor = new ProjectileShotExecutor(recoilManager);
+		executors.put(FiringMode.HITSCAN, new HitscanShotExecutor(recoilManager));
 		executors.put(FiringMode.PROJECTILE, projectileExecutor);
 	}
 
@@ -179,6 +183,7 @@ public class ShootingHandler {
 		autoTasks.values().forEach(BukkitTask::cancel);
 		autoTasks.clear();
 		lastTrigger.clear();
+		recoilManager.stop();
 	}
 
 	private void loadSingleRound(Player player, PewpewGunItem gun) {

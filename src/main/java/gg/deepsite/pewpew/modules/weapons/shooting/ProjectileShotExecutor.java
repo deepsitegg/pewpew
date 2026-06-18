@@ -4,6 +4,7 @@ import gg.deepsite.pewpew.PewpewPlugin;
 import gg.deepsite.pewpew.api.events.PewpewHitEvent;
 import gg.deepsite.pewpew.api.objects.PewpewGunItem;
 import gg.deepsite.pewpew.modules.weapons.attachment.AttachmentUtil;
+import gg.deepsite.pewpew.modules.weapons.shooting.recoil.RecoilManager;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
@@ -21,6 +22,12 @@ public class ProjectileShotExecutor implements ShotExecutor {
 
 	public static final NamespacedKey PROJECTILE_WEAPON_KEY = new NamespacedKey("pewpew", "weapon_id");
 	public static final NamespacedKey PROJECTILE_DAMAGE_KEY = new NamespacedKey("pewpew", "weapon_damage");
+
+	private final RecoilManager recoilManager;
+
+	public ProjectileShotExecutor(@NotNull RecoilManager recoilManager) {
+		this.recoilManager = recoilManager;
+	}
 
 	@Override
 	public void execute(@NotNull Player shooter, @NotNull PewpewGunItem gun, @NotNull ItemStack weapon) {
@@ -46,7 +53,7 @@ public class ProjectileShotExecutor implements ShotExecutor {
 
 		double recoil = gun.getRecoil() * recoilMultiplier;
 		if (scoped) recoil *= AttachmentUtil.aimRecoilMultiplier(weapon);
-		Ballistics.applyRecoil(shooter, recoil);
+		recoilManager.kick(shooter, recoil);
 	}
 
 	private void trail(Snowball projectile, Particle particle) {

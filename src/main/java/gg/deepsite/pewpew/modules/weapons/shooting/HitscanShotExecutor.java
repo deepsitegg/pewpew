@@ -3,6 +3,7 @@ package gg.deepsite.pewpew.modules.weapons.shooting;
 import gg.deepsite.pewpew.api.events.PewpewHitEvent;
 import gg.deepsite.pewpew.api.objects.PewpewGunItem;
 import gg.deepsite.pewpew.modules.weapons.attachment.AttachmentUtil;
+import gg.deepsite.pewpew.modules.weapons.shooting.recoil.RecoilManager;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -16,6 +17,12 @@ import org.jetbrains.annotations.NotNull;
 public class HitscanShotExecutor implements ShotExecutor {
 
 	private static final double DROP_STEP = 0.5;
+
+	private final RecoilManager recoilManager;
+
+	public HitscanShotExecutor(@NotNull RecoilManager recoilManager) {
+		this.recoilManager = recoilManager;
+	}
 
 	@Override
 	public void execute(@NotNull Player shooter, @NotNull PewpewGunItem gun, @NotNull ItemStack weapon) {
@@ -39,7 +46,7 @@ public class HitscanShotExecutor implements ShotExecutor {
 
 		double recoil = gun.getRecoil() * recoilMultiplier;
 		if (scoped) recoil *= AttachmentUtil.aimRecoilMultiplier(weapon);
-		Ballistics.applyRecoil(shooter, recoil);
+		recoilManager.kick(shooter, recoil);
 	}
 
 	private void fireStraight(Player shooter, PewpewGunItem gun, Location eye, Vector direction, double range,
