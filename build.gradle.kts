@@ -1,5 +1,7 @@
 
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar.Companion.shadowJar
+import sun.jvmstat.monitor.MonitoredVmUtil.jvmArgs
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import kotlin.collections.set
@@ -13,7 +15,7 @@ plugins {
 }
 
 group = "gg.deepsite"
-version = "26.0.3-snaphot"
+version = "26.0.4-snapshot"
 val MAINTAINERS = listOf("ThebigTijn")
 
 paperweight.reobfArtifactConfiguration = io.papermc.paperweight.userdev.ReobfArtifactConfiguration.MOJANG_PRODUCTION
@@ -41,13 +43,15 @@ dependencies {
     paperweight.paperDevBundle("1.21.11-R0.1-SNAPSHOT")
 
     implementation(deepsiteLib("com.jazzkuh.modulemanager:spigot:1.0-SNAPSHOT",
-            "gg.deepsite.modulemanager:spigot:main-SNAPSHOT"))
+        "com.github.deepsitegg.modulemanager:spigot:main-SNAPSHOT"))
 
     implementation(deepsiteLib("com.jazzkuh.commandlib:spigot:1.0-SNAPSHOT",
-            "gg.deepsite.commandlibrary:spigot:main-SNAPSHOT"))
+        "com.github.deepsitegg.commandlibrary:spigot:d8f90e0b14"))
 
     implementation(deepsiteLib("com.jazzkuh.inventorylib:spigot:1.1-SNAPSHOT",
-            "gg.deepsite.inventorylib:spigot:main-SNAPSHOT"))
+        "com.github.deepsitegg.inventorylib:spigot:main-SNAPSHOT"))
+
+    implementation("org.bstats:bstats-bukkit:3.2.1")
 
     compileOnly("org.spongepowered:configurate-yaml:4.1.2")
     compileOnly("org.spongepowered:configurate-core:4.1.2")
@@ -63,6 +67,7 @@ tasks.withType<ShadowJar> {
     relocate("com.jazzkuh.modulemanager", "gg.deepsite.pewpew.libs.modulemanager")
     relocate("com.jazzkuh.commandlib", "gg.deepsite.pewpew.libs.commandlib")
     relocate("com.jazzkuh.inventorylib", "gg.deepsite.pewpew.libs.inventorylib")
+    relocate("org.bstats", "gg.deepsite.pewpew.bstats")
 
     exclude("net/kyori/**")
     exclude("org/slf4j/**")
