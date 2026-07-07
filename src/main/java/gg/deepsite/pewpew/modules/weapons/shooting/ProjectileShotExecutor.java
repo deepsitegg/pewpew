@@ -3,6 +3,7 @@ package gg.deepsite.pewpew.modules.weapons.shooting;
 import gg.deepsite.pewpew.PewpewPlugin;
 import gg.deepsite.pewpew.api.events.PewpewHitEvent;
 import gg.deepsite.pewpew.api.objects.PewpewGunItem;
+import gg.deepsite.pewpew.integrations.CombatTagIntegration;
 import gg.deepsite.pewpew.modules.weapons.attachment.AttachmentUtil;
 import gg.deepsite.pewpew.modules.weapons.shooting.recoil.RecoilManager;
 import org.bukkit.Bukkit;
@@ -97,8 +98,12 @@ public class ProjectileShotExecutor implements ShotExecutor {
 		Entity causing = shooterPlayer != null ? shooterPlayer : projectile;
 		if (shooterPlayer != null) {
 			GunHitTracker.record(target, shooterPlayer, gun);
+			if (target instanceof Player victim) CombatTagIntegration.tag(victim, shooterPlayer);
 		}
 		Ballistics.dealProjectileDamage(target, damage, causing, projectile);
+		if (shooterPlayer != null) {
+			Ballistics.applyKnockback(target, shooterPlayer, gun.getKnockback(), gun.getSelfKnockback());
+		}
 		Ballistics.disableShield(target, gun.getShieldDisableTime());
 		Ballistics.applyEffects(target, gun.getVictimEffects());
 		if (shooterPlayer != null) {

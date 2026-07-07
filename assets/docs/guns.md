@@ -33,6 +33,8 @@ Plus the [common fields](common-fields.md). All times are in **ticks** (20 ticks
 | `bulletCount` | int | `1` | Pellets/projectiles per shot, each independently spread (shotgun buckshot). |
 | `spread` | double (degrees) | `1.5` | Bullet cone half-angle. `0` = pinpoint. Scaled by grip and scope. |
 | `recoil` | double (degrees) | `0.0` | Upward camera kick per shot, plus slight random horizontal sway. Scaled by grip and scope. |
+| `knockback` | double | `0.0` | Extra knockback pushed onto the victim on a landed hit, away from the shooter. `0` = vanilla only. |
+| `selfKnockback` | double | `0.0` | Recoil shove on the shooter (backward), for hand-cannon feel. `0` = none. |
 | `bulletDrop` | double | `0.0` | For `HITSCAN`: vertical curve per block (ballistic arc). For `PROJECTILE`: any value `> 0` enables gravity. `0` flies straight. |
 
 ## Damage modifiers

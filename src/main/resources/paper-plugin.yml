@@ -10,3 +10,9 @@ dependencies:
     Skript:
       load: BEFORE
       required: false
+    WorldGuard:
+      load: BEFORE
+      required: false
+    CombatTagPlus:
+      load: BEFORE
+      required: false

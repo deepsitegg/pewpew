@@ -29,6 +29,7 @@ repositories {
     mavenCentral()
     maven("https://repo.papermc.io/repository/maven-public/")
     maven("https://repo.skriptlang.org/releases")
+    maven("https://maven.enginehub.org/repo/")
     maven("https://jitpack.io")
 }
 
@@ -58,6 +59,11 @@ dependencies {
     compileOnly("commons-io:commons-io:2.15.1")
 
     compileOnly("com.github.SkriptLang:Skript:2.15.3")
+
+    compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.13") { isTransitive = false }
+    compileOnly("com.sk89q.worldguard:worldguard-core:7.0.13") { isTransitive = false }
+    compileOnly("com.sk89q.worldedit:worldedit-bukkit:7.3.0") { isTransitive = false }
+    compileOnly("com.sk89q.worldedit:worldedit-core:7.3.0") { isTransitive = false }
 
 }
 

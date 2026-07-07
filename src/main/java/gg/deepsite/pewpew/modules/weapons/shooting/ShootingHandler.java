@@ -8,6 +8,7 @@ import gg.deepsite.pewpew.api.enums.ReloadType;
 import gg.deepsite.pewpew.api.objects.PewPewItem;
 import gg.deepsite.pewpew.api.objects.PewpewAmmoItem;
 import gg.deepsite.pewpew.api.objects.PewpewGunItem;
+import gg.deepsite.pewpew.integrations.WorldGuardIntegration;
 import gg.deepsite.pewpew.modules.items.ItemsModule;
 import gg.deepsite.pewpew.modules.weapons.ammo.AmmoUtil;
 import gg.deepsite.pewpew.modules.weapons.attachment.AttachmentUtil;
@@ -144,7 +145,7 @@ public class ShootingHandler {
 		if (reloading.contains(id)) return;
 
 		if (AmmoUtil.get(weapon) >= AttachmentUtil.effectiveMaxAmmo(gun, weapon)) {
-			player.sendActionBar(ChatUtils.format("<warning>Magazine already full."));
+			player.sendActionBar(ChatUtils.format(PewpewPlugin.getMessagesConfig().magazineFull()));
 			return;
 		}
 
@@ -157,7 +158,7 @@ public class ShootingHandler {
 
 		int reloadTicks = AttachmentUtil.effectiveReloadTime(gun, weapon);
 		reloading.add(id);
-		player.sendActionBar(ChatUtils.format("<color>● <gray>Reloading...", ChatUtils.PRIMARY));
+		player.sendActionBar(ChatUtils.format(PewpewPlugin.getMessagesConfig().reloading(), ChatUtils.PRIMARY));
 
 		if (gun.getReloadType() == ReloadType.SINGLE) {
 			player.getWorld().playSound(player.getLocation(), Sound.BLOCK_PISTON_CONTRACT, 0.8f, 1.0f);
@@ -253,6 +254,8 @@ public class ShootingHandler {
 		ItemStack held = player.getInventory().getItemInMainHand();
 		if (!isSameGun(held, gun)) return;
 
+		if (!WorldGuardIntegration.allows(player)) return;
+
 		if (!new PewpewShootEvent(player, gun, held).callEvent()) return;
 
 		if (AmmoUtil.usesAmmo(gun)) {
@@ -278,11 +281,11 @@ public class ShootingHandler {
 
 	private void signalEmpty(Player player) {
 		player.getWorld().playSound(player.getLocation(), Sound.BLOCK_DISPENSER_FAIL, 0.8f, 1.2f);
-		player.sendActionBar(ChatUtils.format("<error>Out of ammo <dark_gray>┃ <gray>press <color><key:key.swapOffhand><gray> to reload", ChatUtils.PRIMARY));
+		player.sendActionBar(ChatUtils.format(PewpewPlugin.getMessagesConfig().outOfAmmo(), ChatUtils.PRIMARY));
 	}
 
 	private Component noAmmoMessage(PewpewGunItem gun) {
-		return ChatUtils.format("<error>Out of <reset>%1<error> in your inventory.",
+		return ChatUtils.format(PewpewPlugin.getMessagesConfig().noAmmoInInventory(),
 				ChatUtils.PRIMARY, ammoDisplayName(gun));
 	}
 

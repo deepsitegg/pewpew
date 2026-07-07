@@ -44,6 +44,21 @@ public class Ballistics {
         target.damage(amount, source);
     }
 
+    public static void applyKnockback(@NotNull LivingEntity target, @NotNull Player shooter,
+                                      double knockback, double selfKnockback) {
+        if (knockback > 0) {
+            Vector away = target.getLocation().toVector().subtract(shooter.getLocation().toVector());
+            if (away.lengthSquared() > 0) {
+                target.setVelocity(target.getVelocity().add(
+                        away.normalize().multiply(knockback).setY(0.35 * knockback)));
+            }
+        }
+        if (selfKnockback > 0) {
+            Vector back = shooter.getLocation().getDirection().multiply(-selfKnockback);
+            shooter.setVelocity(shooter.getVelocity().add(back));
+        }
+    }
+
     public static boolean isHeadshot(@NotNull LivingEntity target, double hitY) {
         return hitY >= target.getEyeLocation().getY() - HEADSHOT_BAND;
     }

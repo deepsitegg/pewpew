@@ -18,5 +18,11 @@ public class PewpewThrowableItem extends PewPewItem {
     private double blastRadius;
     private double throwForce;
     private ThrowableEffect effect;
+
+    private double explosionDamage;
+    private double explosionKnockback;
+    private int effectDuration;
+    private int effectAmplifier;
+    private int fireTicks;
 }
 

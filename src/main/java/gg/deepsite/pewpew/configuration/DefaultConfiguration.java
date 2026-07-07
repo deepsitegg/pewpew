@@ -14,4 +14,12 @@ public class DefaultConfiguration extends ConfigurateConfig {
 		return getRootNode().node("lore", "stat-display").getBoolean(true);
 	}
 
+	public boolean isWorldGuardEnabled() {
+		return getRootNode().node("integrations", "worldguard", "enabled").getBoolean(true);
+	}
+
+	public boolean isCombatTagEnabled() {
+		return getRootNode().node("integrations", "combattagplus", "enabled").getBoolean(true);
+	}
+
 }

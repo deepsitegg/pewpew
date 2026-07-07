@@ -14,6 +14,8 @@ There are four item types, set by the `type` field:
 
 All types share a set of [common fields](common-fields.md).
 
+Optional plugin hooks (WorldGuard, CombatTagPlus) and the `messages.yml` file are documented in [integrations.md](integrations.md).
+
 ## Notes
 
 - **Text** (`name`, `lore`, messages) uses [MiniMessage](https://docs.advntr.dev/minimessage/format.html). Pewpew adds the tags `<color>`, `<primary>`, `<success>`, `<warning>`, `<error>`.

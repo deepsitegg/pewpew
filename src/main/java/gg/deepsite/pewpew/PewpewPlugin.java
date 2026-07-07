@@ -4,6 +4,8 @@ import ch.njol.skript.bstats.bukkit.Metrics;
 import com.jazzkuh.commandlib.spigot.SpigotCommandLoader;
 import com.jazzkuh.modulemanager.spigot.SpigotModuleManager;
 import gg.deepsite.pewpew.configuration.DefaultConfiguration;
+import gg.deepsite.pewpew.configuration.MessagesConfig;
+import gg.deepsite.pewpew.integrations.WorldGuardIntegration;
 import gg.deepsite.pewpew.utils.ChatUtils;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -23,6 +25,9 @@ PewpewPlugin extends JavaPlugin {
 
 	@Getter @Setter
 	private static DefaultConfiguration defaultConfiguration;
+
+	@Getter @Setter
+	private static MessagesConfig messagesConfig;
 
 	public PewpewPlugin() {
 		instance = this;
@@ -48,6 +53,11 @@ PewpewPlugin extends JavaPlugin {
 
 		defaultConfiguration = new DefaultConfiguration(this.getDataFolder());
 		defaultConfiguration.saveConfiguration();
+
+		messagesConfig = new MessagesConfig(this.getDataFolder());
+		messagesConfig.saveConfiguration();
+
+		WorldGuardIntegration.register();
 
 		moduleManager.scanModules(this.getClass());
 		moduleManager.load();

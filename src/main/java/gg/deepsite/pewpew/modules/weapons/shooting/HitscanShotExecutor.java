@@ -2,6 +2,7 @@ package gg.deepsite.pewpew.modules.weapons.shooting;
 
 import gg.deepsite.pewpew.api.events.PewpewHitEvent;
 import gg.deepsite.pewpew.api.objects.PewpewGunItem;
+import gg.deepsite.pewpew.integrations.CombatTagIntegration;
 import gg.deepsite.pewpew.modules.weapons.attachment.AttachmentUtil;
 import gg.deepsite.pewpew.modules.weapons.shooting.recoil.RecoilManager;
 import org.bukkit.FluidCollisionMode;
@@ -110,7 +111,9 @@ public class HitscanShotExecutor implements ShotExecutor {
 		damage = hitEvent.getDamage();
 
 		GunHitTracker.record(target, shooter, gun);
+		if (target instanceof Player victim) CombatTagIntegration.tag(victim, shooter);
 		Ballistics.dealProjectileDamage(target, damage, shooter, shooter);
+		Ballistics.applyKnockback(target, shooter, gun.getKnockback(), gun.getSelfKnockback());
 		Ballistics.disableShield(target, gun.getShieldDisableTime());
 		Ballistics.applyEffects(target, gun.getVictimEffects());
 		Ballistics.applyEffects(shooter, gun.getShooterEffects());

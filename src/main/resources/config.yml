@@ -1,2 +1,13 @@
 lore:
   stat-display: true
+
+# Optional integrations. Each is a no-op unless the matching plugin is installed,
+# so these are safe to leave on. Set enabled to false to hard-disable the hook.
+integrations:
+  # Requires WorldGuard. Registers a region flag 'pewpew-guns' (default: allow).
+  # Deny it in a region (/rg flag <region> pewpew-guns deny) to block weapon use there.
+  worldguard:
+    enabled: true
+  # Requires CombatTagPlus. Combat-tags shooter and victim on a gun hit.
+  combattagplus:
+    enabled: true

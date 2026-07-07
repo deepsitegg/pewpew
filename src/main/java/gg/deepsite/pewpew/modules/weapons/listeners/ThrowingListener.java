@@ -3,8 +3,10 @@ package gg.deepsite.pewpew.modules.weapons.listeners;
 import gg.deepsite.pewpew.PewpewPlugin;
 import gg.deepsite.pewpew.api.objects.PewPewItem;
 import gg.deepsite.pewpew.api.objects.PewpewThrowableItem;
+import gg.deepsite.pewpew.integrations.WorldGuardIntegration;
 import gg.deepsite.pewpew.modules.items.ItemsModule;
 import gg.deepsite.pewpew.modules.weapons.throwing.ThrowableHandler;
+import gg.deepsite.pewpew.utils.ChatUtils;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -36,6 +38,10 @@ public class ThrowingListener implements Listener {
 		if (!(item instanceof PewpewThrowableItem throwable)) return;
 
 		event.setCancelled(true);
+		if (!WorldGuardIntegration.allows(event.getPlayer())) {
+			event.getPlayer().sendActionBar(ChatUtils.format(PewpewPlugin.getMessagesConfig().worldGuardDeny()));
+			return;
+		}
 		throwableHandler.tryThrow(event.getPlayer(), throwable, held);
 	}
 }

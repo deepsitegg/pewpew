@@ -155,6 +155,8 @@ public class WeaponDeserializer {
         int burstCount = node.node("burstCount").getInt(1);
         double spread = node.node("spread").getDouble(1.5);
         double recoil = node.node("recoil").getDouble(0.0);
+        double knockback = Math.max(0.0, node.node("knockback").getDouble(0.0));
+        double selfKnockback = Math.max(0.0, node.node("selfKnockback").getDouble(0.0));
         int bulletCount = Math.max(1, node.node("bulletCount").getInt(1));
         double bulletDrop = node.node("bulletDrop").getDouble(0.0);
         double headshotMultiplier = node.node("headshotMultiplier").getDouble(1.0);
@@ -248,6 +250,8 @@ public class WeaponDeserializer {
                 .reloadType(reloadType)
                 .spread(spread)
                 .recoil(recoil)
+                .knockback(knockback)
+                .selfKnockback(selfKnockback)
                 .bulletCount(bulletCount)
                 .bulletDrop(bulletDrop)
                 .headshotMultiplier(headshotMultiplier)
@@ -290,6 +294,12 @@ public class WeaponDeserializer {
             return null;
         }
 
+        double explosionDamage = Math.max(0.0, node.node("explosionDamage").getDouble(12.0));
+        double explosionKnockback = Math.max(0.0, node.node("explosionKnockback").getDouble(1.2));
+        int effectDuration = node.node("effectDuration").getInt(-1);
+        int effectAmplifier = node.node("effectAmplifier").getInt(-1);
+        int fireTicks = Math.max(0, node.node("fireTicks").getInt(80));
+
         return PewpewThrowableItem.builder()
                 .id(id)
                 .name(name)
@@ -301,6 +311,11 @@ public class WeaponDeserializer {
                 .blastRadius(blastRadius)
                 .throwForce(throwForce)
                 .effect(effect)
+                .explosionDamage(explosionDamage)
+                .explosionKnockback(explosionKnockback)
+                .effectDuration(effectDuration)
+                .effectAmplifier(effectAmplifier)
+                .fireTicks(fireTicks)
                 .build();
     }
 

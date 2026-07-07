@@ -1,0 +1,6 @@
+messages:
+  reloading: "<color>● <gray>Reloading..."
+  magazine-full: "<warning>Magazine already full."
+  out-of-ammo: "<error>Out of ammo <dark_gray>┃ <gray>press <color><key:key.swapOffhand><gray> to reload"
+  no-ammo-in-inventory: "<error>Out of <reset>%1<error> in your inventory."
+  worldguard-deny: "<error>You cannot use weapons here."
