@@ -18,6 +18,7 @@ public class UpdateNotifyListener implements Listener {
 
 		player.sendMessage(ChatUtils.prefix("<warning>A new version (<color_alt>"
 				+ UpdateChecker.getLatestVersion() + "</color_alt>) is available!"));
-		player.sendMessage(ChatUtils.prefix("<warning>Download: <color_alt>" + UpdateChecker.RELEASES_URL));
+		player.sendMessage(ChatUtils.prefix("<warning>Download: <color_alt><click:open_url:'"
+				+ UpdateChecker.RELEASES_URL + "'><u>" + UpdateChecker.RELEASES_URL + "</u></click>"));
 	}
 }

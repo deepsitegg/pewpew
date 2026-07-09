@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 public final class UpdateChecker {
 
 	private static final String API_URL = "https://api.github.com/repos/deepsitegg/pewpew/releases/latest";
-	public static final String RELEASES_URL = "https://github.com/deepsitegg/pewpew/releases";
+	public static final String RELEASES_URL = "https://modrinth.com/plugin/pewpew/versions";
 
 	private static final Pattern TAG_NAME = Pattern.compile("\"tag_name\"\\s*:\\s*\"([^\"]+)\"");
 

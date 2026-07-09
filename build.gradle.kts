@@ -15,7 +15,7 @@ plugins {
 }
 
 group = "gg.deepsite"
-version = "26.0.4-snapshot"
+version = "26.0.5-snapshot"
 val MAINTAINERS = listOf("ThebigTijn")
 
 paperweight.reobfArtifactConfiguration = io.papermc.paperweight.userdev.ReobfArtifactConfiguration.MOJANG_PRODUCTION

@@ -1,6 +1,6 @@
 package gg.deepsite.pewpew;
 
-import ch.njol.skript.bstats.bukkit.Metrics;
+import org.bstats.bukkit.Metrics;
 import com.jazzkuh.commandlib.spigot.SpigotCommandLoader;
 import com.jazzkuh.modulemanager.spigot.SpigotModuleManager;
 import gg.deepsite.pewpew.configuration.DefaultConfiguration;
