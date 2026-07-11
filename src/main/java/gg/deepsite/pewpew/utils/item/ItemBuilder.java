@@ -1,12 +1,11 @@
 package gg.deepsite.pewpew.utils.item;
 
-import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
-import com.mojang.authlib.properties.PropertyMap;
+import com.destroystokyo.paper.profile.PlayerProfile;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import gg.deepsite.pewpew.utils.ChatUtils;
 import gg.deepsite.pewpew.utils.PersistentDataUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -22,9 +21,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.inventory.meta.components.EquippableComponent;
-import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
+import org.bukkit.profile.PlayerTextures;
 
-import java.lang.reflect.Method;
+import java.net.URI;
 import java.util.*;
 
 public class ItemBuilder {
@@ -277,23 +276,13 @@ public class ItemBuilder {
 
     public ItemBuilder setSkinURL(String url) {
         try {
-            GameProfile gameProfile = new GameProfile(UUID.randomUUID(), "skull");
-            PropertyMap properties = gameProfile.properties();
-            if (properties == null) {
-                return this;
-            }
+            PlayerProfile profile = Bukkit.createProfile(UUID.randomUUID(), "skull");
+            PlayerTextures textures = profile.getTextures();
+            textures.setSkin(URI.create(url).toURL());
+            profile.setTextures(textures);
 
-            String textureJSON = "{textures:{SKIN:{url:\"" + url + "\"}}}";
-            String encoded = Base64Coder.encodeString(textureJSON);
-
-            Property newProperty = new Property("textures", encoded);
-            properties.put("textures", newProperty);
-
-            ItemMeta skullMeta = is.getItemMeta();
-            Method mtd = skullMeta.getClass().getDeclaredMethod("setProfile", GameProfile.class);
-            mtd.setAccessible(true);
-            mtd.invoke(skullMeta, gameProfile);
-
+            SkullMeta skullMeta = (SkullMeta) is.getItemMeta();
+            skullMeta.setPlayerProfile(profile);
             is.setItemMeta(skullMeta);
         } catch (Exception ex) {
             ex.printStackTrace();

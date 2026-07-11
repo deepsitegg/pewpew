@@ -10,15 +10,12 @@ plugins {
     java
     id("io.freefair.lombok") version "8.13.1"
     id("com.gradleup.shadow") version "9.0.2"
-    id("io.papermc.paperweight.userdev") version "2.0.0-beta.19"
-    id("xyz.jpenilla.run-paper") version "2.3.1"
+    id("xyz.jpenilla.run-paper") version "3.0.2"
 }
 
 group = "gg.deepsite"
-version = "26.0.5-snapshot"
+version = "26.0.6"
 val MAINTAINERS = listOf("ThebigTijn")
-
-paperweight.reobfArtifactConfiguration = io.papermc.paperweight.userdev.ReobfArtifactConfiguration.MOJANG_PRODUCTION
 
 lombok {
     version = "1.18.46"
@@ -41,7 +38,7 @@ fun deepsiteLib(local: String, remote: String): String {
 }
 
 dependencies {
-    paperweight.paperDevBundle("1.21.11-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
 
     implementation(deepsiteLib("com.jazzkuh.modulemanager:spigot:1.0-SNAPSHOT",
         "com.github.deepsitegg.modulemanager:spigot:main-SNAPSHOT"))
@@ -102,7 +99,7 @@ tasks.build {
 
 tasks {
     runServer {
-        minecraftVersion("1.21.11")
+        minecraftVersion("26.2")
         jvmArgs("-Dcom.mojang.eula.agree=true", "-Dfile.encoding=UTF-8")
         downloadPlugins {
             modrinth("Skript", "2.15.3")
