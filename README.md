@@ -1,6 +1,6 @@
 ![Banner for @deepsitegg/pewpew](/assets/images/banner.png)
 
-**A fully data-driven gun plugin for Paper 1.21.11.** Build guns, shotguns, snipers, SMGs, throwables and attachments entirely in YAML no code, no resource pack required. Every weapon is a normal item identified by persistent data, so guns drop, trade, and stack like anything else.
+**A fully data-driven gun plugin for Paper** Build guns, shotguns, snipers, SMGs, throwables and attachments entirely in YAML no code, no resource pack required. Every weapon is a normal item identified by persistent data, so guns drop, trade, and stack like anything else.
 
 Pewpew aims to give you CrackShot style depth on a modern Paper API: real ballistics, recoil, attachments, ammo, and per-weapon sounds and effects, all configurable.
 
