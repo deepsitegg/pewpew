@@ -1,14 +1,15 @@
 package gg.deepsite.pewpew.api.objects;
 
+import gg.deepsite.pewpew.api.enums.AttachmentType;
+import gg.deepsite.pewpew.api.enums.FiringMode;
+import gg.deepsite.pewpew.api.enums.ReloadType;
+import gg.deepsite.pewpew.api.objects.attachment.DefaultAttachment;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import gg.deepsite.pewpew.api.enums.AttachmentType;
-import gg.deepsite.pewpew.api.enums.FiringMode;
-import gg.deepsite.pewpew.api.enums.ReloadType;
-import gg.deepsite.pewpew.api.objects.attachment.DefaultAttachment;
+import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.potion.PotionEffect;
 
@@ -24,6 +25,7 @@ public class PewpewGunItem extends PewpewWeaponItem {
     private FiringMode firingMode;
     private double range;
     private double projectileSpeed;
+    private Material projectileModel;
     private int burstCount;
     private ReloadType reloadType;
     private double spread;

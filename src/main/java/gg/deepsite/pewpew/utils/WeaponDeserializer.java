@@ -150,6 +150,16 @@ public class WeaponDeserializer {
             projectileSpeed = node.node("projectileSpeed").getDouble(0.0);
         }
 
+        org.bukkit.Material projectileModel = null;
+        String projectileModelRaw = node.node("projectileModel").getString();
+        if (projectileModelRaw != null && !projectileModelRaw.isBlank()) {
+            projectileModel = org.bukkit.Material.matchMaterial(projectileModelRaw.trim());
+            if (projectileModel == null || !projectileModel.isItem()) {
+                warn(fileName, id, "invalid projectileModel '" + projectileModelRaw + "', using default snowball");
+                projectileModel = null;
+            }
+        }
+
         String ammoType = node.node("ammoType").getString("default");
         boolean consumesAmmo = node.node("consumesAmmo").getBoolean(false);
         int burstCount = node.node("burstCount").getInt(1);
@@ -246,6 +256,7 @@ public class WeaponDeserializer {
                 .firingMode(firingMode)
                 .range(range)
                 .projectileSpeed(projectileSpeed)
+                .projectileModel(projectileModel)
                 .burstCount(burstCount)
                 .reloadType(reloadType)
                 .spread(spread)

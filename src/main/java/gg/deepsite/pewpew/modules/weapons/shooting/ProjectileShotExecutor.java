@@ -45,6 +45,7 @@ public class ProjectileShotExecutor implements ShotExecutor {
 			Vector velocity = Ballistics.applySpread(aim, spread).multiply(gun.getProjectileSpeed());
 			Snowball projectile = shooter.launchProjectile(Snowball.class, velocity);
 			projectile.setGravity(gravity);
+			if (gun.getProjectileModel() != null) projectile.setItem(new ItemStack(gun.getProjectileModel()));
 			projectile.getPersistentDataContainer()
 					.set(PROJECTILE_WEAPON_KEY, PersistentDataType.STRING, gun.getId());
 			projectile.getPersistentDataContainer()
