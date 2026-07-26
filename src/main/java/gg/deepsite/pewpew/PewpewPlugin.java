@@ -1,6 +1,5 @@
 package gg.deepsite.pewpew;
 
-import org.bstats.bukkit.Metrics;
 import com.jazzkuh.commandlib.spigot.SpigotCommandLoader;
 import com.jazzkuh.modulemanager.spigot.SpigotModuleManager;
 import gg.deepsite.pewpew.configuration.DefaultConfiguration;
@@ -10,6 +9,7 @@ import gg.deepsite.pewpew.utils.ChatUtils;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 

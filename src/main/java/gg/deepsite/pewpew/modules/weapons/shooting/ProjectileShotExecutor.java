@@ -1,15 +1,27 @@
 package gg.deepsite.pewpew.modules.weapons.shooting;
 
 import gg.deepsite.pewpew.PewpewPlugin;
+import gg.deepsite.pewpew.api.enums.Trajectory;
+import gg.deepsite.pewpew.api.events.PewpewGunExplodeEvent;
 import gg.deepsite.pewpew.api.events.PewpewHitEvent;
+import gg.deepsite.pewpew.api.events.PewpewThrowableDetonateEvent;
+import gg.deepsite.pewpew.api.objects.ExplosiveConfig;
 import gg.deepsite.pewpew.api.objects.PewpewGunItem;
+import gg.deepsite.pewpew.api.objects.PewpewThrowableItem;
 import gg.deepsite.pewpew.integrations.CombatTagIntegration;
+import gg.deepsite.pewpew.modules.items.ItemsModule;
+import gg.deepsite.pewpew.modules.weapons.WeaponsModule;
 import gg.deepsite.pewpew.modules.weapons.attachment.AttachmentUtil;
 import gg.deepsite.pewpew.modules.weapons.shooting.recoil.RecoilManager;
+import gg.deepsite.pewpew.modules.weapons.throwing.ThrowableHandler;
+import gg.deepsite.pewpew.utils.item.ItemFactory;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
@@ -37,12 +49,18 @@ public class ProjectileShotExecutor implements ShotExecutor {
 		double spread = gun.getSpread() * recoilMultiplier;
 		if (scoped) spread *= AttachmentUtil.aimSpreadMultiplier(weapon);
 		double damage = AttachmentUtil.effectiveDamage(gun, weapon);
-		boolean gravity = gun.getBulletDrop() > 0;
+		boolean gravity = gun.getTrajectory() != null
+				? gun.getTrajectory() == Trajectory.ARC
+				: gun.getBulletDrop() > 0;
 		Vector aim = shooter.getEyeLocation().getDirection();
 		int pellets = Math.max(1, gun.getBulletCount());
 
 		for (int pellet = 0; pellet < pellets; pellet++) {
 			Vector velocity = Ballistics.applySpread(aim, spread).multiply(gun.getProjectileSpeed());
+			if (gun.getPayload() != null) {
+				launchPayload(shooter, gun, velocity, gravity);
+				continue;
+			}
 			Snowball projectile = shooter.launchProjectile(Snowball.class, velocity);
 			projectile.setGravity(gravity);
 			if (gun.getProjectileModel() != null) projectile.setItem(new ItemStack(gun.getProjectileModel()));
@@ -58,9 +76,33 @@ public class ProjectileShotExecutor implements ShotExecutor {
 		recoilManager.kick(shooter, recoil);
 	}
 
-	private void trail(Snowball projectile, Particle particle) {
+	private void launchPayload(@NotNull Player shooter, @NotNull PewpewGunItem gun, @NotNull Vector velocity, boolean gravity) {
+		ItemsModule items = PewpewPlugin.getModuleManager().get(ItemsModule.class);
+		if (!(items.get(gun.getPayload()) instanceof PewpewThrowableItem throwable)) return;
+		ItemStack display = ItemFactory.build(throwable);
+		display.setAmount(1);
+		Item grenade = shooter.getWorld().dropItem(shooter.getEyeLocation(), display);
+		grenade.setVelocity(velocity);
+		grenade.setPickupDelay(Integer.MAX_VALUE);
+		grenade.setWillAge(false);
+		grenade.setGravity(gravity);
+		if (gun.getTrailParticle() != null) trail(grenade, gun.getTrailParticle());
+
+		ThrowableHandler handler = PewpewPlugin.getModuleManager().get(WeaponsModule.class).getThrowableHandler();
+		int fuse = Math.max(1, throwable.getFuseTime());
+		Bukkit.getScheduler().runTaskLater(PewpewPlugin.getInstance(), () -> {
+			if (!grenade.isValid()) return;
+			World world = grenade.getWorld();
+			Location loc = grenade.getLocation();
+			boolean detonate = new PewpewThrowableDetonateEvent(grenade, throwable, loc).callEvent();
+			grenade.remove();
+			if (detonate && handler != null) handler.applyEffect(world, loc, throwable);
+		}, fuse);
+	}
+
+	private void trail(Entity projectile, Particle particle) {
 		Bukkit.getScheduler().runTaskTimer(PewpewPlugin.getInstance(), task -> {
-			if (projectile.isDead() || !projectile.isValid()) {
+			if (projectile.isDead() || !projectile.isValid() || projectile.isOnGround()) {
 				task.cancel();
 				return;
 			}
@@ -75,7 +117,21 @@ public class ProjectileShotExecutor implements ShotExecutor {
 	}
 
 	public void handleHit(@NotNull Snowball projectile, @NotNull PewpewGunItem gun, @Nullable LivingEntity target) {
-		Ballistics.impact(gun.getImpactParticle(), projectile.getLocation());
+		Location impact = projectile.getLocation();
+		Ballistics.impact(gun.getImpactParticle(), impact);
+
+		Player detonator = projectile.getShooter() instanceof Player p ? p : null;
+		if (gun.getExplosive() != null && projectile.getWorld() != null) {
+			ExplosiveConfig cfg = gun.getExplosive();
+			PewpewGunExplodeEvent explodeEvent = new PewpewGunExplodeEvent(
+					detonator, gun, impact, cfg.blastRadius(), cfg.explosionDamage());
+			if (explodeEvent.callEvent()) {
+				ExplosiveConfig applied = new ExplosiveConfig(
+						explodeEvent.getBlastRadius(), explodeEvent.getExplosionDamage(), cfg.explosionKnockback(),
+						cfg.damageBlocks(), cfg.rebuildEnabled(), cfg.rebuildDelay(), cfg.blocksPerTick());
+				Explosions.detonate(projectile.getWorld(), impact, applied, detonator);
+			}
+		}
 		if (target == null) return;
 		Double stored = projectile.getPersistentDataContainer()
 				.get(PROJECTILE_DAMAGE_KEY, PersistentDataType.DOUBLE);

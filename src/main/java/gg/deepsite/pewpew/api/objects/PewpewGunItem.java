@@ -3,6 +3,7 @@ package gg.deepsite.pewpew.api.objects;
 import gg.deepsite.pewpew.api.enums.AttachmentType;
 import gg.deepsite.pewpew.api.enums.FiringMode;
 import gg.deepsite.pewpew.api.enums.ReloadType;
+import gg.deepsite.pewpew.api.enums.Trajectory;
 import gg.deepsite.pewpew.api.objects.attachment.DefaultAttachment;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,6 +27,9 @@ public class PewpewGunItem extends PewpewWeaponItem {
     private double range;
     private double projectileSpeed;
     private Material projectileModel;
+    private Trajectory trajectory;
+    private ExplosiveConfig explosive;
+    private String payload;
     private int burstCount;
     private ReloadType reloadType;
     private double spread;

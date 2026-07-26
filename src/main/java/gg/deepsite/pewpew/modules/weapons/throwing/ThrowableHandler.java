@@ -80,6 +80,10 @@ public class ThrowableHandler {
 		thrown.remove();
 		if (!detonate || world == null) return;
 
+		applyEffect(world, loc, throwable);
+	}
+
+	public void applyEffect(@NotNull World world, @NotNull Location loc, @NotNull PewpewThrowableItem throwable) {
 		switch (throwable.getEffect()) {
 			case EXPLOSION -> explosion(world, loc, throwable);
 			case SMOKE -> smoke(world, loc, throwable);

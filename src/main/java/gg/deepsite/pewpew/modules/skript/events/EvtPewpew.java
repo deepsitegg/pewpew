@@ -3,6 +3,7 @@ package gg.deepsite.pewpew.modules.skript.events;
 import ch.njol.skript.Skript;
 import ch.njol.skript.lang.util.SimpleEvent;
 import ch.njol.skript.registrations.EventValues;
+import gg.deepsite.pewpew.api.events.PewpewGunExplodeEvent;
 import gg.deepsite.pewpew.api.events.PewpewHitEvent;
 import gg.deepsite.pewpew.api.events.PewpewReloadEvent;
 import gg.deepsite.pewpew.api.events.PewpewShootEvent;
@@ -40,8 +41,16 @@ public final class EvtPewpew {
 
 		Skript.registerEvent("Pewpew Detonate", SimpleEvent.class, PewpewThrowableDetonateEvent.class,
 						"pewpew (detonat(e|ion)|explo(de|sion))")
-				.description("Called when a Pewpew throwable detonates. event-location is the blast point. Cancellable.")
+				.description("Called when a Pewpew throwable (or grenade-launcher payload) detonates. "
+						+ "event-location is the blast point. Cancellable.")
 				.examples("on pewpew detonate:", "\tstrike lightning at event-location")
+				.since("26.0.2");
+
+		Skript.registerEvent("Pewpew Gun Explode", SimpleEvent.class, PewpewGunExplodeEvent.class,
+						"pewpew gun explo(de|sion)")
+				.description("Called when an explosive Pewpew gun projectile (rocket launcher) detonates. "
+						+ "event-player is the shooter, event-location the blast point. Cancellable.")
+				.examples("on pewpew gun explode:", "\tset pewpew damage to pewpew damage * 2")
 				.since("26.0.2");
 
 		EventValues.registerEventValue(PewpewShootEvent.class, Player.class,
@@ -52,6 +61,10 @@ public final class EvtPewpew {
 				PewpewReloadEvent::getPlayer, EventValues.TIME_NOW);
 		EventValues.registerEventValue(PewpewThrowEvent.class, Player.class,
 				PewpewThrowEvent::getPlayer, EventValues.TIME_NOW);
+		EventValues.registerEventValue(PewpewGunExplodeEvent.class, Player.class,
+				PewpewGunExplodeEvent::getShooter, EventValues.TIME_NOW);
+		EventValues.registerEventValue(PewpewGunExplodeEvent.class, Location.class,
+				PewpewGunExplodeEvent::getLocation, EventValues.TIME_NOW);
 
 		EventValues.registerEventValue(PewpewHitEvent.class, LivingEntity.class,
 				PewpewHitEvent::getTarget, EventValues.TIME_NOW);

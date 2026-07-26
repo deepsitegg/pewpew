@@ -13,6 +13,23 @@ Plus the [common fields](common-fields.md). All times are in **ticks** (20 ticks
 | `range` | double | - | yes | Maximum hitscan trace distance, or projectile reach. |
 | `firingMode` | enum | - | yes | `HITSCAN` (instant ray) or `PROJECTILE` (thrown snowball). |
 | `projectileSpeed` | double | - | only for `PROJECTILE` | Launch velocity of the projectile. |
+| `projectileModel` | material | snowball | no | Item shown for the projectile in flight (e.g. `minecraft:fire_charge`). |
+| `trajectory` | enum | (uses `bulletDrop`) | no | `FLAT` (no gravity) or `ARC` (lobbed). Overrides `bulletDrop` gravity for `PROJECTILE`. |
+| `payload` | string | - | no | Id of a throwable. The projectile flies as that throwable's model; its **fuse starts when fired** and it detonates with the throwable's **effect** when the fuse runs out — wherever it is (airburst or after landing). Grenade launcher. |
+
+## Explosive projectiles
+
+Add an `explosive:` block to a `PROJECTILE` gun to detonate on impact (rocket launcher). Mutually exclusive with `payload` — `payload` reuses a throwable's effect instead.
+
+| Field | Type | Default | Description |
+| --- | --- | --- | --- |
+| `blastRadius` | double | `4.0` | Explosion radius; entity damage and knockback fall off linearly to the edge. |
+| `explosionDamage` | double | `12.0` | Damage at the center. |
+| `explosionKnockback` | double | `1.2` | Knockback at the center. |
+| `damageBlocks` | bool | `false` | Destroy breakable blocks in the radius (no drops). |
+| `rebuild.enabled` | bool | `false` | Restore destroyed blocks after the blast. |
+| `rebuild.delay` | int (ticks) | `100` | Delay before regen starts. |
+| `rebuild.blocksPerTick` | int | `2` | Regen speed. |
 
 ## Ammo & reloading
 

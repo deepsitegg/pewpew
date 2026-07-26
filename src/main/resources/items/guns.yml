@@ -177,3 +177,53 @@ awp:
     SCOPE:
       id: acog
       forced: true
+
+rocket_launcher:
+  type: GUN
+  maxStack: 1
+  name: "<gray>Rocket Launcher"
+  lore:
+    - "<dark_gray>High-explosive"
+  customModelData: 1010
+  itemModel: "minecraft:diamond_horse_armor"
+  baseDamage: 6.0
+  fireRate: 40
+  reloadTime: 80
+  maxAmmo: 1
+  firingMode: PROJECTILE
+  trajectory: FLAT
+  projectileSpeed: 4.0
+  projectileModel: "minecraft:fire_charge"
+  range: 80.0
+  spread: 0.5
+  recoil: 5.0
+  explosive:
+    blastRadius: 5.0
+    explosionDamage: 16.0
+    explosionKnockback: 1.5
+    damageBlocks: true
+    rebuild:
+      enabled: true
+      delay: 100
+      blocksPerTick: 2
+  deathMessage: "<gray>%victim% <error>was blown up by <gray>%killer%"
+
+grenade_launcher:
+  type: GUN
+  maxStack: 1
+  name: "<gray>Grenade Launcher"
+  lore:
+    - "<dark_gray>40mm"
+  customModelData: 1011
+  itemModel: "minecraft:diamond_horse_armor"
+  baseDamage: 4.0
+  fireRate: 25
+  reloadTime: 60
+  maxAmmo: 4
+  firingMode: PROJECTILE
+  trajectory: ARC
+  projectileSpeed: 1.5
+  range: 48.0
+  spread: 1.0
+  recoil: 2.5
+  payload: frag_grenade

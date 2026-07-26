@@ -7,6 +7,8 @@ import gg.deepsite.pewpew.api.enums.FiringMode;
 import gg.deepsite.pewpew.api.enums.ItemType;
 import gg.deepsite.pewpew.api.enums.ReloadType;
 import gg.deepsite.pewpew.api.enums.ThrowableEffect;
+import gg.deepsite.pewpew.api.enums.Trajectory;
+import gg.deepsite.pewpew.api.objects.ExplosiveConfig;
 import gg.deepsite.pewpew.api.objects.PewPewItem;
 import gg.deepsite.pewpew.api.objects.PewpewAmmoItem;
 import gg.deepsite.pewpew.api.objects.PewpewGunItem;
@@ -160,6 +162,32 @@ public class WeaponDeserializer {
             }
         }
 
+        Trajectory trajectory = null;
+        String trajectoryRaw = node.node("trajectory").getString();
+        if (trajectoryRaw != null && !trajectoryRaw.isBlank()) {
+            try {
+                trajectory = Trajectory.valueOf(trajectoryRaw.trim().toUpperCase());
+            } catch (IllegalArgumentException e) {
+                warn(fileName, id, "unknown trajectory '" + trajectoryRaw + "', ignoring");
+            }
+        }
+
+        ExplosiveConfig explosive = null;
+        ConfigurationNode explosiveNode = node.node("explosive");
+        if (!explosiveNode.virtual()) {
+            ConfigurationNode rebuild = explosiveNode.node("rebuild");
+            explosive = new ExplosiveConfig(
+                    Math.max(0.0, explosiveNode.node("blastRadius").getDouble(4.0)),
+                    Math.max(0.0, explosiveNode.node("explosionDamage").getDouble(12.0)),
+                    Math.max(0.0, explosiveNode.node("explosionKnockback").getDouble(1.2)),
+                    explosiveNode.node("damageBlocks").getBoolean(false),
+                    rebuild.node("enabled").getBoolean(false),
+                    Math.max(0, rebuild.node("delay").getInt(100)),
+                    Math.max(1, rebuild.node("blocksPerTick").getInt(2)));
+        }
+
+        String payload = node.node("payload").getString();
+
         String ammoType = node.node("ammoType").getString("default");
         boolean consumesAmmo = node.node("consumesAmmo").getBoolean(false);
         int burstCount = node.node("burstCount").getInt(1);
@@ -257,6 +285,9 @@ public class WeaponDeserializer {
                 .range(range)
                 .projectileSpeed(projectileSpeed)
                 .projectileModel(projectileModel)
+                .trajectory(trajectory)
+                .explosive(explosive)
+                .payload(payload)
                 .burstCount(burstCount)
                 .reloadType(reloadType)
                 .spread(spread)
