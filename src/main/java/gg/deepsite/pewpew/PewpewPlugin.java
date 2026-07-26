@@ -9,7 +9,6 @@ import gg.deepsite.pewpew.utils.ChatUtils;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
-import org.bstats.bukkit.Metrics;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,9 +36,6 @@ PewpewPlugin extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		moduleManager.setDebug(false);
-
-		int pluginId = 32453;
-		Metrics metrics = new Metrics(this, pluginId);
 
 		SpigotCommandLoader.loadResolvers();
 		SpigotCommandLoader.setFormattingProvider((commandException, message) -> ChatUtils.prefix(message));
