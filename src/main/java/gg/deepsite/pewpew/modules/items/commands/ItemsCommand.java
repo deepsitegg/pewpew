@@ -41,8 +41,8 @@ public final class ItemsCommand {
 		for (PewPewItem item : all) {
 			sender.sendMessage(ChatUtils.format(
 					"  <dark_gray>- <gray>" + item.getId()
-					+ " <dark_gray>[<primary>" + typeOf(item) + "<dark_gray>]"
-					+ " <dark_gray>| <gray>" + item.getName()
+							+ " <dark_gray>[<primary>" + typeOf(item) + "<dark_gray>]"
+							+ " <dark_gray>| <gray>" + item.getName()
 			));
 		}
 	}

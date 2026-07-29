@@ -1,10 +1,10 @@
 package gg.deepsite.pewpew.modules.weapons.shooting;
 
 import gg.deepsite.pewpew.PewpewPlugin;
-import gg.deepsite.pewpew.api.events.PewpewReloadEvent;
-import gg.deepsite.pewpew.api.events.PewpewShootEvent;
 import gg.deepsite.pewpew.api.enums.FiringMode;
 import gg.deepsite.pewpew.api.enums.ReloadType;
+import gg.deepsite.pewpew.api.events.PewpewReloadEvent;
+import gg.deepsite.pewpew.api.events.PewpewShootEvent;
 import gg.deepsite.pewpew.api.objects.PewPewItem;
 import gg.deepsite.pewpew.api.objects.PewpewAmmoItem;
 import gg.deepsite.pewpew.api.objects.PewpewGunItem;
@@ -71,10 +71,16 @@ public class ShootingHandler {
 	private void startAutoFire(Player player, PewpewGunItem gun) {
 		UUID id = player.getUniqueId();
 		BukkitTask task = plugin.getServer().getScheduler().runTaskTimer(plugin, () -> {
-			if (!player.isOnline() || player.isDead()) { stopAutoFire(id); return; }
+			if (!player.isOnline() || player.isDead()) {
+				stopAutoFire(id);
+				return;
+			}
 
 			ItemStack held = player.getInventory().getItemInMainHand();
-			if (!isSameGun(held, gun)) { stopAutoFire(id); return; }
+			if (!isSameGun(held, gun)) {
+				stopAutoFire(id);
+				return;
+			}
 
 			if (System.currentTimeMillis() - lastTrigger.getOrDefault(id, 0L) > AUTO_RELEASE_MS) {
 				stopAutoFire(id);
@@ -122,7 +128,9 @@ public class ShootingHandler {
 		fireShot(player, gun);
 		for (int shot = 1; shot < burstCount; shot++) {
 			plugin.getServer().getScheduler().runTaskLater(plugin,
-					() -> { if (player.isOnline() && !player.isDead()) fireShot(player, gun); },
+					() -> {
+						if (player.isOnline() && !player.isDead()) fireShot(player, gun);
+					},
 					shot * BURST_SHOT_DELAY_TICKS);
 		}
 
@@ -132,10 +140,12 @@ public class ShootingHandler {
 	private void cycleFirearmAction(Player player, PewpewGunItem gun, long burstSpan) {
 		long openAt = burstSpan + 1;
 		plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
-			if (player.isOnline()) player.getWorld().playSound(player.getLocation(), Sound.BLOCK_PISTON_CONTRACT, 0.7f, 0.8f);
+			if (player.isOnline())
+				player.getWorld().playSound(player.getLocation(), Sound.BLOCK_PISTON_CONTRACT, 0.7f, 0.8f);
 		}, openAt);
 		plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
-			if (player.isOnline()) player.getWorld().playSound(player.getLocation(), Sound.BLOCK_PISTON_EXTEND, 0.7f, 0.8f);
+			if (player.isOnline())
+				player.getWorld().playSound(player.getLocation(), Sound.BLOCK_PISTON_EXTEND, 0.7f, 0.8f);
 		}, openAt + gun.getActionOpenTime());
 	}
 
@@ -189,14 +199,23 @@ public class ShootingHandler {
 
 	private void loadSingleRound(Player player, PewpewGunItem gun) {
 		UUID id = player.getUniqueId();
-		if (!player.isOnline()) { endReload(id); return; }
+		if (!player.isOnline()) {
+			endReload(id);
+			return;
+		}
 
 		ItemStack held = player.getInventory().getItemInMainHand();
-		if (!isSameGun(held, gun)) { endReload(id); return; }
+		if (!isSameGun(held, gun)) {
+			endReload(id);
+			return;
+		}
 
 		int maxAmmo = AttachmentUtil.effectiveMaxAmmo(gun, held);
 		int current = AmmoUtil.get(held);
-		if (current >= maxAmmo) { endReload(id); return; }
+		if (current >= maxAmmo) {
+			endReload(id);
+			return;
+		}
 
 		int newAmmo;
 		if (gun.isConsumesAmmo()) {

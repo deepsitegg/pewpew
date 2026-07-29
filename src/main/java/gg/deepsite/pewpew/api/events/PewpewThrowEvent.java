@@ -13,28 +13,28 @@ import org.jetbrains.annotations.NotNull;
 @Getter
 public class PewpewThrowEvent extends Event implements Cancellable {
 
-    private static final HandlerList HANDLERS = new HandlerList();
+	private static final HandlerList HANDLERS = new HandlerList();
 
-    private final Player player;
-    private final PewpewThrowableItem throwable;
-    private final ItemStack item;
-    @Setter
-    private boolean cancelled;
+	private final Player player;
+	private final PewpewThrowableItem throwable;
+	private final ItemStack item;
+	@Setter
+	private boolean cancelled;
 
-    public PewpewThrowEvent(@NotNull Player player, @NotNull PewpewThrowableItem throwable, @NotNull ItemStack item) {
-        this.player = player;
-        this.throwable = throwable;
-        this.item = item;
-    }
+	public PewpewThrowEvent(@NotNull Player player, @NotNull PewpewThrowableItem throwable, @NotNull ItemStack item) {
+		this.player = player;
+		this.throwable = throwable;
+		this.item = item;
+	}
 
-    @NotNull
-    @Override
-    public HandlerList getHandlers() {
-        return HANDLERS;
-    }
+	@NotNull
+	@Override
+	public HandlerList getHandlers() {
+		return HANDLERS;
+	}
 
-    @NotNull
-    public static HandlerList getHandlerList() {
-        return HANDLERS;
-    }
+	@NotNull
+	public static HandlerList getHandlerList() {
+		return HANDLERS;
+	}
 }

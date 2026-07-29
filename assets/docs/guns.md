@@ -1,62 +1,66 @@
 # Guns (`type: GUN`)
 
-Plus the [common fields](common-fields.md). All times are in **ticks** (20 ticks = 1 second). All distances are in **blocks**.
+Plus the [common fields](common-fields.md). All times are in **ticks** (20 ticks = 1 second). All distances are in
+**blocks**.
 
 ## Core
 
-| Field | Type | Default | Required | Description |
-|-------|------|---------|----------|-------------|
-| `baseDamage` | double | - | yes | Damage per shot before modifiers. For multi-pellet guns this is **per pellet**. |
-| `fireRate` | int (ticks) | - | yes | Ticks between trigger pulls. Lower = faster. |
-| `reloadTime` | int (ticks) | - | yes | Reload duration. With `reloadType: SINGLE` this is the delay **per round**. |
-| `maxAmmo` | int | - | yes | Magazine size. `0` makes the gun infinite-ammo (never reloads, no durability bar). |
-| `range` | double | - | yes | Maximum hitscan trace distance, or projectile reach. |
-| `firingMode` | enum | - | yes | `HITSCAN` (instant ray) or `PROJECTILE` (thrown snowball). |
-| `projectileSpeed` | double | - | only for `PROJECTILE` | Launch velocity of the projectile. |
-| `projectileModel` | material | snowball | no | Item shown for the projectile in flight (e.g. `minecraft:fire_charge`). |
-| `trajectory` | enum | (uses `bulletDrop`) | no | `FLAT` (no gravity) or `ARC` (lobbed). Overrides `bulletDrop` gravity for `PROJECTILE`. |
-| `payload` | string | - | no | Id of a throwable. The projectile flies as that throwable's model; its **fuse starts when fired** and it detonates with the throwable's **effect** when the fuse runs out — wherever it is (airburst or after landing). Grenade launcher. |
+| Field             | Type        | Default             | Required              | Description                                                                                                                                                                                                                               |
+|-------------------|-------------|---------------------|-----------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `baseDamage`      | double      | -                   | yes                   | Damage per shot before modifiers. For multi-pellet guns this is **per pellet**.                                                                                                                                                           |
+| `fireRate`        | int (ticks) | -                   | yes                   | Ticks between trigger pulls. Lower = faster.                                                                                                                                                                                              |
+| `reloadTime`      | int (ticks) | -                   | yes                   | Reload duration. With `reloadType: SINGLE` this is the delay **per round**.                                                                                                                                                               |
+| `maxAmmo`         | int         | -                   | yes                   | Magazine size. `0` makes the gun infinite-ammo (never reloads, no durability bar).                                                                                                                                                        |
+| `range`           | double      | -                   | yes                   | Maximum hitscan trace distance, or projectile reach.                                                                                                                                                                                      |
+| `firingMode`      | enum        | -                   | yes                   | `HITSCAN` (instant ray) or `PROJECTILE` (thrown snowball).                                                                                                                                                                                |
+| `projectileSpeed` | double      | -                   | only for `PROJECTILE` | Launch velocity of the projectile.                                                                                                                                                                                                        |
+| `projectileModel` | material    | snowball            | no                    | Item shown for the projectile in flight (e.g. `minecraft:fire_charge`).                                                                                                                                                                   |
+| `trajectory`      | enum        | (uses `bulletDrop`) | no                    | `FLAT` (no gravity) or `ARC` (lobbed). Overrides `bulletDrop` gravity for `PROJECTILE`.                                                                                                                                                   |
+| `payload`         | string      | -                   | no                    | Id of a throwable. The projectile flies as that throwable's model; its **fuse starts when fired** and it detonates with the throwable's **effect** when the fuse runs out — wherever it is (airburst or after landing). Grenade launcher. |
 
 ## Explosive projectiles
 
-Add an `explosive:` block to a `PROJECTILE` gun to detonate on impact (rocket launcher). Mutually exclusive with `payload` — `payload` reuses a throwable's effect instead.
+Add an `explosive:` block to a `PROJECTILE` gun to detonate on impact (rocket launcher). Mutually exclusive with
+`payload` — `payload` reuses a throwable's effect instead.
 
-| Field | Type | Default | Description |
-| --- | --- | --- | --- |
-| `blastRadius` | double | `4.0` | Explosion radius; entity damage and knockback fall off linearly to the edge. |
-| `explosionDamage` | double | `12.0` | Damage at the center. |
-| `explosionKnockback` | double | `1.2` | Knockback at the center. |
-| `damageBlocks` | bool | `false` | Destroy breakable blocks in the radius (no drops). |
-| `rebuild.enabled` | bool | `false` | Restore destroyed blocks after the blast. |
-| `rebuild.delay` | int (ticks) | `100` | Delay before regen starts. |
-| `rebuild.blocksPerTick` | int | `2` | Regen speed. |
+| Field                   | Type        | Default | Description                                                                  |
+|-------------------------|-------------|---------|------------------------------------------------------------------------------|
+| `blastRadius`           | double      | `4.0`   | Explosion radius; entity damage and knockback fall off linearly to the edge. |
+| `explosionDamage`       | double      | `12.0`  | Damage at the center.                                                        |
+| `explosionKnockback`    | double      | `1.2`   | Knockback at the center.                                                     |
+| `damageBlocks`          | bool        | `false` | Destroy breakable blocks in the radius (no drops).                           |
+| `rebuild.enabled`       | bool        | `false` | Restore destroyed blocks after the blast.                                    |
+| `rebuild.delay`         | int (ticks) | `100`   | Delay before regen starts.                                                   |
+| `rebuild.blocksPerTick` | int         | `2`     | Regen speed.                                                                 |
 
 ## Ammo & reloading
 
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `ammoType` | string | `default` | Matches ammo items with the same `ammoType`. Only used when `consumesAmmo` is true. |
-| `consumesAmmo` | bool | `false` | When true, reloads draw matching ammo items from the inventory. When false, reloads refill for free. |
-| `reloadType` | enum | `MAGAZINE` | `MAGAZINE` refills in one timed action; `SINGLE` loads one round per `reloadTime` (shell-by-shell). |
-| `actionOpenTime` | int (ticks) | `0` | Bolt/pump open delay added after each shot, with a sound. `0` disables the action cycle. |
-| `actionCloseTime` | int (ticks) | `0` | Bolt/pump close delay before the gun is ready again, with a sound. |
+| Field             | Type        | Default    | Description                                                                                          |
+|-------------------|-------------|------------|------------------------------------------------------------------------------------------------------|
+| `ammoType`        | string      | `default`  | Matches ammo items with the same `ammoType`. Only used when `consumesAmmo` is true.                  |
+| `consumesAmmo`    | bool        | `false`    | When true, reloads draw matching ammo items from the inventory. When false, reloads refill for free. |
+| `reloadType`      | enum        | `MAGAZINE` | `MAGAZINE` refills in one timed action; `SINGLE` loads one round per `reloadTime` (shell-by-shell).  |
+| `actionOpenTime`  | int (ticks) | `0`        | Bolt/pump open delay added after each shot, with a sound. `0` disables the action cycle.             |
+| `actionCloseTime` | int (ticks) | `0`        | Bolt/pump close delay before the gun is ready again, with a sound.                                   |
 
 ## Firing behavior
 
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `automatic` | bool | `false` | Hold right-click to fire continuously at `fireRate`. False fires once per click. |
-| `burstCount` | int | `1` | Shots fired per trigger pull, 2 ticks apart. |
-| `bulletCount` | int | `1` | Pellets/projectiles per shot, each independently spread (shotgun buckshot). |
-| `spread` | double (degrees) | `1.5` | Bullet cone half-angle. `0` = pinpoint. Scaled by grip and scope. |
-| `recoil` | double (degrees) | `0.0` | Camera kick strength per shot. Scaled by grip and scope, then shaped by `recoilProfile`. |
-| `knockback` | double | `0.0` | Extra knockback pushed onto the victim on a landed hit, away from the shooter. `0` = vanilla only. |
-| `selfKnockback` | double | `0.0` | Recoil shove on the shooter (backward), for hand-cannon feel. `0` = none. |
-| `bulletDrop` | double | `0.0` | For `HITSCAN`: vertical curve per block (ballistic arc). For `PROJECTILE`: any value `> 0` enables gravity. `0` flies straight. |
+| Field           | Type             | Default | Description                                                                                                                     |
+|-----------------|------------------|---------|---------------------------------------------------------------------------------------------------------------------------------|
+| `automatic`     | bool             | `false` | Hold right-click to fire continuously at `fireRate`. False fires once per click.                                                |
+| `burstCount`    | int              | `1`     | Shots fired per trigger pull, 2 ticks apart.                                                                                    |
+| `bulletCount`   | int              | `1`     | Pellets/projectiles per shot, each independently spread (shotgun buckshot).                                                     |
+| `spread`        | double (degrees) | `1.5`   | Bullet cone half-angle. `0` = pinpoint. Scaled by grip and scope.                                                               |
+| `recoil`        | double (degrees) | `0.0`   | Camera kick strength per shot. Scaled by grip and scope, then shaped by `recoilProfile`.                                        |
+| `knockback`     | double           | `0.0`   | Extra knockback pushed onto the victim on a landed hit, away from the shooter. `0` = vanilla only.                              |
+| `selfKnockback` | double           | `0.0`   | Recoil shove on the shooter (backward), for hand-cannon feel. `0` = none.                                                       |
+| `bulletDrop`    | double           | `0.0`   | For `HITSCAN`: vertical curve per block (ballistic arc). For `PROJECTILE`: any value `> 0` enables gravity. `0` flies straight. |
 
 ## Recoil profile
 
-Optional `recoilProfile` map per gun. Every key is optional; omitting the whole block keeps the defaults below, which reproduce the old behavior. Angles are expressed as a fraction of `recoil` (after grip/scope scaling), so `recoil` stays the single strength knob.
+Optional `recoilProfile` map per gun. Every key is optional; omitting the whole block keeps the defaults below, which
+reproduce the old behavior. Angles are expressed as a fraction of `recoil` (after grip/scope scaling), so `recoil` stays
+the single strength knob.
 
 ```yaml
 recoil: 1.2
@@ -66,52 +70,53 @@ recoilProfile:
   verticalVariance: 0.2
 ```
 
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `verticalMean` | double | `1.0` | Upward kick as a fraction of `recoil`. `1.0` = the full value. |
-| `verticalVariance` | double | `0.0` | Random ± around `verticalMean`, as a fraction of `recoil`. `0` = every shot kicks identically. |
-| `horizontalMean` | double | `0.0` | Constant sideways drift per shot. Positive = right, negative = left. `0` = no bias. |
-| `horizontalVariance` | double | `0.3` | Random ± sideways sway. Set to `0` together with `horizontalMean` for pure vertical recoil. |
-| `smoothing` | double (0.01–1) | `0.35` | How fast the camera chases the accumulated kick. `1.0` = instant snap, lower = softer climb. |
-| `damping` | double (0–1) | `0.15` | Per-tick decay of the accumulated kick. Higher = the climb dies out sooner during sustained fire. |
-| `recovery` | double (degrees/tick) | `0.6` | How fast the camera returns to where you were aiming. `0` = no recovery pass, the kick only fades out through `damping`. |
-| `recoveryPenalty` | double (0–1) | `0.0` | Share of every kick the camera never gives back, as a percentage. `0.0` = full recovery, `0.25` = a quarter of each shot's kick sticks and your aim walks up over a burst, `1.0` = nothing recovers. Needs `recovery > 0`. |
-| `speed` | double | `1.0` | Multiplier on the per-tick rotation actually applied. `<1` = the whole animation plays slower. |
-| `maxAccumulation` | double (degrees) | `12.0` | Ceiling on total accumulated kick, so full-auto cannot walk your camera into the sky. `0` = no ceiling. |
+| Field                | Type                  | Default | Description                                                                                                                                                                                                                |
+|----------------------|-----------------------|---------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `verticalMean`       | double                | `1.0`   | Upward kick as a fraction of `recoil`. `1.0` = the full value.                                                                                                                                                             |
+| `verticalVariance`   | double                | `0.0`   | Random ± around `verticalMean`, as a fraction of `recoil`. `0` = every shot kicks identically.                                                                                                                             |
+| `horizontalMean`     | double                | `0.0`   | Constant sideways drift per shot. Positive = right, negative = left. `0` = no bias.                                                                                                                                        |
+| `horizontalVariance` | double                | `0.3`   | Random ± sideways sway. Set to `0` together with `horizontalMean` for pure vertical recoil.                                                                                                                                |
+| `smoothing`          | double (0.01–1)       | `0.35`  | How fast the camera chases the accumulated kick. `1.0` = instant snap, lower = softer climb.                                                                                                                               |
+| `damping`            | double (0–1)          | `0.15`  | Per-tick decay of the accumulated kick. Higher = the climb dies out sooner during sustained fire.                                                                                                                          |
+| `recovery`           | double (degrees/tick) | `0.6`   | How fast the camera returns to where you were aiming. `0` = no recovery pass, the kick only fades out through `damping`.                                                                                                   |
+| `recoveryPenalty`    | double (0–1)          | `0.0`   | Share of every kick the camera never gives back, as a percentage. `0.0` = full recovery, `0.25` = a quarter of each shot's kick sticks and your aim walks up over a burst, `1.0` = nothing recovers. Needs `recovery > 0`. |
+| `speed`              | double                | `1.0`   | Multiplier on the per-tick rotation actually applied. `<1` = the whole animation plays slower.                                                                                                                             |
+| `maxAccumulation`    | double (degrees)      | `12.0`  | Ceiling on total accumulated kick, so full-auto cannot walk your camera into the sky. `0` = no ceiling.                                                                                                                    |
 
 ## Damage modifiers
 
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `headshotMultiplier` | double | `1.0` | Damage multiplier on a head hit. `1.0` = no bonus. |
-| `critChance` | double (0–1) | `0.0` | Chance per shot to crit. |
-| `critMultiplier` | double | `1.5` | Crit damage multiplier. Stacks with `headshotMultiplier`. |
-| `falloffStart` | double (blocks) | `0.0` | Distance where damage starts dropping. |
-| `falloffEnd` | double (blocks) | `0.0` | Distance where damage reaches the minimum. `0` (or ≤ start) disables falloff. |
-| `falloffMinMultiplier` | double | `1.0` | Damage multiplier at and beyond `falloffEnd` (e.g. `0.25` = 25% damage at long range). |
-| `shieldDisableTime` | int (ticks) | `0` | Hitting a blocking player disables their shield for this long (the axe effect). `0` = off. |
+| Field                  | Type            | Default | Description                                                                                |
+|------------------------|-----------------|---------|--------------------------------------------------------------------------------------------|
+| `headshotMultiplier`   | double          | `1.0`   | Damage multiplier on a head hit. `1.0` = no bonus.                                         |
+| `critChance`           | double (0–1)    | `0.0`   | Chance per shot to crit.                                                                   |
+| `critMultiplier`       | double          | `1.5`   | Crit damage multiplier. Stacks with `headshotMultiplier`.                                  |
+| `falloffStart`         | double (blocks) | `0.0`   | Distance where damage starts dropping.                                                     |
+| `falloffEnd`           | double (blocks) | `0.0`   | Distance where damage reaches the minimum. `0` (or ≤ start) disables falloff.              |
+| `falloffMinMultiplier` | double          | `1.0`   | Damage multiplier at and beyond `falloffEnd` (e.g. `0.25` = 25% damage at long range).     |
+| `shieldDisableTime`    | int (ticks)     | `0`     | Hitting a blocking player disables their shield for this long (the axe effect). `0` = off. |
 
 ## Effects on hit
 
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `victimEffects` | list | empty | Potion effects applied to the entity hit. Each entry is `TYPE:durationTicks:amplifier` (amplifier optional, 0-based). |
-| `shooterEffects` | list | empty | Potion effects applied to the shooter on a landed hit. Same format. |
+| Field            | Type | Default | Description                                                                                                           |
+|------------------|------|---------|-----------------------------------------------------------------------------------------------------------------------|
+| `victimEffects`  | list | empty   | Potion effects applied to the entity hit. Each entry is `TYPE:durationTicks:amplifier` (amplifier optional, 0-based). |
+| `shooterEffects` | list | empty   | Potion effects applied to the shooter on a landed hit. Same format.                                                   |
 
 Example: `"POISON:60:1"` = Poison II for 3 seconds. Effect names are vanilla, e.g. `SLOWNESS`, `SPEED`, `BLINDNESS`.
 
 ## Presentation
 
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `trailParticle` | particle | `CRIT` | Particle drawn along the bullet path / projectile trail. `null`/omit for none. |
-| `impactParticle` | particle | none | Particle burst at the point of impact. |
-| `fireSound` | sound | default | Played positionally on each shot. See [sound format](#sound-format). |
-| `hitSound` | sound | default hitmarker | Played to the shooter on a landed hit. |
-| `hitMessage` | text | none | Action-bar message to the shooter on hit. Placeholders `%victim%`, `%damage%`. |
-| `deathMessage` | text | vanilla | Replaces the death message when this gun kills. Placeholders `%victim%`, `%killer%`, `%weapon%`. |
+| Field            | Type     | Default           | Description                                                                                      |
+|------------------|----------|-------------------|--------------------------------------------------------------------------------------------------|
+| `trailParticle`  | particle | `CRIT`            | Particle drawn along the bullet path / projectile trail. `null`/omit for none.                   |
+| `impactParticle` | particle | none              | Particle burst at the point of impact.                                                           |
+| `fireSound`      | sound    | default           | Played positionally on each shot. See [sound format](#sound-format).                             |
+| `hitSound`       | sound    | default hitmarker | Played to the shooter on a landed hit.                                                           |
+| `hitMessage`     | text     | none              | Action-bar message to the shooter on hit. Placeholders `%victim%`, `%damage%`.                   |
+| `deathMessage`   | text     | vanilla           | Replaces the death message when this gun kills. Placeholders `%victim%`, `%killer%`, `%weapon%`. |
 
-Use simple particle names (e.g. `FLAME`, `SMOKE`, `CRIT`, `SOUL_FIRE_FLAME`, `LARGE_SMOKE`). Particles that need extra data (`DUST`, `BLOCK`, `ITEM`) are not supported.
+Use simple particle names (e.g. `FLAME`, `SMOKE`, `CRIT`, `SOUL_FIRE_FLAME`, `LARGE_SMOKE`). Particles that need extra
+data (`DUST`, `BLOCK`, `ITEM`) are not supported.
 
 ### Sound format
 
@@ -120,16 +125,17 @@ A sound is either a scalar name or a block:
 ```yaml
 fireSound: "ENTITY_BLAZE_SHOOT"        # name, volume/pitch default to 1.0
 
-fireSound:                              # or a block
+fireSound: # or a block
   key: "minecraft:entity.blaze.shoot"   # vanilla key, or a custom resource-pack key
   volume: 1.0
   pitch: 1.4
 ```
 
-Names without a namespace are treated as vanilla and converted (`ENTITY_BLAZE_SHOOT` → `minecraft:entity.blaze.shoot`). Anything with a `:` is used as-is, so custom resource-pack sounds work (`mypack:gun.ak.fire`).
+Names without a namespace are treated as vanilla and converted (`ENTITY_BLAZE_SHOOT` → `minecraft:entity.blaze.shoot`).
+Anything with a `:` is used as-is, so custom resource-pack sounds work (`mypack:gun.ak.fire`).
 
 ## Attachments
 
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `allowedAttachmentSlots` | list of enum | empty | Which slots this gun accepts: `SCOPE`, `BARREL`, `GRIP`, `MAGAZINE`. See [attachments.md](attachments.md). |
+| Field                    | Type         | Default | Description                                                                                                |
+|--------------------------|--------------|---------|------------------------------------------------------------------------------------------------------------|
+| `allowedAttachmentSlots` | list of enum | empty   | Which slots this gun accepts: `SCOPE`, `BARREL`, `GRIP`, `MAGAZINE`. See [attachments.md](attachments.md). |

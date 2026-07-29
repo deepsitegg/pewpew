@@ -1,10 +1,6 @@
 package gg.deepsite.pewpew.modules.dummy.commands;
 
-import com.jazzkuh.commandlib.common.annotations.Command;
-import com.jazzkuh.commandlib.common.annotations.Description;
-import com.jazzkuh.commandlib.common.annotations.Main;
-import com.jazzkuh.commandlib.common.annotations.Permission;
-import com.jazzkuh.commandlib.common.annotations.Subcommand;
+import com.jazzkuh.commandlib.common.annotations.*;
 import com.jazzkuh.commandlib.spigot.AnnotationCommand;
 import gg.deepsite.pewpew.modules.dummy.listeners.DummyListener;
 import gg.deepsite.pewpew.utils.ChatUtils;

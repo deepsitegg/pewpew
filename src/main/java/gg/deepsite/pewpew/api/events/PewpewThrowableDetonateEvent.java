@@ -14,34 +14,34 @@ import org.jetbrains.annotations.NotNull;
 @Getter
 public class PewpewThrowableDetonateEvent extends Event implements Cancellable {
 
-    private static final HandlerList HANDLERS = new HandlerList();
+	private static final HandlerList HANDLERS = new HandlerList();
 
-    private final Item entity;
-    private final PewpewThrowableItem throwable;
-    private final Location location;
-    @Setter
-    private boolean cancelled;
+	private final Item entity;
+	private final PewpewThrowableItem throwable;
+	private final Location location;
+	@Setter
+	private boolean cancelled;
 
-    public PewpewThrowableDetonateEvent(@NotNull Item entity, @NotNull PewpewThrowableItem throwable,
-                                        @NotNull Location location) {
-        this.entity = entity;
-        this.throwable = throwable;
-        this.location = location;
-    }
+	public PewpewThrowableDetonateEvent(@NotNull Item entity, @NotNull PewpewThrowableItem throwable,
+	                                    @NotNull Location location) {
+		this.entity = entity;
+		this.throwable = throwable;
+		this.location = location;
+	}
 
-    @NotNull
-    public ThrowableEffect getEffect() {
-        return throwable.getEffect();
-    }
+	@NotNull
+	public ThrowableEffect getEffect() {
+		return throwable.getEffect();
+	}
 
-    @NotNull
-    @Override
-    public HandlerList getHandlers() {
-        return HANDLERS;
-    }
+	@NotNull
+	@Override
+	public HandlerList getHandlers() {
+		return HANDLERS;
+	}
 
-    @NotNull
-    public static HandlerList getHandlerList() {
-        return HANDLERS;
-    }
+	@NotNull
+	public static HandlerList getHandlerList() {
+		return HANDLERS;
+	}
 }

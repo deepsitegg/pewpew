@@ -13,6 +13,6 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode(callSuper = true)
 public class PewpewGripAttachment extends PewpewAttachment {
 
-    private double recoilModifier;
+	private double recoilModifier;
 }
 

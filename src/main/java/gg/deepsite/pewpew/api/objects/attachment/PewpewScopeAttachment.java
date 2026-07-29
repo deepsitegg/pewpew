@@ -13,9 +13,9 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode(callSuper = true)
 public class PewpewScopeAttachment extends PewpewAttachment {
 
-    private double zoom;
-    private double adsSpeedModifier;
-    private double aimSpreadMultiplier;
-    private double aimRecoilMultiplier;
+	private double zoom;
+	private double adsSpeedModifier;
+	private double aimSpreadMultiplier;
+	private double aimRecoilMultiplier;
 }
 

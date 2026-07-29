@@ -11,136 +11,136 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class RecoilController {
 
-    private static final float EPSILON = 0.01f;
-    private static final int HISTORY = 20;
+	private static final float EPSILON = 0.01f;
+	private static final int HISTORY = 20;
 
-    private final Deque<float[]> commanded = new ArrayDeque<>();
+	private final Deque<float[]> commanded = new ArrayDeque<>();
 
-    private final Player player;
-    private final RecoilProfile profile;
+	private final Player player;
+	private final RecoilProfile profile;
 
-    private float currentYaw;
-    private float currentPitch;
-    private float targetYaw;
-    private float targetPitch;
-    private float keptYaw;
-    private float keptPitch;
-    private float appliedYaw;
-    private float appliedPitch;
+	private float currentYaw;
+	private float currentPitch;
+	private float targetYaw;
+	private float targetPitch;
+	private float keptYaw;
+	private float keptPitch;
+	private float appliedYaw;
+	private float appliedPitch;
 
-    public RecoilController(@NotNull Player player, @NotNull RecoilProfile profile) {
-        this.player = player;
-        this.profile = profile;
-    }
+	public RecoilController(@NotNull Player player, @NotNull RecoilProfile profile) {
+		this.player = player;
+		this.profile = profile;
+	}
 
-    public boolean uses(@NotNull RecoilProfile other) {
-        return profile == other;
-    }
+	public boolean uses(@NotNull RecoilProfile other) {
+		return profile == other;
+	}
 
-    public void kick(double degrees) {
-        if (degrees <= 0) return;
+	public void kick(double degrees) {
+		if (degrees <= 0) return;
 
-        float vertical = (float) degrees * spread(profile.getVerticalMean(), profile.getVerticalVariance());
-        float horizontal = (float) degrees * spread(profile.getHorizontalMean(), profile.getHorizontalVariance());
+		float vertical = (float) degrees * spread(profile.getVerticalMean(), profile.getVerticalVariance());
+		float horizontal = (float) degrees * spread(profile.getHorizontalMean(), profile.getHorizontalVariance());
 
-        targetPitch -= vertical;
-        targetYaw += horizontal;
-        if (profile.getRecovery() > 0f) {
-            keptPitch -= vertical * profile.getRecoveryPenalty();
-            keptYaw += horizontal * profile.getRecoveryPenalty();
-        }
+		targetPitch -= vertical;
+		targetYaw += horizontal;
+		if (profile.getRecovery() > 0f) {
+			keptPitch -= vertical * profile.getRecoveryPenalty();
+			keptYaw += horizontal * profile.getRecoveryPenalty();
+		}
 
-        float length = (float) Math.sqrt(targetYaw * targetYaw + targetPitch * targetPitch);
-        float max = profile.getMaxAccumulation();
-        if (max > 0 && length > max) {
-            float scale = max / length;
-            targetYaw *= scale;
-            targetPitch *= scale;
-        }
-    }
+		float length = (float) Math.sqrt(targetYaw * targetYaw + targetPitch * targetPitch);
+		float max = profile.getMaxAccumulation();
+		if (max > 0 && length > max) {
+			float scale = max / length;
+			targetYaw *= scale;
+			targetPitch *= scale;
+		}
+	}
 
-    public boolean tick() {
-        if (!player.isOnline() || player.isDead()) return true;
+	public boolean tick() {
+		if (!player.isOnline() || player.isDead()) return true;
 
-        targetYaw *= (1f - profile.getDamping());
-        targetPitch *= (1f - profile.getDamping());
+		targetYaw *= (1f - profile.getDamping());
+		targetPitch *= (1f - profile.getDamping());
 
-        currentYaw = lerp(currentYaw, targetYaw, profile.getSmoothing());
-        currentPitch = lerp(currentPitch, targetPitch, profile.getSmoothing());
+		currentYaw = lerp(currentYaw, targetYaw, profile.getSmoothing());
+		currentPitch = lerp(currentPitch, targetPitch, profile.getSmoothing());
 
-        if (profile.getRecovery() > 0f) {
-            currentYaw = moveTowards(currentYaw, 0f, profile.getRecovery());
-            currentPitch = moveTowards(currentPitch, 0f, profile.getRecovery());
-        }
+		if (profile.getRecovery() > 0f) {
+			currentYaw = moveTowards(currentYaw, 0f, profile.getRecovery());
+			currentPitch = moveTowards(currentPitch, 0f, profile.getRecovery());
+		}
 
-        float deltaYaw = (currentYaw + keptYaw - appliedYaw) * profile.getSpeed();
-        float deltaPitch = (currentPitch + keptPitch - appliedPitch) * profile.getSpeed();
+		float deltaYaw = (currentYaw + keptYaw - appliedYaw) * profile.getSpeed();
+		float deltaPitch = (currentPitch + keptPitch - appliedPitch) * profile.getSpeed();
 
-        if (Math.abs(deltaYaw) > EPSILON || Math.abs(deltaPitch) > EPSILON) {
-            if (!RelativeRotation.apply(player, deltaYaw, deltaPitch)) {
-                applyAbsolute(deltaYaw, deltaPitch);
-            }
-            appliedYaw += deltaYaw;
-            appliedPitch += deltaPitch;
-        }
+		if (Math.abs(deltaYaw) > EPSILON || Math.abs(deltaPitch) > EPSILON) {
+			if (!RelativeRotation.apply(player, deltaYaw, deltaPitch)) {
+				applyAbsolute(deltaYaw, deltaPitch);
+			}
+			appliedYaw += deltaYaw;
+			appliedPitch += deltaPitch;
+		}
 
-        return settled();
-    }
+		return settled();
+	}
 
-    private void applyAbsolute(float deltaYaw, float deltaPitch) {
-        Location loc = player.getLocation();
-        float[] base = rebase(loc.getYaw(), loc.getPitch());
-        float yaw = Location.normalizeYaw(base[0] + deltaYaw);
-        float pitch = Math.max(-90f, Math.min(90f, base[1] + deltaPitch));
-        player.setRotation(yaw, pitch);
-        commanded.addLast(new float[]{yaw, pitch});
-        if (commanded.size() > HISTORY) commanded.removeFirst();
-    }
+	private void applyAbsolute(float deltaYaw, float deltaPitch) {
+		Location loc = player.getLocation();
+		float[] base = rebase(loc.getYaw(), loc.getPitch());
+		float yaw = Location.normalizeYaw(base[0] + deltaYaw);
+		float pitch = Math.max(-90f, Math.min(90f, base[1] + deltaPitch));
+		player.setRotation(yaw, pitch);
+		commanded.addLast(new float[]{yaw, pitch});
+		if (commanded.size() > HISTORY) commanded.removeFirst();
+	}
 
-    float[] rebase(float observedYaw, float observedPitch) {
-        if (commanded.isEmpty()) {
-            float[] start = {observedYaw, observedPitch};
-            commanded.addLast(start);
-            return start;
-        }
+	float[] rebase(float observedYaw, float observedPitch) {
+		if (commanded.isEmpty()) {
+			float[] start = {observedYaw, observedPitch};
+			commanded.addLast(start);
+			return start;
+		}
 
-        float bestYaw = 0f;
-        float bestPitch = 0f;
-        float best = Float.MAX_VALUE;
-        for (float[] previous : commanded) {
-            float diffYaw = Location.normalizeYaw(observedYaw - previous[0]);
-            float diffPitch = observedPitch - previous[1];
-            float distance = Math.abs(diffYaw) + Math.abs(diffPitch);
-            if (distance < best) {
-                best = distance;
-                bestYaw = diffYaw;
-                bestPitch = diffPitch;
-            }
-        }
+		float bestYaw = 0f;
+		float bestPitch = 0f;
+		float best = Float.MAX_VALUE;
+		for (float[] previous : commanded) {
+			float diffYaw = Location.normalizeYaw(observedYaw - previous[0]);
+			float diffPitch = observedPitch - previous[1];
+			float distance = Math.abs(diffYaw) + Math.abs(diffPitch);
+			if (distance < best) {
+				best = distance;
+				bestYaw = diffYaw;
+				bestPitch = diffPitch;
+			}
+		}
 
-        float[] last = commanded.peekLast();
-        return new float[]{last[0] + bestYaw, last[1] + bestPitch};
-    }
+		float[] last = commanded.peekLast();
+		return new float[]{last[0] + bestYaw, last[1] + bestPitch};
+	}
 
-    private boolean settled() {
-        return Math.abs(currentYaw + keptYaw - appliedYaw) < EPSILON
-                && Math.abs(currentPitch + keptPitch - appliedPitch) < EPSILON
-                && Math.abs(targetYaw) < EPSILON && Math.abs(targetPitch) < EPSILON
-                && Math.abs(currentYaw) < EPSILON && Math.abs(currentPitch) < EPSILON;
-    }
+	private boolean settled() {
+		return Math.abs(currentYaw + keptYaw - appliedYaw) < EPSILON
+				&& Math.abs(currentPitch + keptPitch - appliedPitch) < EPSILON
+				&& Math.abs(targetYaw) < EPSILON && Math.abs(targetPitch) < EPSILON
+				&& Math.abs(currentYaw) < EPSILON && Math.abs(currentPitch) < EPSILON;
+	}
 
-    private static float spread(float mean, float variance) {
-        if (variance <= 0f) return mean;
-        return mean + (float) (ThreadLocalRandom.current().nextDouble() * 2 - 1) * variance;
-    }
+	private static float spread(float mean, float variance) {
+		if (variance <= 0f) return mean;
+		return mean + (float) (ThreadLocalRandom.current().nextDouble() * 2 - 1) * variance;
+	}
 
-    private static float lerp(float from, float to, float t) {
-        return from + (to - from) * t;
-    }
+	private static float lerp(float from, float to, float t) {
+		return from + (to - from) * t;
+	}
 
-    private static float moveTowards(float current, float target, float maxDelta) {
-        float diff = target - current;
-        if (Math.abs(diff) <= maxDelta) return target;
-        return current + Math.signum(diff) * maxDelta;
-    }
+	private static float moveTowards(float current, float target, float maxDelta) {
+		float diff = target - current;
+		if (Math.abs(diff) <= maxDelta) return target;
+		return current + Math.signum(diff) * maxDelta;
+	}
 }

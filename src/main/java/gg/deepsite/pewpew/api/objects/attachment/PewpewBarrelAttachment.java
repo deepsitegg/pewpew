@@ -13,7 +13,7 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode(callSuper = true)
 public class PewpewBarrelAttachment extends PewpewAttachment {
 
-    private double damageModifier;
-    private double rangeModifier;
+	private double damageModifier;
+	private double rangeModifier;
 }
 

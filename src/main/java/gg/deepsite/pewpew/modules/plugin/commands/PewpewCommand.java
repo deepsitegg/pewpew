@@ -2,7 +2,6 @@ package gg.deepsite.pewpew.modules.plugin.commands;
 
 import com.jazzkuh.commandlib.common.annotations.*;
 import com.jazzkuh.commandlib.spigot.AnnotationCommand;
-import lombok.SneakyThrows;
 import gg.deepsite.pewpew.PewpewPlugin;
 import gg.deepsite.pewpew.configuration.DefaultConfiguration;
 import gg.deepsite.pewpew.configuration.MessagesConfig;
@@ -10,6 +9,7 @@ import gg.deepsite.pewpew.modules.items.ItemsModule;
 import gg.deepsite.pewpew.modules.items.commands.ItemsCommand;
 import gg.deepsite.pewpew.utils.ChatUtils;
 import gg.deepsite.pewpew.utils.UpdateChecker;
+import lombok.SneakyThrows;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -50,14 +50,14 @@ public class PewpewCommand extends AnnotationCommand {
 		}
 		try (var in = url.openStream()) {
 			var attrs = new Manifest(in).getMainAttributes();
-			String version     = attrs.getValue("Implementation-Version");
-			String buildTime   = attrs.getValue("Build-Time");
+			String version = attrs.getValue("Implementation-Version");
+			String buildTime = attrs.getValue("Build-Time");
 			String maintainers = attrs.getValue("Maintainers");
 
 			sender.sendMessage("");
 			sender.sendMessage(ChatUtils.format("<color>Pewpew</color>", ChatUtils.PRIMARY));
-			sender.sendMessage(ChatUtils.format("<color_alt>Version:</color_alt> %1",       ChatUtils.PRIMARY, version     != null ? version     : "<error>Unknown"));
-			sender.sendMessage(ChatUtils.format("<color_alt>Build Date:</color_alt> %1",    ChatUtils.PRIMARY, buildTime   != null ? buildTime   : "<error>Unknown"));
+			sender.sendMessage(ChatUtils.format("<color_alt>Version:</color_alt> %1", ChatUtils.PRIMARY, version != null ? version : "<error>Unknown"));
+			sender.sendMessage(ChatUtils.format("<color_alt>Build Date:</color_alt> %1", ChatUtils.PRIMARY, buildTime != null ? buildTime : "<error>Unknown"));
 			sender.sendMessage(ChatUtils.format("<color_alt>Maintained by:</color_alt> %1", ChatUtils.PRIMARY, maintainers != null ? maintainers : "<error>Unknown"));
 			if (UpdateChecker.isUpdateAvailable()) {
 				sender.sendMessage(ChatUtils.format("<warning>Update available: %1 - %2", ChatUtils.PRIMARY,

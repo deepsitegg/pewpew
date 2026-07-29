@@ -8,7 +8,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class DefaultAttachment {
 
-    private AttachmentType slot;
-    private String attachmentId;
-    private boolean forced;
+	private AttachmentType slot;
+	private String attachmentId;
+	private boolean forced;
 }

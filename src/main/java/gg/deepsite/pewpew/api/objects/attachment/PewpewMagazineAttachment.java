@@ -13,6 +13,6 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode(callSuper = true)
 public class PewpewMagazineAttachment extends PewpewAttachment {
 
-    private int ammoBonus;
-    private double reloadModifier;
+	private int ammoBonus;
+	private double reloadModifier;
 }

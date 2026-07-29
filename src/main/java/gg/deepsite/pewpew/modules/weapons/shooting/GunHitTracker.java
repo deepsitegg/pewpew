@@ -16,7 +16,8 @@ public class GunHitTracker {
 
 	private static final long EXPIRY_MS = 10_000L;
 
-	public record Hit(@NotNull String gunId, @NotNull UUID killerId, long time) {}
+	public record Hit(@NotNull String gunId, @NotNull UUID killerId, long time) {
+	}
 
 	private static final Map<UUID, Hit> HITS = new ConcurrentHashMap<>();
 

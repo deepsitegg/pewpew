@@ -12,20 +12,24 @@ import lombok.Setter;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
-@Getter @Setter
+@Getter
+@Setter
 public final class
 PewpewPlugin extends JavaPlugin {
 
 	@Getter
 	private static PewpewPlugin instance;
 
-	@Getter @Setter(AccessLevel.PRIVATE)
+	@Getter
+	@Setter(AccessLevel.PRIVATE)
 	private static SpigotModuleManager<@NotNull PewpewPlugin> moduleManager;
 
-	@Getter @Setter
+	@Getter
+	@Setter
 	private static DefaultConfiguration defaultConfiguration;
 
-	@Getter @Setter
+	@Getter
+	@Setter
 	private static MessagesConfig messagesConfig;
 
 	public PewpewPlugin() {

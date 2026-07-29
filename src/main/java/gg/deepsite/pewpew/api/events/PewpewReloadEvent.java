@@ -13,28 +13,28 @@ import org.jetbrains.annotations.NotNull;
 @Getter
 public class PewpewReloadEvent extends Event implements Cancellable {
 
-    private static final HandlerList HANDLERS = new HandlerList();
+	private static final HandlerList HANDLERS = new HandlerList();
 
-    private final Player player;
-    private final PewpewGunItem gun;
-    private final ItemStack weapon;
-    @Setter
-    private boolean cancelled;
+	private final Player player;
+	private final PewpewGunItem gun;
+	private final ItemStack weapon;
+	@Setter
+	private boolean cancelled;
 
-    public PewpewReloadEvent(@NotNull Player player, @NotNull PewpewGunItem gun, @NotNull ItemStack weapon) {
-        this.player = player;
-        this.gun = gun;
-        this.weapon = weapon;
-    }
+	public PewpewReloadEvent(@NotNull Player player, @NotNull PewpewGunItem gun, @NotNull ItemStack weapon) {
+		this.player = player;
+		this.gun = gun;
+		this.weapon = weapon;
+	}
 
-    @NotNull
-    @Override
-    public HandlerList getHandlers() {
-        return HANDLERS;
-    }
+	@NotNull
+	@Override
+	public HandlerList getHandlers() {
+		return HANDLERS;
+	}
 
-    @NotNull
-    public static HandlerList getHandlerList() {
-        return HANDLERS;
-    }
+	@NotNull
+	public static HandlerList getHandlerList() {
+		return HANDLERS;
+	}
 }

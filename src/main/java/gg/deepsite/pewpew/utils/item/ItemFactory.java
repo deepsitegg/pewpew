@@ -17,11 +17,11 @@ public class ItemFactory {
 	public static ItemStack build(@NotNull PewPewItem item) {
 		ItemBuilder builder = new ItemBuilder(Material.PAPER).setName(item.getName());
 
-		if (item.getLore() != null)         item.getLore().forEach(builder::addLoreLine);
-		if (item.getItemModel() != null)    builder.setItemModel(item.getItemModel());
+		if (item.getLore() != null) item.getLore().forEach(builder::addLoreLine);
+		if (item.getItemModel() != null) builder.setItemModel(item.getItemModel());
 		if (item.getCustomModelData() != 0) builder.setCustomModelData(item.getCustomModelData());
-		if (item.isHideItemFlags())         builder.setItemFlag(ItemFlag.values());
-		if (item.getMaxStack() > 0)         builder.setMaxStackSize(item.getMaxStack());
+		if (item.isHideItemFlags()) builder.setItemFlag(ItemFlag.values());
+		if (item.getMaxStack() > 0) builder.setMaxStackSize(item.getMaxStack());
 
 		ItemStack stack = ItemsModule.stamp(builder.toItemStack(), item);
 		if (item instanceof PewpewAttachment attachment) AttachmentLoreRenderer.apply(stack, attachment);

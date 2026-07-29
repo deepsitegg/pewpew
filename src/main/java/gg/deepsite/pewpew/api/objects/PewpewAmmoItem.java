@@ -13,6 +13,6 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode(callSuper = true)
 public class PewpewAmmoItem extends PewPewItem {
 
-    private String ammoType;
-    private int roundsPerItem;
+	private String ammoType;
+	private int roundsPerItem;
 }

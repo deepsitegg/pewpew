@@ -1,8 +1,8 @@
 package gg.deepsite.pewpew.utils.configuration;
 
+import gg.deepsite.pewpew.PewpewPlugin;
 import lombok.Getter;
 import lombok.SneakyThrows;
-import gg.deepsite.pewpew.PewpewPlugin;
 import org.apache.commons.io.FileUtils;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.loader.HeaderMode;

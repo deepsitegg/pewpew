@@ -52,7 +52,7 @@ public class HitscanShotExecutor implements ShotExecutor {
 	}
 
 	private void fireStraight(Player shooter, PewpewGunItem gun, Location eye, Vector direction, double range,
-							  double damage) {
+	                          double damage) {
 		RayTraceResult result = shooter.getWorld().rayTrace(
 				eye, direction, range,
 				FluidCollisionMode.NEVER, true, 0.1,
@@ -73,7 +73,7 @@ public class HitscanShotExecutor implements ShotExecutor {
 	}
 
 	private void fireBallistic(Player shooter, PewpewGunItem gun, Location eye, Vector direction, double range, double drop,
-							   double damage) {
+	                           double damage) {
 		Location point = eye.clone();
 		Vector velocity = direction.clone();
 		double traveled = 0;
@@ -94,7 +94,8 @@ public class HitscanShotExecutor implements ShotExecutor {
 			}
 
 			point.add(dir.clone().multiply(DROP_STEP));
-			if (gun.getTrailParticle() != null) point.getWorld().spawnParticle(gun.getTrailParticle(), point, 1, 0, 0, 0, 0);
+			if (gun.getTrailParticle() != null)
+				point.getWorld().spawnParticle(gun.getTrailParticle(), point, 1, 0, 0, 0, 0);
 			velocity = dir.setY(dir.getY() - drop * DROP_STEP);
 			traveled += DROP_STEP;
 		}

@@ -1,6 +1,5 @@
 package gg.deepsite.pewpew.modules.weapons.throwing;
 
-import gg.deepsite.pewpew.api.enums.ThrowableEffect;
 import gg.deepsite.pewpew.api.events.PewpewThrowEvent;
 import gg.deepsite.pewpew.api.events.PewpewThrowableDetonateEvent;
 import gg.deepsite.pewpew.api.objects.PewpewThrowableItem;

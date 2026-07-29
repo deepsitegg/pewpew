@@ -1,22 +1,12 @@
 package gg.deepsite.pewpew.modules.dummy.listeners;
 
 import gg.deepsite.pewpew.PewpewPlugin;
+import gg.deepsite.pewpew.modules.dummy.menu.DummyArmorMenu;
 import gg.deepsite.pewpew.utils.ChatUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.Color;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
-import org.bukkit.entity.Display;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Mannequin;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.TextDisplay;
-import gg.deepsite.pewpew.modules.dummy.menu.DummyArmorMenu;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;

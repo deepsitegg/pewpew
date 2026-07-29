@@ -1,10 +1,6 @@
 package gg.deepsite.pewpew.modules.weapons.lore;
 
-import gg.deepsite.pewpew.api.objects.attachment.PewpewAttachment;
-import gg.deepsite.pewpew.api.objects.attachment.PewpewBarrelAttachment;
-import gg.deepsite.pewpew.api.objects.attachment.PewpewGripAttachment;
-import gg.deepsite.pewpew.api.objects.attachment.PewpewMagazineAttachment;
-import gg.deepsite.pewpew.api.objects.attachment.PewpewScopeAttachment;
+import gg.deepsite.pewpew.api.objects.attachment.*;
 import gg.deepsite.pewpew.utils.ChatUtils;
 import lombok.experimental.UtilityClass;
 import net.kyori.adventure.text.Component;
@@ -47,8 +43,10 @@ public class AttachmentLoreRenderer {
 			modifier(lines, "Recoil", grip.getRecoilModifier(), false);
 		} else if (attachment instanceof PewpewScopeAttachment scope) {
 			lines.add(stat("Zoom", "x" + trim(scope.getZoom())));
-			if (scope.getAimSpreadMultiplier() != 1.0) modifier(lines, "ADS Spread", scope.getAimSpreadMultiplier(), false);
-			if (scope.getAimRecoilMultiplier() != 1.0) modifier(lines, "ADS Recoil", scope.getAimRecoilMultiplier(), false);
+			if (scope.getAimSpreadMultiplier() != 1.0)
+				modifier(lines, "ADS Spread", scope.getAimSpreadMultiplier(), false);
+			if (scope.getAimRecoilMultiplier() != 1.0)
+				modifier(lines, "ADS Recoil", scope.getAimRecoilMultiplier(), false);
 		} else if (attachment instanceof PewpewMagazineAttachment magazine) {
 			if (magazine.getAmmoBonus() != 0) {
 				String sign = magazine.getAmmoBonus() > 0 ? "<success>+" : "<error>";

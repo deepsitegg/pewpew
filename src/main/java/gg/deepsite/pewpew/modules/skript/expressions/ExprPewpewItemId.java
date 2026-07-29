@@ -6,11 +6,7 @@ import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
-import gg.deepsite.pewpew.api.events.PewpewHitEvent;
-import gg.deepsite.pewpew.api.events.PewpewReloadEvent;
-import gg.deepsite.pewpew.api.events.PewpewShootEvent;
-import gg.deepsite.pewpew.api.events.PewpewThrowEvent;
-import gg.deepsite.pewpew.api.events.PewpewThrowableDetonateEvent;
+import gg.deepsite.pewpew.api.events.*;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.Nullable;
 

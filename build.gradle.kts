@@ -1,11 +1,7 @@
-
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar.Companion.shadowJar
-import jdk.jfr.internal.JVM.exclude
-import sun.jvmstat.monitor.MonitoredVmUtil.jvmArgs
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import kotlin.collections.set
 
 plugins {
     java
@@ -15,7 +11,7 @@ plugins {
 }
 
 group = "gg.deepsite"
-version = "26.0.8-snapshot"
+version = "26.1.0"
 val MAINTAINERS = listOf("ThebigTijn")
 
 lombok {
@@ -33,22 +29,36 @@ repositories {
 
 fun deepsiteLib(local: String, remote: String): String {
     val (group, name, version) = local.split(":")
-    val jar = File(System.getProperty("user.home"),
-            ".m2/repository/${group.replace('.', '/')}/$name/$version/$name-$version.jar")
+    val jar = File(
+        System.getProperty("user.home"),
+        ".m2/repository/${group.replace('.', '/')}/$name/$version/$name-$version.jar"
+    )
     return if (jar.exists()) local else remote
 }
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
 
-    implementation(deepsiteLib("com.jazzkuh.modulemanager:spigot:1.0-SNAPSHOT",
-        "com.github.deepsitegg.modulemanager:spigot:main-SNAPSHOT"))
+    implementation(
+        deepsiteLib(
+            "com.jazzkuh.modulemanager:spigot:1.0-SNAPSHOT",
+            "com.github.deepsitegg.modulemanager:spigot:main-SNAPSHOT"
+        )
+    )
 
-    implementation(deepsiteLib("com.jazzkuh.commandlib:spigot:1.0-SNAPSHOT",
-        "com.github.deepsitegg.commandlibrary:spigot:d8f90e0b14"))
+    implementation(
+        deepsiteLib(
+            "com.jazzkuh.commandlib:spigot:1.0-SNAPSHOT",
+            "com.github.deepsitegg.commandlibrary:spigot:d8f90e0b14"
+        )
+    )
 
-    implementation(deepsiteLib("com.jazzkuh.inventorylib:spigot:1.1-SNAPSHOT",
-        "com.github.deepsitegg.inventorylib:spigot:main-SNAPSHOT"))
+    implementation(
+        deepsiteLib(
+            "com.jazzkuh.inventorylib:spigot:1.1-SNAPSHOT",
+            "com.github.deepsitegg.inventorylib:spigot:main-SNAPSHOT"
+        )
+    )
 
     implementation("org.bstats:bstats-bukkit:3.2.1")
 
