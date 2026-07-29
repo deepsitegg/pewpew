@@ -9,6 +9,9 @@ per-weapon sounds and effects, all configurable.
 
 ---
 
+![bStats](https://bstats.org/signatures/bukkit/pewpew.svg)
+
+---
 ## Features
 
 ### Shooting
@@ -131,3 +134,4 @@ Pewpew is licensed under the [PolyForm Noncommercial License 1.0.0](LICENSE.md) 
 
 Copyright 2026 ThebigTijn (https://deepsite.gg). Redistributions must keep the license and the `Required Notice`
 (see [NOTICE](NOTICE)).
+
