@@ -1,105 +1,150 @@
-ak47:
+glock_17:
   type: GUN
   maxStack: 1
-  name: "<gray>AK-47"
-  lore:
-    - "<dark_gray>7.62x39mm"
-  customModelData: 1001
-  itemModel: "minecraft:iron_horse_armor"
-  baseDamage: 8.5
-  fireRate: 4
-  reloadTime: 60
-  ammoType: rifle_round
-  maxAmmo: 30
-  consumesAmmo: true
-  automatic: true
-  firingMode: PROJECTILE
-  projectileSpeed: 3.5
-  range: 64.0
-  spread: 2.0
-  recoil: 1.2
-  bulletDrop: 1.0
-  headshotMultiplier: 1.5
-  critChance: 0.15
-  critMultiplier: 2.0
-  deathMessage: "<gray>%victim% <error>was gunned down by <gray>%killer%"
-  allowedAttachmentSlots:
-    - SCOPE
-    - BARREL
-    - GRIP
-    - MAGAZINE
-
-m16:
-  type: GUN
-  maxStack: 1
-  name: "<gray>M16"
-  lore:
-    - "<dark_gray>5.56x45mm"
-  customModelData: 1002
-  itemModel: "minecraft:golden_horse_armor"
-  baseDamage: 7.0
-  fireRate: 6
-  reloadTime: 8
-  reloadType: SINGLE
-  maxAmmo: 30
-  firingMode: HITSCAN
-  range: 70.0
-  spread: 1.0
-  recoil: 0.8
-  burstCount: 3
-  victimEffects:
-    - "POISON:60:0"
-    - "SLOWNESS:40:1"
-  shooterEffects:
-    - "SPEED:30:0"
-  allowedAttachmentSlots:
-    - SCOPE
-    - BARREL
-    - GRIP
-    - MAGAZINE
-
-glock:
-  type: GUN
-  maxStack: 1
+  hideItemFlags: true
   name: "<gray>Glock 17"
   lore:
-    - "<dark_gray>9x19mm sidearm"
-  customModelData: 1005
+    - "<dark_gray>9x19mm Parabellum · 17+1"
+    - "<dark_gray>Polymer frame, striker fired."
+  customModelData: 1001
   itemModel: "minecraft:golden_horse_armor"
   baseDamage: 5.5
-  fireRate: 5
-  reloadTime: 40
-  ammoType: pistol_round
+  fireRate: 4
+  reloadTime: 36
+  ammoType: pistol_9mm
   maxAmmo: 17
   consumesAmmo: true
   firingMode: HITSCAN
   range: 45.0
-  spread: 1.5
-  recoil: 0.6
+  spread: 1.2
+  recoil: 0.55
+  recoilProfile:
+    verticalVariance: 0.15
+    horizontalVariance: 0.25
+    recovery: 0.9
+    maxAccumulation: 4.0
   headshotMultiplier: 1.8
+  falloffStart: 18.0
+  falloffEnd: 40.0
+  falloffMinMultiplier: 0.55
+  fireSound:
+    key: "minecraft:entity.firework_rocket.blast"
+    volume: 0.7
+    pitch: 1.9
   allowedAttachmentSlots:
     - BARREL
     - MAGAZINE
 
+deagle:
+  type: GUN
+  maxStack: 1
+  hideItemFlags: true
+  name: "<white>Desert Eagle"
+  lore:
+    - "<dark_gray>.50 Action Express · 7 rounds"
+    - "<dark_gray>Wrist-breaking, and worth it."
+  customModelData: 1002
+  itemModel: "minecraft:golden_horse_armor"
+  baseDamage: 14.0
+  fireRate: 8
+  reloadTime: 48
+  ammoType: magnum_50ae
+  maxAmmo: 7
+  consumesAmmo: true
+  firingMode: HITSCAN
+  range: 60.0
+  spread: 0.8
+  recoil: 3.2
+  recoilProfile:
+    verticalVariance: 0.1
+    horizontalMean: -0.1
+    horizontalVariance: 0.1
+    smoothing: 0.55
+    recovery: 0.45
+    recoveryPenalty: 0.35
+    maxAccumulation: 9.0
+  headshotMultiplier: 2.2
+  selfKnockback: 0.15
+  shieldDisableTime: 60
+  critChance: 0.1
+  critMultiplier: 1.8
+  impactParticle: "LARGE_SMOKE"
+  fireSound:
+    key: "minecraft:entity.generic.explode"
+    volume: 0.6
+    pitch: 1.8
+  deathMessage: "<gray>%victim% <error>caught a hand cannon round from <gray>%killer%"
+  allowedAttachmentSlots:
+    - SCOPE
+    - BARREL
+
+revolver:
+  type: GUN
+  maxStack: 1
+  hideItemFlags: true
+  name: "<white>Model 29"
+  lore:
+    - "<dark_gray>.44 Magnum · 6 rounds"
+    - "<dark_gray>Six chances to be right."
+  customModelData: 1003
+  itemModel: "minecraft:golden_horse_armor"
+  baseDamage: 12.0
+  fireRate: 10
+  reloadTime: 14
+  reloadType: SINGLE
+  actionOpenTime: 2
+  actionCloseTime: 2
+  ammoType: magnum_44
+  maxAmmo: 6
+  consumesAmmo: true
+  firingMode: HITSCAN
+  range: 65.0
+  spread: 0.6
+  recoil: 2.8
+  recoilProfile:
+    verticalVariance: 0.25
+    horizontalVariance: 0.2
+    recovery: 0.5
+    speed: 0.85
+  headshotMultiplier: 2.0
+  critChance: 0.25
+  critMultiplier: 2.0
+  hitMessage: "<primary>%damage% <gray>to %victim%"
+  allowedAttachmentSlots:
+    - SCOPE
+    - BARREL
+
 mp5:
   type: GUN
   maxStack: 1
-  name: "<gray>MP5"
+  hideItemFlags: true
+  name: "<gray>MP5A3"
   lore:
-    - "<dark_gray>9x19mm SMG"
-  customModelData: 1006
+    - "<dark_gray>9x19mm · 30 rounds · 600 RPM"
+    - "<dark_gray>Roller-delayed and boringly reliable."
+  customModelData: 1010
   itemModel: "minecraft:golden_horse_armor"
   baseDamage: 5.0
   fireRate: 2
-  reloadTime: 45
-  ammoType: pistol_round
+  reloadTime: 44
+  ammoType: pistol_9mm
   maxAmmo: 30
   consumesAmmo: true
   automatic: true
   firingMode: HITSCAN
   range: 50.0
-  spread: 2.5
+  spread: 1.8
   recoil: 0.7
+  recoilProfile:
+    verticalVariance: 0.2
+    horizontalVariance: 0.35
+    damping: 0.2
+    recovery: 0.75
+    recoveryPenalty: 0.1
+    maxAccumulation: 7.0
+  falloffStart: 20.0
+  falloffEnd: 42.0
+  falloffMinMultiplier: 0.5
   allowedAttachmentSlots:
     - SCOPE
     - BARREL
@@ -108,13 +153,375 @@ mp5:
   defaultAttachments:
     SCOPE: red_dot
 
-remington:
+vector:
   type: GUN
   maxStack: 1
+  hideItemFlags: true
+  name: "<gray>KRISS Vector"
+  lore:
+    - "<dark_gray>.45 ACP · 25 rounds · 1200 RPM"
+    - "<dark_gray>Empties itself before you notice."
+  customModelData: 1011
+  itemModel: "minecraft:golden_horse_armor"
+  baseDamage: 3.6
+  fireRate: 1
+  reloadTime: 50
+  ammoType: pistol_45
+  maxAmmo: 25
+  consumesAmmo: true
+  automatic: true
+  firingMode: HITSCAN
+  range: 40.0
+  spread: 2.2
+  recoil: 0.35
+  recoilProfile:
+    verticalMean: 0.9
+    verticalVariance: 0.3
+    horizontalVariance: 0.45
+    smoothing: 0.25
+    damping: 0.25
+    recovery: 0.8
+    maxAccumulation: 6.0
+  falloffStart: 14.0
+  falloffEnd: 34.0
+  falloffMinMultiplier: 0.45
+  allowedAttachmentSlots:
+    - SCOPE
+    - BARREL
+    - GRIP
+    - MAGAZINE
+
+p90:
+  type: GUN
+  maxStack: 1
+  hideItemFlags: true
+  name: "<gray>P90"
+  lore:
+    - "<dark_gray>5.7x28mm · 50 rounds · 900 RPM"
+    - "<dark_gray>Top-loading bullpup, armor unfriendly."
+  customModelData: 1012
+  itemModel: "minecraft:golden_horse_armor"
+  baseDamage: 4.2
+  fireRate: 2
+  reloadTime: 66
+  ammoType: pdw_57
+  maxAmmo: 50
+  consumesAmmo: true
+  automatic: true
+  firingMode: HITSCAN
+  range: 55.0
+  spread: 1.6
+  recoil: 0.5
+  recoilProfile:
+    verticalVariance: 0.2
+    horizontalMean: -0.15
+    horizontalVariance: 0.2
+    recovery: 0.8
+    maxAccumulation: 6.5
+  headshotMultiplier: 2.0
+  allowedAttachmentSlots:
+    - SCOPE
+    - BARREL
+    - MAGAZINE
+
+ak47:
+  type: GUN
+  maxStack: 1
+  hideItemFlags: true
+  name: "<gray>AK-47"
+  lore:
+    - "<dark_gray>7.62x39mm · 30 rounds · 600 RPM"
+    - "<dark_gray>Climbs right. Always has."
+  customModelData: 1020
+  itemModel: "minecraft:iron_horse_armor"
+  baseDamage: 8.5
+  fireRate: 2
+  reloadTime: 58
+  ammoType: rifle_762x39
+  maxAmmo: 30
+  consumesAmmo: true
+  automatic: true
+  firingMode: HITSCAN
+  range: 80.0
+  spread: 1.4
+  recoil: 1.5
+  recoilProfile:
+    verticalVariance: 0.2
+    horizontalMean: 0.3
+    horizontalVariance: 0.15
+    damping: 0.12
+    recovery: 0.55
+    recoveryPenalty: 0.2
+    maxAccumulation: 14.0
+  headshotMultiplier: 1.8
+  falloffStart: 35.0
+  falloffEnd: 75.0
+  falloffMinMultiplier: 0.65
+  critChance: 0.1
+  critMultiplier: 1.6
+  deathMessage: "<gray>%victim% <error>was gunned down by <gray>%killer%"
+  allowedAttachmentSlots:
+    - SCOPE
+    - BARREL
+    - GRIP
+    - MAGAZINE
+
+m4a1:
+  type: GUN
+  maxStack: 1
+  hideItemFlags: true
+  name: "<gray>M4A1"
+  lore:
+    - "<dark_gray>5.56x45mm · 30 rounds · 800 RPM"
+    - "<dark_gray>Flat, forgiving, unremarkable."
+  customModelData: 1021
+  itemModel: "minecraft:iron_horse_armor"
+  baseDamage: 7.0
+  fireRate: 2
+  reloadTime: 52
+  ammoType: rifle_556
+  maxAmmo: 30
+  consumesAmmo: true
+  automatic: true
+  firingMode: HITSCAN
+  range: 85.0
+  spread: 1.0
+  recoil: 1.1
+  recoilProfile:
+    verticalVariance: 0.1
+    horizontalVariance: 0.12
+    smoothing: 0.3
+    recovery: 0.7
+    maxAccumulation: 10.0
+  headshotMultiplier: 1.7
+  falloffStart: 40.0
+  falloffEnd: 80.0
+  falloffMinMultiplier: 0.7
+  allowedAttachmentSlots:
+    - SCOPE
+    - BARREL
+    - GRIP
+    - MAGAZINE
+
+m16a4:
+  type: GUN
+  maxStack: 1
+  hideItemFlags: true
+  name: "<gray>M16A4"
+  lore:
+    - "<dark_gray>5.56x45mm · 30 rounds · 3-round burst"
+    - "<dark_gray>Discipline, enforced by the trigger group."
+  customModelData: 1022
+  itemModel: "minecraft:iron_horse_armor"
+  baseDamage: 7.5
+  fireRate: 8
+  burstCount: 3
+  reloadTime: 52
+  ammoType: rifle_556
+  maxAmmo: 30
+  consumesAmmo: true
+  firingMode: HITSCAN
+  range: 95.0
+  spread: 0.7
+  recoil: 1.3
+  recoilProfile:
+    verticalVariance: 0.05
+    horizontalVariance: 0.1
+    smoothing: 0.45
+    recovery: 0.8
+    maxAccumulation: 8.0
+  headshotMultiplier: 1.9
+  falloffStart: 45.0
+  falloffEnd: 90.0
+  falloffMinMultiplier: 0.7
+  allowedAttachmentSlots:
+    - SCOPE
+    - BARREL
+    - GRIP
+    - MAGAZINE
+
+scar_h:
+  type: GUN
+  maxStack: 1
+  hideItemFlags: true
+  name: "<white>SCAR-H"
+  lore:
+    - "<dark_gray>7.62x51mm NATO · 20 rounds · 600 RPM"
+    - "<dark_gray>Battle rifle. Heavy in every sense."
+  customModelData: 1023
+  itemModel: "minecraft:iron_horse_armor"
+  baseDamage: 11.0
+  fireRate: 3
+  reloadTime: 62
+  ammoType: rifle_762x51
+  maxAmmo: 20
+  consumesAmmo: true
+  automatic: true
+  firingMode: HITSCAN
+  range: 110.0
+  spread: 1.1
+  recoil: 2.1
+  recoilProfile:
+    verticalVariance: 0.2
+    horizontalMean: 0.1
+    horizontalVariance: 0.25
+    damping: 0.1
+    recovery: 0.5
+    recoveryPenalty: 0.25
+    maxAccumulation: 16.0
+  headshotMultiplier: 1.8
+  falloffStart: 55.0
+  falloffEnd: 105.0
+  falloffMinMultiplier: 0.75
+  allowedAttachmentSlots:
+    - SCOPE
+    - BARREL
+    - GRIP
+    - MAGAZINE
+
+m14_dmr:
+  type: GUN
+  maxStack: 1
+  hideItemFlags: true
+  name: "<white>M14 DMR"
+  lore:
+    - "<dark_gray>7.62x51mm NATO · 20 rounds · semi-auto"
+    - "<dark_gray>One trigger pull, one answer."
+  customModelData: 1024
+  itemModel: "minecraft:iron_horse_armor"
+  baseDamage: 16.0
+  fireRate: 7
+  reloadTime: 60
+  ammoType: rifle_762x51
+  maxAmmo: 20
+  consumesAmmo: true
+  firingMode: HITSCAN
+  range: 140.0
+  spread: 0.3
+  recoil: 2.4
+  recoilProfile:
+    verticalVariance: 0.1
+    horizontalVariance: 0.1
+    smoothing: 0.5
+    recovery: 0.6
+    speed: 0.9
+  bulletDrop: 0.02
+  headshotMultiplier: 2.2
+  falloffStart: 70.0
+  falloffEnd: 135.0
+  falloffMinMultiplier: 0.8
+  trailParticle: "CRIT"
+  allowedAttachmentSlots:
+    - SCOPE
+    - BARREL
+    - GRIP
+    - MAGAZINE
+  defaultAttachments:
+    SCOPE: holographic
+
+awm:
+  type: GUN
+  maxStack: 1
+  hideItemFlags: true
+  name: "<white>AWM"
+  lore:
+    - "<dark_gray>.338 Lapua Magnum · 5 rounds · bolt action"
+    - "<dark_gray>Work the bolt. Breathe. Again."
+  customModelData: 1030
+  itemModel: "minecraft:iron_horse_armor"
+  baseDamage: 45.0
+  fireRate: 30
+  actionOpenTime: 6
+  actionCloseTime: 6
+  reloadTime: 70
+  ammoType: sniper_338
+  maxAmmo: 5
+  consumesAmmo: true
+  firingMode: HITSCAN
+  range: 250.0
+  spread: 0.0
+  recoil: 6.0
+  recoilProfile:
+    verticalVariance: 0.05
+    horizontalVariance: 0.0
+    smoothing: 0.5
+    recovery: 0.25
+    maxAccumulation: 10.0
+  bulletDrop: 0.04
+  headshotMultiplier: 2.5
+  trailParticle: "FLAME"
+  impactParticle: "LARGE_SMOKE"
+  fireSound:
+    key: "minecraft:entity.generic.explode"
+    volume: 1.0
+    pitch: 1.4
+  hitSound: "minecraft:entity.arrow.hit_player"
+  hitMessage: "<error>Hit <gray>%victim% <error>for <gray>%damage%"
+  deathMessage: "<gray>%victim% <error>was sniped by <gray>%killer% <error>with a <reset>%weapon%"
+  allowedAttachmentSlots:
+    - SCOPE
+    - BARREL
+    - GRIP
+  defaultAttachments:
+    SCOPE:
+      id: acog
+      forced: true
+
+barrett_m82:
+  type: GUN
+  maxStack: 1
+  hideItemFlags: true
+  name: "<white>Barrett M82"
+  lore:
+    - "<dark_gray>.50 BMG · 10 rounds · semi-auto"
+    - "<dark_gray>Anti-materiel. People are materiel."
+  customModelData: 1031
+  itemModel: "minecraft:diamond_horse_armor"
+  baseDamage: 60.0
+  fireRate: 14
+  reloadTime: 90
+  ammoType: bmg_50
+  maxAmmo: 10
+  consumesAmmo: true
+  firingMode: HITSCAN
+  range: 300.0
+  spread: 0.2
+  recoil: 8.0
+  recoilProfile:
+    verticalMean: 1.0
+    verticalVariance: 0.15
+    horizontalVariance: 0.1
+    smoothing: 0.6
+    damping: 0.05
+    recovery: 0.3
+    recoveryPenalty: 0.15
+    maxAccumulation: 18.0
+  bulletDrop: 0.02
+  headshotMultiplier: 2.0
+  knockback: 1.4
+  selfKnockback: 0.35
+  shieldDisableTime: 120
+  trailParticle: "SOUL_FIRE_FLAME"
+  impactParticle: "EXPLOSION"
+  fireSound:
+    key: "minecraft:entity.generic.explode"
+    volume: 1.4
+    pitch: 0.6
+  deathMessage: "<gray>%victim% <error>was deleted by <gray>%killer%"
+  allowedAttachmentSlots:
+    - SCOPE
+    - BARREL
+    - GRIP
+
+m870:
+  type: GUN
+  maxStack: 1
+  hideItemFlags: true
   name: "<gray>Remington 870"
   lore:
-    - "<dark_gray>12-Gauge"
-  customModelData: 1003
+    - "<dark_gray>12 gauge · 6 shells · pump action"
+    - "<dark_gray>Eight pellets of bad news."
+  customModelData: 1040
   itemModel: "minecraft:diamond_horse_armor"
   baseDamage: 4.0
   fireRate: 6
@@ -127,69 +534,156 @@ remington:
   consumesAmmo: true
   firingMode: HITSCAN
   range: 22.0
-  falloffStart: 8.0
-  falloffEnd: 20.0
-  falloffMinMultiplier: 0.25
   bulletCount: 8
   spread: 6.0
   recoil: 3.5
+  recoilProfile:
+    verticalVariance: 0.15
+    horizontalVariance: 0.3
+    smoothing: 0.6
+    recovery: 0.5
+  falloffStart: 8.0
+  falloffEnd: 20.0
+  falloffMinMultiplier: 0.25
   shieldDisableTime: 100
+  impactParticle: "SMOKE"
   allowedAttachmentSlots:
     - BARREL
     - GRIP
 
-awp:
+aa12:
   type: GUN
   maxStack: 1
-  name: "<gray>AWP"
+  hideItemFlags: true
+  name: "<white>AA-12"
   lore:
-    - "<dark_gray>.338 Lapua Magnum"
-  customModelData: 1004
-  itemModel: "minecraft:iron_horse_armor"
-  baseDamage: 45.0
-  fireRate: 18
-  actionOpenTime: 6
-  actionCloseTime: 6
-  reloadTime: 70
-  ammoType: sniper_round
-  maxAmmo: 5
+    - "<dark_gray>12 gauge · 20-round drum · full auto"
+    - "<dark_gray>A shotgun with no sense of restraint."
+  customModelData: 1041
+  itemModel: "minecraft:diamond_horse_armor"
+  baseDamage: 2.8
+  fireRate: 5
+  reloadTime: 80
+  ammoType: shotgun_shell
+  maxAmmo: 20
+  consumesAmmo: true
+  automatic: true
+  firingMode: HITSCAN
+  range: 26.0
+  bulletCount: 6
+  spread: 7.5
+  recoil: 2.2
+  recoilProfile:
+    verticalVariance: 0.3
+    horizontalVariance: 0.4
+    damping: 0.22
+    recovery: 0.7
+    recoveryPenalty: 0.15
+    maxAccumulation: 13.0
+  falloffStart: 9.0
+  falloffEnd: 24.0
+  falloffMinMultiplier: 0.3
+  impactParticle: "SMOKE"
+  allowedAttachmentSlots:
+    - BARREL
+    - GRIP
+    - MAGAZINE
+
+sawed_off:
+  type: GUN
+  maxStack: 1
+  hideItemFlags: true
+  name: "<gray>Sawed-Off"
+  lore:
+    - "<dark_gray>12 gauge · 2 shells · break action"
+    - "<dark_gray>Legal advice not included."
+  customModelData: 1042
+  itemModel: "minecraft:diamond_horse_armor"
+  baseDamage: 3.6
+  fireRate: 4
+  actionOpenTime: 3
+  actionCloseTime: 3
+  reloadTime: 16
+  reloadType: SINGLE
+  ammoType: shotgun_shell
+  maxAmmo: 2
   consumesAmmo: true
   firingMode: HITSCAN
-  range: 250.0
-  spread: 0.0
-  recoil: 6.0
-  bulletDrop: 0.04
-  headshotMultiplier: 2.5
-  trailParticle: "FLAME"
-  impactParticle: "LARGE_SMOKE"
-  fireSound:
-    key: "ENTITY_GENERIC_EXPLODE"
-    volume: 1.0
-    pitch: 1.4
-  hitSound: "ENTITY_ARROW_HIT_PLAYER"
-  hitMessage: "<error>Hit <gray>%victim% <error>for <gray>%damage%"
-  deathMessage: "<gray>%victim% <error>was sniped by <gray>%killer% <error>with a <reset>%weapon%"
+  range: 14.0
+  bulletCount: 12
+  spread: 11.0
+  recoil: 4.5
+  recoilProfile:
+    verticalVariance: 0.25
+    horizontalVariance: 0.5
+    smoothing: 0.7
+    recovery: 0.6
+  falloffStart: 4.0
+  falloffEnd: 13.0
+  falloffMinMultiplier: 0.15
+  knockback: 0.8
+  selfKnockback: 0.45
+  allowedAttachmentSlots:
+    - BARREL
+
+m249:
+  type: GUN
+  maxStack: 1
+  hideItemFlags: true
+  name: "<white>M249 SAW"
+  lore:
+    - "<dark_gray>5.56x45mm · 100-round belt · 750 RPM"
+    - "<dark_gray>Suppression is a strategy."
+  customModelData: 1050
+  itemModel: "minecraft:iron_horse_armor"
+  baseDamage: 6.5
+  fireRate: 2
+  reloadTime: 140
+  ammoType: belt_556
+  maxAmmo: 100
+  consumesAmmo: true
+  automatic: true
+  firingMode: HITSCAN
+  range: 90.0
+  spread: 3.0
+  recoil: 1.4
+  recoilProfile:
+    verticalMean: 0.85
+    verticalVariance: 0.35
+    horizontalMean: 0.1
+    horizontalVariance: 0.45
+    smoothing: 0.28
+    damping: 0.18
+    recovery: 0.5
+    recoveryPenalty: 0.12
+    maxAccumulation: 15.0
+  falloffStart: 40.0
+  falloffEnd: 88.0
+  falloffMinMultiplier: 0.6
   allowedAttachmentSlots:
     - SCOPE
     - BARREL
     - GRIP
+    - MAGAZINE
   defaultAttachments:
-    SCOPE:
-      id: acog
-      forced: true
+    GRIP: vertical_grip
 
-rocket_launcher:
+rpg7:
   type: GUN
   maxStack: 1
-  name: "<gray>Rocket Launcher"
+  hideItemFlags: true
+  name: "<white>RPG-7"
   lore:
-    - "<dark_gray>High-explosive"
-  customModelData: 1010
+    - "<dark_gray>PG-7VL rocket · single shot"
+    - "<dark_gray>Backblast area — all clear?"
+  customModelData: 1060
   itemModel: "minecraft:diamond_horse_armor"
   baseDamage: 6.0
   fireRate: 40
   reloadTime: 80
+  ammoType: rocket_pg7
   maxAmmo: 1
+  consumesAmmo: true
   firingMode: PROJECTILE
   trajectory: FLAT
   projectileSpeed: 4.0
@@ -197,6 +691,13 @@ rocket_launcher:
   range: 80.0
   spread: 0.5
   recoil: 5.0
+  recoilProfile:
+    verticalVariance: 0.2
+    horizontalVariance: 0.15
+    smoothing: 0.6
+    recovery: 0.4
+    recoveryPenalty: 0.2
+  selfKnockback: 0.5
   explosive:
     blastRadius: 5.0
     explosionDamage: 16.0
@@ -206,24 +707,328 @@ rocket_launcher:
       enabled: true
       delay: 100
       blocksPerTick: 2
+  trailParticle: "FLAME"
+  impactParticle: "EXPLOSION"
+  fireSound:
+    key: "minecraft:entity.generic.explode"
+    volume: 1.2
+    pitch: 0.8
   deathMessage: "<gray>%victim% <error>was blown up by <gray>%killer%"
 
-grenade_launcher:
+m32_mgl:
   type: GUN
   maxStack: 1
-  name: "<gray>Grenade Launcher"
+  hideItemFlags: true
+  name: "<white>M32 MGL"
   lore:
-    - "<dark_gray>40mm"
-  customModelData: 1011
+    - "<dark_gray>40x46mm · 6-round cylinder"
+    - "<dark_gray>Lob it. Wait for it."
+  customModelData: 1061
   itemModel: "minecraft:diamond_horse_armor"
   baseDamage: 4.0
-  fireRate: 25
-  reloadTime: 60
-  maxAmmo: 4
+  fireRate: 12
+  reloadTime: 100
+  ammoType: grenade_40mm
+  maxAmmo: 6
+  consumesAmmo: true
   firingMode: PROJECTILE
   trajectory: ARC
   projectileSpeed: 1.5
   range: 48.0
   spread: 1.0
   recoil: 2.5
+  recoilProfile:
+    verticalVariance: 0.2
+    horizontalVariance: 0.2
+    recovery: 0.55
   payload: frag_grenade
+  fireSound: "minecraft:entity.arrow.shoot"
+  deathMessage: "<gray>%victim% <error>was airburst by <gray>%killer%"
+
+incinerator:
+  type: GUN
+  maxStack: 1
+  hideItemFlags: true
+  name: "<#e0762c>Incinerator</#e0762c>"
+  lore:
+    - "<dark_gray>40mm incendiary · 4-round cylinder"
+    - "<dark_gray>Area denial, warmly delivered."
+  customModelData: 1062
+  itemModel: "minecraft:diamond_horse_armor"
+  baseDamage: 3.0
+  fireRate: 16
+  reloadTime: 90
+  ammoType: grenade_40mm
+  maxAmmo: 4
+  consumesAmmo: true
+  firingMode: PROJECTILE
+  trajectory: ARC
+  projectileSpeed: 1.4
+  projectileModel: "minecraft:blaze_powder"
+  range: 44.0
+  spread: 1.2
+  recoil: 2.2
+  payload: incendiary_grenade
+  trailParticle: "FLAME"
+  fireSound: "minecraft:item.firecharge.use"
+  deathMessage: "<gray>%victim% <error>was cooked by <gray>%killer%"
+
+nail_gun:
+  type: GUN
+  maxStack: 1
+  hideItemFlags: true
+  name: "<#b7c4cf>Nail Gun</#b7c4cf>"
+  lore:
+    - "<dark_gray>Framing nails · unlimited"
+    - "<dark_gray>Technically a power tool."
+  customModelData: 1070
+  itemModel: "minecraft:golden_horse_armor"
+  baseDamage: 2.0
+  fireRate: 1
+  reloadTime: 1
+  maxAmmo: 0
+  automatic: true
+  firingMode: HITSCAN
+  range: 18.0
+  spread: 3.5
+  recoil: 0.25
+  recoilProfile:
+    verticalVariance: 0.4
+    horizontalVariance: 0.6
+    damping: 0.3
+    recovery: 1.0
+    maxAccumulation: 3.0
+  falloffStart: 6.0
+  falloffEnd: 16.0
+  falloffMinMultiplier: 0.2
+  impactParticle: "CRIT"
+  fireSound:
+    key: "minecraft:block.anvil.land"
+    volume: 0.4
+    pitch: 2.0
+  deathMessage: "<gray>%victim% <error>was renovated by <gray>%killer%"
+
+freeze_ray:
+  type: GUN
+  maxStack: 1
+  hideItemFlags: true
+  name: "<gradient:#7fd3ff:#e8faff>Freeze Ray</gradient>"
+  lore:
+    - "<dark_gray>Cryo cell · unlimited"
+    - "<dark_gray>Hold still. Permanently."
+  customModelData: 1071
+  itemModel: "minecraft:iron_horse_armor"
+  baseDamage: 1.5
+  fireRate: 2
+  reloadTime: 1
+  maxAmmo: 0
+  automatic: true
+  firingMode: HITSCAN
+  range: 30.0
+  spread: 0.5
+  recoil: 0.0
+  victimEffects:
+    - "SLOWNESS:60:2"
+    - "MINING_FATIGUE:60:1"
+  trailParticle: "SNOWFLAKE"
+  impactParticle: "SNOWFLAKE"
+  fireSound:
+    key: "minecraft:block.glass.break"
+    volume: 0.5
+    pitch: 2.0
+  hitSound: "minecraft:block.powder_snow.step"
+  hitMessage: "<aqua>%victim% <gray>is freezing"
+  deathMessage: "<gray>%victim% <error>was flash-frozen by <gray>%killer%"
+
+bee_blaster:
+  type: GUN
+  maxStack: 1
+  hideItemFlags: true
+  name: "<gradient:#ffcf3f:#ff9a00>Bee Blaster</gradient>"
+  lore:
+    - "<dark_gray>Live ordnance · 8 hives"
+    - "<dark_gray>They are extremely upset."
+  customModelData: 1072
+  itemModel: "minecraft:golden_horse_armor"
+  baseDamage: 3.0
+  fireRate: 6
+  reloadTime: 50
+  maxAmmo: 8
+  firingMode: PROJECTILE
+  trajectory: ARC
+  projectileSpeed: 1.8
+  projectileModel: "minecraft:honeycomb"
+  range: 40.0
+  spread: 2.0
+  recoil: 0.8
+  victimEffects:
+    - "POISON:80:0"
+    - "BLINDNESS:40:0"
+  shooterEffects:
+    - "SPEED:60:0"
+  trailParticle: "FALLING_HONEY"
+  impactParticle: "FALLING_HONEY"
+  fireSound:
+    key: "minecraft:entity.bee.loop_aggressive"
+    volume: 1.0
+    pitch: 1.2
+  hitMessage: "<yellow>%victim% <gray>got the hive"
+  deathMessage: "<gray>%victim% <error>was stung to death by <gray>%killer%"
+
+confetti_cannon:
+  type: GUN
+  maxStack: 1
+  hideItemFlags: true
+  name: "<gradient:#ff5f9e:#ffd166:#7bdff2>Confetti Cannon</gradient>"
+  lore:
+    - "<dark_gray>Party ordnance · 4 charges"
+    - "<dark_gray>Harmless. Mostly."
+  customModelData: 1073
+  itemModel: "minecraft:diamond_horse_armor"
+  baseDamage: 0.5
+  fireRate: 10
+  reloadTime: 40
+  maxAmmo: 4
+  firingMode: HITSCAN
+  range: 12.0
+  bulletCount: 24
+  spread: 14.0
+  recoil: 1.2
+  recoilProfile:
+    verticalVariance: 0.5
+    horizontalVariance: 0.8
+    recovery: 1.2
+    maxAccumulation: 5.0
+  knockback: 1.6
+  impactParticle: "TOTEM_OF_UNDYING"
+  fireSound:
+    key: "minecraft:entity.firework_rocket.large_blast"
+    volume: 1.0
+    pitch: 1.6
+  hitMessage: "<light_purple>🎉 <gray>%victim%"
+  deathMessage: "<gray>%victim% <error>partied too hard with <gray>%killer%"
+
+thunderbuss:
+  type: GUN
+  maxStack: 1
+  hideItemFlags: true
+  name: "<gradient:#d9a441:#8b5a2b>Thunderbuss</gradient>"
+  lore:
+    - "<dark_gray>Black powder · 1 charge · muzzle loaded"
+    - "<dark_gray>Aim vaguely. Hold on."
+  customModelData: 1074
+  itemModel: "minecraft:diamond_horse_armor"
+  baseDamage: 3.0
+  fireRate: 8
+  actionOpenTime: 4
+  actionCloseTime: 6
+  reloadTime: 30
+  reloadType: SINGLE
+  maxAmmo: 1
+  firingMode: HITSCAN
+  range: 16.0
+  bulletCount: 16
+  spread: 13.0
+  recoil: 7.0
+  recoilProfile:
+    verticalMean: 1.0
+    verticalVariance: 0.3
+    horizontalVariance: 0.6
+    smoothing: 0.8
+    damping: 0.05
+    recovery: 0.35
+    recoveryPenalty: 0.4
+    speed: 1.0
+    maxAccumulation: 22.0
+  falloffStart: 5.0
+  falloffEnd: 15.0
+  falloffMinMultiplier: 0.2
+  knockback: 1.2
+  selfKnockback: 1.3
+  shieldDisableTime: 140
+  trailParticle: "SMOKE"
+  impactParticle: "LARGE_SMOKE"
+  fireSound:
+    key: "minecraft:entity.generic.explode"
+    volume: 1.5
+    pitch: 0.5
+  deathMessage: "<gray>%victim% <error>was blunderbussed by <gray>%killer%"
+
+railgun:
+  type: GUN
+  maxStack: 1
+  hideItemFlags: true
+  name: "<gradient:#8be9fd:#bd93f9>Railgun</gradient>"
+  lore:
+    - "<dark_gray>Capacitor bank · 3 slugs"
+    - "<dark_gray>Point at horizon. Discharge."
+  customModelData: 1075
+  itemModel: "minecraft:iron_horse_armor"
+  baseDamage: 80.0
+  fireRate: 60
+  actionOpenTime: 10
+  actionCloseTime: 10
+  reloadTime: 120
+  ammoType: energy_cell
+  maxAmmo: 3
+  consumesAmmo: true
+  firingMode: HITSCAN
+  range: 400.0
+  spread: 0.0
+  recoil: 12.0
+  recoilProfile:
+    verticalVariance: 0.0
+    horizontalVariance: 0.0
+    smoothing: 1.0
+    damping: 0.02
+    recovery: 0.2
+    recoveryPenalty: 0.5
+    speed: 1.0
+    maxAccumulation: 30.0
+  headshotMultiplier: 1.5
+  knockback: 2.0
+  selfKnockback: 0.8
+  shieldDisableTime: 200
+  trailParticle: "SOUL_FIRE_FLAME"
+  impactParticle: "EXPLOSION"
+  fireSound:
+    key: "minecraft:entity.lightning_bolt.thunder"
+    volume: 1.2
+    pitch: 1.4
+  hitSound: "minecraft:block.beacon.power_select"
+  hitMessage: "<light_purple>%damage% <gray>· %victim%"
+  deathMessage: "<gray>%victim% <error>was vaporized by <gray>%killer%"
+  allowedAttachmentSlots:
+    - SCOPE
+
+chicken_cannon:
+  type: GUN
+  maxStack: 1
+  hideItemFlags: true
+  name: "<gradient:#fff3b0:#ffb703>Chicken Cannon</gradient>"
+  lore:
+    - "<dark_gray>Free range · 6 birds"
+    - "<dark_gray>Ethically questionable artillery."
+  customModelData: 1076
+  itemModel: "minecraft:golden_horse_armor"
+  baseDamage: 2.5
+  fireRate: 8
+  reloadTime: 45
+  maxAmmo: 6
+  firingMode: PROJECTILE
+  trajectory: ARC
+  projectileSpeed: 2.2
+  projectileModel: "minecraft:egg"
+  range: 50.0
+  spread: 2.5
+  recoil: 1.0
+  victimEffects:
+    - "LEVITATION:40:1"
+    - "NAUSEA:100:0"
+  trailParticle: "ITEM_SLIME"
+  fireSound:
+    key: "minecraft:entity.chicken.egg"
+    volume: 1.0
+    pitch: 0.8
+  hitSound: "minecraft:entity.chicken.hurt"
+  deathMessage: "<gray>%victim% <error>was fowl-played by <gray>%killer%"

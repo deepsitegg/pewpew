@@ -1,6 +1,7 @@
 
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar.Companion.shadowJar
+import jdk.jfr.internal.JVM.exclude
 import sun.jvmstat.monitor.MonitoredVmUtil.jvmArgs
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -14,7 +15,7 @@ plugins {
 }
 
 group = "gg.deepsite"
-version = "26.0.6"
+version = "26.0.8-snapshot"
 val MAINTAINERS = listOf("ThebigTijn")
 
 lombok {

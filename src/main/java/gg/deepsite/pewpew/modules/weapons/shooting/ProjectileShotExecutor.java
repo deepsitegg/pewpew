@@ -73,7 +73,8 @@ public class ProjectileShotExecutor implements ShotExecutor {
 
 		double recoil = gun.getRecoil() * recoilMultiplier;
 		if (scoped) recoil *= AttachmentUtil.aimRecoilMultiplier(weapon);
-		recoilManager.kick(shooter, recoil);
+		recoilManager.kick(shooter, gun.getRecoilProfile(), recoil);
+		Ballistics.applySelfKnockback(shooter, gun.getSelfKnockback());
 	}
 
 	private void launchPayload(@NotNull Player shooter, @NotNull PewpewGunItem gun, @NotNull Vector velocity, boolean gravity) {
@@ -159,7 +160,7 @@ public class ProjectileShotExecutor implements ShotExecutor {
 		}
 		Ballistics.dealProjectileDamage(target, damage, causing, projectile);
 		if (shooterPlayer != null) {
-			Ballistics.applyKnockback(target, shooterPlayer, gun.getKnockback(), gun.getSelfKnockback());
+			Ballistics.applyKnockback(target, shooterPlayer, gun.getKnockback());
 		}
 		Ballistics.disableShield(target, gun.getShieldDisableTime());
 		Ballistics.applyEffects(target, gun.getVictimEffects());

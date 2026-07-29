@@ -20,6 +20,7 @@ import gg.deepsite.pewpew.api.objects.attachment.PewpewGripAttachment;
 import gg.deepsite.pewpew.api.objects.attachment.PewpewMagazineAttachment;
 import gg.deepsite.pewpew.api.objects.attachment.PewpewScopeAttachment;
 import gg.deepsite.pewpew.api.objects.PewpewSound;
+import gg.deepsite.pewpew.api.objects.RecoilProfile;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
 import org.bukkit.Registry;
@@ -193,6 +194,7 @@ public class WeaponDeserializer {
         int burstCount = node.node("burstCount").getInt(1);
         double spread = node.node("spread").getDouble(1.5);
         double recoil = node.node("recoil").getDouble(0.0);
+        RecoilProfile recoilProfile = parseRecoilProfile(node.node("recoilProfile"));
         double knockback = Math.max(0.0, node.node("knockback").getDouble(0.0));
         double selfKnockback = Math.max(0.0, node.node("selfKnockback").getDouble(0.0));
         int bulletCount = Math.max(1, node.node("bulletCount").getInt(1));
@@ -292,6 +294,7 @@ public class WeaponDeserializer {
                 .reloadType(reloadType)
                 .spread(spread)
                 .recoil(recoil)
+                .recoilProfile(recoilProfile)
                 .knockback(knockback)
                 .selfKnockback(selfKnockback)
                 .bulletCount(bulletCount)
@@ -440,6 +443,27 @@ public class WeaponDeserializer {
     }
 
     @Nullable
+    private static RecoilProfile parseRecoilProfile(ConfigurationNode node) {
+        if (node.virtual()) return RecoilProfile.DEFAULT;
+        RecoilProfile defaults = RecoilProfile.DEFAULT;
+        return RecoilProfile.builder()
+                .verticalMean((float) node.node("verticalMean").getDouble(defaults.getVerticalMean()))
+                .verticalVariance((float) Math.max(0.0, node.node("verticalVariance").getDouble(defaults.getVerticalVariance())))
+                .horizontalMean((float) node.node("horizontalMean").getDouble(defaults.getHorizontalMean()))
+                .horizontalVariance((float) Math.max(0.0, node.node("horizontalVariance").getDouble(defaults.getHorizontalVariance())))
+                .smoothing((float) clamp(node.node("smoothing").getDouble(defaults.getSmoothing()), 0.01, 1.0))
+                .damping((float) clamp(node.node("damping").getDouble(defaults.getDamping()), 0.0, 1.0))
+                .recovery((float) Math.max(0.0, node.node("recovery").getDouble(defaults.getRecovery())))
+                .recoveryPenalty((float) clamp(node.node("recoveryPenalty").getDouble(defaults.getRecoveryPenalty()), 0.0, 1.0))
+                .speed((float) Math.max(0.0, node.node("speed").getDouble(defaults.getSpeed())))
+                .maxAccumulation((float) Math.max(0.0, node.node("maxAccumulation").getDouble(defaults.getMaxAccumulation())))
+                .build();
+    }
+
+    private static double clamp(double value, double min, double max) {
+        return Math.max(min, Math.min(max, value));
+    }
+
     private static PewpewSound parseSound(String fileName, String id, ConfigurationNode node) {
         if (node.virtual()) return null;
         String key;

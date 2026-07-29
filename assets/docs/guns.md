@@ -49,10 +49,35 @@ Add an `explosive:` block to a `PROJECTILE` gun to detonate on impact (rocket la
 | `burstCount` | int | `1` | Shots fired per trigger pull, 2 ticks apart. |
 | `bulletCount` | int | `1` | Pellets/projectiles per shot, each independently spread (shotgun buckshot). |
 | `spread` | double (degrees) | `1.5` | Bullet cone half-angle. `0` = pinpoint. Scaled by grip and scope. |
-| `recoil` | double (degrees) | `0.0` | Upward camera kick per shot, plus slight random horizontal sway. Scaled by grip and scope. |
+| `recoil` | double (degrees) | `0.0` | Camera kick strength per shot. Scaled by grip and scope, then shaped by `recoilProfile`. |
 | `knockback` | double | `0.0` | Extra knockback pushed onto the victim on a landed hit, away from the shooter. `0` = vanilla only. |
 | `selfKnockback` | double | `0.0` | Recoil shove on the shooter (backward), for hand-cannon feel. `0` = none. |
 | `bulletDrop` | double | `0.0` | For `HITSCAN`: vertical curve per block (ballistic arc). For `PROJECTILE`: any value `> 0` enables gravity. `0` flies straight. |
+
+## Recoil profile
+
+Optional `recoilProfile` map per gun. Every key is optional; omitting the whole block keeps the defaults below, which reproduce the old behavior. Angles are expressed as a fraction of `recoil` (after grip/scope scaling), so `recoil` stays the single strength knob.
+
+```yaml
+recoil: 1.2
+recoilProfile:
+  horizontalMean: 0.25
+  horizontalVariance: 0.15
+  verticalVariance: 0.2
+```
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `verticalMean` | double | `1.0` | Upward kick as a fraction of `recoil`. `1.0` = the full value. |
+| `verticalVariance` | double | `0.0` | Random ± around `verticalMean`, as a fraction of `recoil`. `0` = every shot kicks identically. |
+| `horizontalMean` | double | `0.0` | Constant sideways drift per shot. Positive = right, negative = left. `0` = no bias. |
+| `horizontalVariance` | double | `0.3` | Random ± sideways sway. Set to `0` together with `horizontalMean` for pure vertical recoil. |
+| `smoothing` | double (0.01–1) | `0.35` | How fast the camera chases the accumulated kick. `1.0` = instant snap, lower = softer climb. |
+| `damping` | double (0–1) | `0.15` | Per-tick decay of the accumulated kick. Higher = the climb dies out sooner during sustained fire. |
+| `recovery` | double (degrees/tick) | `0.6` | How fast the camera returns to where you were aiming. `0` = no recovery pass, the kick only fades out through `damping`. |
+| `recoveryPenalty` | double (0–1) | `0.0` | Share of every kick the camera never gives back, as a percentage. `0.0` = full recovery, `0.25` = a quarter of each shot's kick sticks and your aim walks up over a burst, `1.0` = nothing recovers. Needs `recovery > 0`. |
+| `speed` | double | `1.0` | Multiplier on the per-tick rotation actually applied. `<1` = the whole animation plays slower. |
+| `maxAccumulation` | double (degrees) | `12.0` | Ceiling on total accumulated kick, so full-auto cannot walk your camera into the sky. `0` = no ceiling. |
 
 ## Damage modifiers
 

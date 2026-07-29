@@ -1,51 +1,220 @@
-# roundsPerItem: 1 = one round, N = a box of N, 0 = one item refills the whole magazine.
-
-rifle_round:
+pistol_9mm:
   type: AMMO
-  name: "<gray>7.62x39mm Round"
+  name: "<gray>9x19mm Parabellum"
   lore:
-    - "<dark_gray>Loose rifle round"
+    - "<dark_gray>Loose pistol round"
+    - "<dark_gray>Glock 17 · MP5"
   customModelData: 4001
   itemModel: "minecraft:iron_nugget"
-  ammoType: rifle_round
+  maxStack: 64
+  ammoType: pistol_9mm
   roundsPerItem: 1
 
-rifle_magazine:
+pistol_9mm_box:
+  type: AMMO
+  name: "<gray>9x19mm Box"
+  lore:
+    - "<dark_gray>50 rounds, boxed"
+  customModelData: 4002
+  itemModel: "minecraft:iron_ingot"
+  maxStack: 16
+  ammoType: pistol_9mm
+  roundsPerItem: 50
+
+pistol_45:
+  type: AMMO
+  name: "<gray>.45 ACP"
+  lore:
+    - "<dark_gray>Fat, slow, effective"
+    - "<dark_gray>KRISS Vector"
+  customModelData: 4003
+  itemModel: "minecraft:iron_nugget"
+  maxStack: 64
+  ammoType: pistol_45
+  roundsPerItem: 1
+
+pdw_57:
+  type: AMMO
+  name: "<gray>5.7x28mm"
+  lore:
+    - "<dark_gray>Small, fast, spiteful"
+    - "<dark_gray>P90"
+  customModelData: 4004
+  itemModel: "minecraft:iron_nugget"
+  maxStack: 64
+  ammoType: pdw_57
+  roundsPerItem: 1
+
+magnum_44:
+  type: AMMO
+  name: "<white>.44 Magnum"
+  lore:
+    - "<dark_gray>Revolver round"
+  customModelData: 4005
+  itemModel: "minecraft:gold_nugget"
+  maxStack: 32
+  ammoType: magnum_44
+  roundsPerItem: 1
+
+magnum_50ae:
+  type: AMMO
+  name: "<white>.50 Action Express"
+  lore:
+    - "<dark_gray>Desert Eagle"
+  customModelData: 4006
+  itemModel: "minecraft:gold_nugget"
+  maxStack: 32
+  ammoType: magnum_50ae
+  roundsPerItem: 1
+
+rifle_762x39:
+  type: AMMO
+  name: "<gray>7.62x39mm"
+  lore:
+    - "<dark_gray>Loose rifle round"
+    - "<dark_gray>AK-47"
+  customModelData: 4010
+  itemModel: "minecraft:iron_nugget"
+  maxStack: 64
+  ammoType: rifle_762x39
+  roundsPerItem: 1
+
+ak_magazine:
   type: AMMO
   name: "<gray>AK Magazine"
   lore:
     - "<dark_gray>Refills the whole magazine"
-  customModelData: 4002
+  customModelData: 4011
   itemModel: "minecraft:iron_ingot"
-  ammoType: rifle_round
+  maxStack: 8
+  ammoType: rifle_762x39
   roundsPerItem: 0
 
-pistol_round:
+rifle_556:
   type: AMMO
-  name: "<gray>9x19mm Round"
+  name: "<gray>5.56x45mm NATO"
   lore:
-    - "<dark_gray>Pistol and SMG round"
-  customModelData: 4005
+    - "<dark_gray>Loose rifle round"
+    - "<dark_gray>M4A1 · M16A4"
+  customModelData: 4012
   itemModel: "minecraft:iron_nugget"
-  ammoType: pistol_round
+  maxStack: 64
+  ammoType: rifle_556
+  roundsPerItem: 1
+
+stanag_magazine:
+  type: AMMO
+  name: "<gray>STANAG Magazine"
+  lore:
+    - "<dark_gray>Refills the whole magazine"
+  customModelData: 4013
+  itemModel: "minecraft:iron_ingot"
+  maxStack: 8
+  ammoType: rifle_556
+  roundsPerItem: 0
+
+belt_556:
+  type: AMMO
+  name: "<white>5.56mm Belt"
+  lore:
+    - "<dark_gray>100 linked rounds"
+    - "<dark_gray>M249 SAW"
+  customModelData: 4014
+  itemModel: "minecraft:chain"
+  maxStack: 4
+  ammoType: belt_556
+  roundsPerItem: 100
+
+rifle_762x51:
+  type: AMMO
+  name: "<white>7.62x51mm NATO"
+  lore:
+    - "<dark_gray>Battle rifle round"
+    - "<dark_gray>SCAR-H · M14"
+  customModelData: 4015
+  itemModel: "minecraft:gold_nugget"
+  maxStack: 64
+  ammoType: rifle_762x51
   roundsPerItem: 1
 
 shotgun_shell:
   type: AMMO
-  name: "<gray>12-Gauge Shell"
+  name: "<gray>12-Gauge Buckshot"
   lore:
     - "<dark_gray>Loaded one at a time"
-  customModelData: 4003
+  customModelData: 4020
   itemModel: "minecraft:firework_star"
+  maxStack: 64
   ammoType: shotgun_shell
   roundsPerItem: 1
 
-sniper_round:
+shotgun_box:
   type: AMMO
-  name: "<gray>.338 Lapua Round"
+  name: "<gray>12-Gauge Box"
+  lore:
+    - "<dark_gray>25 shells, boxed"
+  customModelData: 4021
+  itemModel: "minecraft:firework_rocket"
+  maxStack: 16
+  ammoType: shotgun_shell
+  roundsPerItem: 25
+
+sniper_338:
+  type: AMMO
+  name: "<white>.338 Lapua Magnum"
   lore:
     - "<dark_gray>Heavy long-range round"
-  customModelData: 4004
+    - "<dark_gray>AWM"
+  customModelData: 4022
   itemModel: "minecraft:gold_nugget"
-  ammoType: sniper_round
+  maxStack: 32
+  ammoType: sniper_338
+  roundsPerItem: 1
+
+bmg_50:
+  type: AMMO
+  name: "<white>.50 BMG"
+  lore:
+    - "<dark_gray>Anti-materiel round"
+    - "<dark_gray>Barrett M82"
+  customModelData: 4023
+  itemModel: "minecraft:copper_ingot"
+  maxStack: 16
+  ammoType: bmg_50
+  roundsPerItem: 1
+
+grenade_40mm:
+  type: AMMO
+  name: "<#c9a227>40x46mm Grenade</#c9a227>"
+  lore:
+    - "<dark_gray>Low-velocity launcher round"
+    - "<dark_gray>M32 MGL · Incinerator"
+  customModelData: 4030
+  itemModel: "minecraft:firework_star"
+  maxStack: 16
+  ammoType: grenade_40mm
+  roundsPerItem: 1
+
+rocket_pg7:
+  type: AMMO
+  name: "<#c9a227>PG-7VL Rocket</#c9a227>"
+  lore:
+    - "<dark_gray>Shaped charge, fin stabilized"
+    - "<dark_gray>RPG-7"
+  customModelData: 4031
+  itemModel: "minecraft:fire_charge"
+  maxStack: 4
+  ammoType: rocket_pg7
+  roundsPerItem: 1
+
+energy_cell:
+  type: AMMO
+  name: "<gradient:#8be9fd:#bd93f9>Energy Cell</gradient>"
+  lore:
+    - "<dark_gray>Charged capacitor slug"
+    - "<dark_gray>Railgun"
+  customModelData: 4032
+  itemModel: "minecraft:amethyst_shard"
+  maxStack: 16
+  ammoType: energy_cell
   roundsPerItem: 1

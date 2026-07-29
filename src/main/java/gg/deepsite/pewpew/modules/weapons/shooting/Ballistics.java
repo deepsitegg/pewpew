@@ -44,19 +44,19 @@ public class Ballistics {
         target.damage(amount, source);
     }
 
-    public static void applyKnockback(@NotNull LivingEntity target, @NotNull Player shooter,
-                                      double knockback, double selfKnockback) {
-        if (knockback > 0) {
-            Vector away = target.getLocation().toVector().subtract(shooter.getLocation().toVector());
-            if (away.lengthSquared() > 0) {
-                target.setVelocity(target.getVelocity().add(
-                        away.normalize().multiply(knockback).setY(0.35 * knockback)));
-            }
+    public static void applyKnockback(@NotNull LivingEntity target, @NotNull Player shooter, double knockback) {
+        if (knockback <= 0) return;
+        Vector away = target.getLocation().toVector().subtract(shooter.getLocation().toVector());
+        if (away.lengthSquared() > 0) {
+            target.setVelocity(target.getVelocity().add(
+                    away.normalize().multiply(knockback).setY(0.35 * knockback)));
         }
-        if (selfKnockback > 0) {
-            Vector back = shooter.getLocation().getDirection().multiply(-selfKnockback);
-            shooter.setVelocity(shooter.getVelocity().add(back));
-        }
+    }
+
+    public static void applySelfKnockback(@NotNull Player shooter, double selfKnockback) {
+        if (selfKnockback <= 0) return;
+        Vector back = shooter.getLocation().getDirection().multiply(-selfKnockback);
+        shooter.setVelocity(shooter.getVelocity().add(back));
     }
 
     public static boolean isHeadshot(@NotNull LivingEntity target, double hitY) {

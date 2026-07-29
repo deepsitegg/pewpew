@@ -34,6 +34,7 @@ public class PewpewGunItem extends PewpewWeaponItem {
     private ReloadType reloadType;
     private double spread;
     private double recoil;
+    private RecoilProfile recoilProfile;
     private double knockback;
     private double selfKnockback;
     private int bulletCount;

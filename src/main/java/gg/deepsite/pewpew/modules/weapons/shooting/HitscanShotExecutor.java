@@ -47,7 +47,8 @@ public class HitscanShotExecutor implements ShotExecutor {
 
 		double recoil = gun.getRecoil() * recoilMultiplier;
 		if (scoped) recoil *= AttachmentUtil.aimRecoilMultiplier(weapon);
-		recoilManager.kick(shooter, recoil);
+		recoilManager.kick(shooter, gun.getRecoilProfile(), recoil);
+		Ballistics.applySelfKnockback(shooter, gun.getSelfKnockback());
 	}
 
 	private void fireStraight(Player shooter, PewpewGunItem gun, Location eye, Vector direction, double range,
@@ -113,7 +114,7 @@ public class HitscanShotExecutor implements ShotExecutor {
 		GunHitTracker.record(target, shooter, gun);
 		if (target instanceof Player victim) CombatTagIntegration.tag(victim, shooter);
 		Ballistics.dealProjectileDamage(target, damage, shooter, shooter);
-		Ballistics.applyKnockback(target, shooter, gun.getKnockback(), gun.getSelfKnockback());
+		Ballistics.applyKnockback(target, shooter, gun.getKnockback());
 		Ballistics.disableShield(target, gun.getShieldDisableTime());
 		Ballistics.applyEffects(target, gun.getVictimEffects());
 		Ballistics.applyEffects(shooter, gun.getShooterEffects());
