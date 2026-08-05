@@ -4,3 +4,5 @@ messages:
   out-of-ammo: "<error>Out of ammo <dark_gray>┃ <gray>press <color><key:key.swapOffhand><gray> to reload"
   no-ammo-in-inventory: "<error>Out of <reset>%1<error> in your inventory."
   worldguard-deny: "<error>You cannot use weapons here."
+  openminetopia-handcuffed-deny: "<error>You cannot use weapons while handcuffed."
+  openminetopia-place-deny: "<error>Weapons are not allowed in this city."

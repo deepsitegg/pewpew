@@ -14,7 +14,7 @@ There are four item types, set by the `type` field:
 
 All types share a set of [common fields](common-fields.md).
 
-Optional plugin hooks (WorldGuard, CombatTagPlus) and the `messages.yml` file are documented
+Optional plugin hooks (WorldGuard, CombatTagPlus, OpenMinetopia) and the `messages.yml` file are documented
 in [integrations.md](integrations.md).
 
 ## Notes

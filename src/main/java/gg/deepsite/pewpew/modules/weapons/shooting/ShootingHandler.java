@@ -8,7 +8,7 @@ import gg.deepsite.pewpew.api.events.PewpewShootEvent;
 import gg.deepsite.pewpew.api.objects.PewPewItem;
 import gg.deepsite.pewpew.api.objects.PewpewAmmoItem;
 import gg.deepsite.pewpew.api.objects.PewpewGunItem;
-import gg.deepsite.pewpew.integrations.WorldGuardIntegration;
+import gg.deepsite.pewpew.integrations.WeaponRestrictions;
 import gg.deepsite.pewpew.modules.items.ItemsModule;
 import gg.deepsite.pewpew.modules.weapons.ammo.AmmoUtil;
 import gg.deepsite.pewpew.modules.weapons.attachment.AttachmentUtil;
@@ -273,7 +273,7 @@ public class ShootingHandler {
 		ItemStack held = player.getInventory().getItemInMainHand();
 		if (!isSameGun(held, gun)) return;
 
-		if (!WorldGuardIntegration.allows(player)) return;
+		if (WeaponRestrictions.denied(player, false)) return;
 
 		if (!new PewpewShootEvent(player, gun, held).callEvent()) return;
 

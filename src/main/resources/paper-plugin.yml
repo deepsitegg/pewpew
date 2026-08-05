@@ -16,3 +16,6 @@ dependencies:
     CombatTagPlus:
       load: BEFORE
       required: false
+    OpenMinetopia:
+      load: BEFORE
+      required: false

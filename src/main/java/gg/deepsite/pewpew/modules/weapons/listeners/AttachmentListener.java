@@ -3,6 +3,7 @@ package gg.deepsite.pewpew.modules.weapons.listeners;
 import gg.deepsite.pewpew.PewpewPlugin;
 import gg.deepsite.pewpew.api.objects.PewPewItem;
 import gg.deepsite.pewpew.api.objects.PewpewGunItem;
+import gg.deepsite.pewpew.integrations.WeaponRestrictions;
 import gg.deepsite.pewpew.modules.items.ItemsModule;
 import gg.deepsite.pewpew.modules.weapons.attachment.menu.AttachmentMenu;
 import org.bukkit.entity.Player;
@@ -35,6 +36,8 @@ public class AttachmentListener implements Listener {
 		if (!(item instanceof PewpewGunItem)) return;
 
 		event.setCancelled(true);
+		if (WeaponRestrictions.denied(player, true)) return;
+
 		int gunSlot = event.getSlot();
 		PewpewPlugin.getInstance().getServer().getScheduler().runTask(
 				PewpewPlugin.getInstance(), () -> new AttachmentMenu(player, gunSlot).open(player));

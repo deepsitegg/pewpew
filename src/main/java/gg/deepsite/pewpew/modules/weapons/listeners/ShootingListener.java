@@ -3,7 +3,7 @@ package gg.deepsite.pewpew.modules.weapons.listeners;
 import gg.deepsite.pewpew.PewpewPlugin;
 import gg.deepsite.pewpew.api.objects.PewPewItem;
 import gg.deepsite.pewpew.api.objects.PewpewGunItem;
-import gg.deepsite.pewpew.integrations.WorldGuardIntegration;
+import gg.deepsite.pewpew.integrations.WeaponRestrictions;
 import gg.deepsite.pewpew.modules.items.ItemsModule;
 import gg.deepsite.pewpew.modules.weapons.shooting.GunHitTracker;
 import gg.deepsite.pewpew.modules.weapons.shooting.ProjectileShotExecutor;
@@ -48,10 +48,7 @@ public class ShootingListener implements Listener {
 		if (!(item instanceof PewpewGunItem gun)) return;
 
 		event.setCancelled(true);
-		if (!WorldGuardIntegration.allows(event.getPlayer())) {
-			event.getPlayer().sendActionBar(ChatUtils.format(PewpewPlugin.getMessagesConfig().worldGuardDeny()));
-			return;
-		}
+		if (WeaponRestrictions.denied(event.getPlayer(), true)) return;
 		shootingHandler.onTrigger(event.getPlayer(), gun, held);
 	}
 

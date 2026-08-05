@@ -5,6 +5,7 @@ import com.jazzkuh.modulemanager.spigot.SpigotModule;
 import com.jazzkuh.modulemanager.spigot.SpigotModuleManager;
 import gg.deepsite.pewpew.PewpewPlugin;
 import gg.deepsite.pewpew.integrations.CombatTagIntegration;
+import gg.deepsite.pewpew.integrations.OpenMinetopiaIntegration;
 import gg.deepsite.pewpew.modules.weapons.listeners.AttachmentListener;
 import gg.deepsite.pewpew.modules.weapons.listeners.ScopeListener;
 import gg.deepsite.pewpew.modules.weapons.listeners.ShootingListener;
@@ -30,6 +31,7 @@ public class WeaponsModule extends SpigotModule<PewpewPlugin> {
 	public void onEnable() {
 		Menu.init(getPlugin());
 		CombatTagIntegration.init();
+		OpenMinetopiaIntegration.init();
 		shootingHandler = new ShootingHandler(getPlugin());
 		throwableHandler = new ThrowableHandler(getPlugin());
 		registerComponent(new ShootingListener(shootingHandler));

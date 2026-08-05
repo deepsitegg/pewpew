@@ -2,9 +2,11 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar.Companion.shadowJar
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.concurrent.TimeUnit
 
 plugins {
     java
+    `maven-publish`
     id("io.freefair.lombok") version "8.13.1"
     id("com.gradleup.shadow") version "9.0.2"
     id("xyz.jpenilla.run-paper") version "3.0.2"
@@ -21,44 +23,25 @@ lombok {
 repositories {
     mavenLocal()
     mavenCentral()
+    maven("https://maven.deepsite.gg/releases")
+    maven("https://maven.deepsite.gg/snapshots")
     maven("https://repo.papermc.io/repository/maven-public/")
     maven("https://repo.skriptlang.org/releases")
     maven("https://maven.enginehub.org/repo/")
     maven("https://jitpack.io")
 }
 
-fun deepsiteLib(local: String, remote: String): String {
-    val (group, name, version) = local.split(":")
-    val jar = File(
-        System.getProperty("user.home"),
-        ".m2/repository/${group.replace('.', '/')}/$name/$version/$name-$version.jar"
-    )
-    return if (jar.exists()) local else remote
+// Our own SNAPSHOTs change often — don't let Gradle cache them for 24h
+configurations.all {
+    resolutionStrategy.cacheChangingModulesFor(5, TimeUnit.MINUTES)
 }
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
 
-    implementation(
-        deepsiteLib(
-            "com.jazzkuh.modulemanager:spigot:1.0-SNAPSHOT",
-            "com.github.deepsitegg.modulemanager:spigot:main-SNAPSHOT"
-        )
-    )
-
-    implementation(
-        deepsiteLib(
-            "com.jazzkuh.commandlib:spigot:1.0-SNAPSHOT",
-            "com.github.deepsitegg.commandlibrary:spigot:d8f90e0b14"
-        )
-    )
-
-    implementation(
-        deepsiteLib(
-            "com.jazzkuh.inventorylib:spigot:1.1-SNAPSHOT",
-            "com.github.deepsitegg.inventorylib:spigot:main-SNAPSHOT"
-        )
-    )
+    implementation("com.jazzkuh.modulemanager:spigot:1.0-SNAPSHOT")
+    implementation("com.jazzkuh.commandlib:spigot:1.0-SNAPSHOT")
+    implementation("com.jazzkuh.inventorylib:spigot:1.1-SNAPSHOT")
 
     implementation("org.bstats:bstats-bukkit:3.2.1")
 
@@ -77,6 +60,8 @@ dependencies {
 
 tasks.withType<ShadowJar> {
     archiveFileName.set("pewpew.jar")
+    // published coordinate stays gg.deepsite:pewpew:<version> with no "-all" suffix
+    archiveClassifier.set("")
 
     relocate("com.jazzkuh.modulemanager", "gg.deepsite.pewpew.libs.modulemanager")
     relocate("com.jazzkuh.commandlib", "gg.deepsite.pewpew.libs.commandlib")
@@ -101,6 +86,38 @@ tasks.withType<ShadowJar> {
         attributes["Build-Time"] = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
         attributes["Implementation-Version"] = version
         attributes["Maintainers"] = MAINTAINERS.joinToString(", ")
+    }
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("shadow") {
+            artifactId = "pewpew"
+            // publishes the shadowed jar with a correct POM
+            from(components["shadow"])
+        }
+    }
+
+    repositories {
+        maven {
+            name = "deepsite"
+            url = uri(
+                if (version.toString().endsWith("SNAPSHOT"))
+                    "https://maven.deepsite.gg/snapshots"
+                else
+                    "https://maven.deepsite.gg/releases"
+            )
+            credentials {
+                username = System.getenv("DEEPSITE_MAVEN_NAME")
+                    ?: project.findProperty("deepsiteUsername") as String?
+                password = System.getenv("DEEPSITE_MAVEN_SECRET")
+                    ?: project.findProperty("deepsitePassword") as String?
+            }
+            // Reposilite expects preemptive basic auth
+            authentication {
+                create<BasicAuthentication>("basic")
+            }
+        }
     }
 }
 

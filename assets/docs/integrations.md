@@ -9,6 +9,10 @@ integrations:
     enabled: true
   combattagplus:
     enabled: true
+  openminetopia:
+    enabled: true
+    block-handcuffed: true
+    banned-places: [ ]
 ```
 
 ## WorldGuard
@@ -28,6 +32,29 @@ moment they enter a protected region). If WorldGuard is absent the flag is never
 Requires [CombatTagPlus](https://www.spigotmc.org/resources/combattagplus.4775/). When a player lands a gun hit on
 another player, both are combat-tagged. If CombatTagPlus is absent this does nothing (guns already deal real damage, so
 most combat-log plugins tag on their own regardless).
+
+## OpenMinetopia
+
+Requires [OpenMinetopia](https://github.com/openminetopia/openminetopia). Blocks firing, throwing and opening the
+attachment bench for players who are:
+
+- **handcuffed** - action-bar message `openminetopia-handcuffed-deny`. Turn off with `block-handcuffed: false`.
+- **inside a banned place** - action-bar message `openminetopia-place-deny`.
+
+`banned-places` is a list of MTPlace names (the city, or the world name when outside a city), matched
+case-insensitively:
+
+```yaml
+openminetopia:
+  banned-places:
+    - "Amsterdam"
+    - "Rotterdam"
+```
+
+Detection gates (weapon scanners) need no configuration here - list the gun's material and `customModelData` in
+OpenMinetopia's own config and it will be flagged like any other item.
+
+If OpenMinetopia is absent nothing is checked.
 
 ## Messages
 

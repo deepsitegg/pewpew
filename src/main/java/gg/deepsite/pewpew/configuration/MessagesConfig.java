@@ -34,4 +34,12 @@ public class MessagesConfig extends ConfigurateConfig {
 	public String worldGuardDeny() {
 		return get("worldguard-deny", "<error>You cannot use weapons here.");
 	}
+
+	public String openMinetopiaHandcuffedDeny() {
+		return get("openminetopia-handcuffed-deny", "<error>You cannot use weapons while handcuffed.");
+	}
+
+	public String openMinetopiaPlaceDeny() {
+		return get("openminetopia-place-deny", "<error>Weapons are not allowed in this city.");
+	}
 }

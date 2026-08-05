@@ -11,3 +11,11 @@ integrations:
   # Requires CombatTagPlus. Combat-tags shooter and victim on a gun hit.
   combattagplus:
     enabled: true
+  # Requires OpenMinetopia. Blocks weapon use while handcuffed and in the listed cities/worlds.
+  # Place names are the MTPlace (city, or world if outside a city) names, case-insensitive.
+  # Detection gates need no setup here: list a gun's material + customModelData in
+  # OpenMinetopia's own config to make it show up as a flagged item.
+  openminetopia:
+    enabled: true
+    block-handcuffed: true
+    banned-places: []
