@@ -17,7 +17,11 @@ public record PewpewSound(@NotNull Key key, float volume, float pitch) {
 	}
 
 	private Sound adventure() {
-		return Sound.sound(key, Sound.Source.MASTER, volume, pitch);
+		return adventure(1.0f);
+	}
+
+	private Sound adventure(float pitchScale) {
+		return Sound.sound(key, Sound.Source.MASTER, volume, pitch * pitchScale);
 	}
 
 	public void play(@NotNull Player player) {
@@ -25,8 +29,12 @@ public record PewpewSound(@NotNull Key key, float volume, float pitch) {
 	}
 
 	public void playAt(@NotNull Location location) {
+		playAt(location, 1.0f);
+	}
+
+	public void playAt(@NotNull Location location, float pitchScale) {
 		if (location.getWorld() != null) {
-			location.getWorld().playSound(adventure(), location.getX(), location.getY(), location.getZ());
+			location.getWorld().playSound(adventure(pitchScale), location.getX(), location.getY(), location.getZ());
 		}
 	}
 }

@@ -19,7 +19,7 @@ public class CooldownUtil {
 	}
 
 	public static void stamp(@NotNull ItemStack stack, @NotNull PewpewGunItem gun) {
-		float seconds = Math.max(1, gun.getFireRate()) / 20.0f;
+		float seconds = (float) Math.floor(Math.max(1.0, gun.getFireRate())) / 20.0f;
 		stack.setData(DataComponentTypes.USE_COOLDOWN,
 				UseCooldown.useCooldown(seconds).cooldownGroup(group(gun)));
 	}

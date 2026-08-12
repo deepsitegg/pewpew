@@ -202,7 +202,7 @@ p90:
   customModelData: 1012
   itemModel: "minecraft:golden_horse_armor"
   baseDamage: 4.2
-  fireRate: 2
+  fireRate: 1.33
   reloadTime: 66
   ammoType: pdw_57
   maxAmmo: 50
@@ -277,7 +277,7 @@ m4a1:
   customModelData: 1021
   itemModel: "minecraft:iron_horse_armor"
   baseDamage: 7.0
-  fireRate: 2
+  fireRate: 1.5
   reloadTime: 52
   ammoType: rifle_556
   maxAmmo: 30
@@ -637,7 +637,7 @@ m249:
   customModelData: 1050
   itemModel: "minecraft:iron_horse_armor"
   baseDamage: 6.5
-  fireRate: 2
+  fireRate: 1.6
   reloadTime: 140
   ammoType: belt_556
   maxAmmo: 100

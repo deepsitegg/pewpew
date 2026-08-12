@@ -114,8 +114,8 @@ public class WeaponDeserializer {
 			return null;
 		}
 
-		int fireRate = node.node("fireRate").getInt(Integer.MIN_VALUE);
-		if (fireRate == Integer.MIN_VALUE) {
+		double fireRate = node.node("fireRate").getDouble(Double.MIN_VALUE);
+		if (fireRate == Double.MIN_VALUE) {
 			warn(fileName, id, "missing required field 'fireRate'");
 			return null;
 		}

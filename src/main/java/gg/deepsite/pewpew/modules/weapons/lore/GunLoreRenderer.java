@@ -52,8 +52,8 @@ public class GunLoreRenderer {
 			double range = AttachmentUtil.effectiveRange(gun, stack);
 			lore.add(bar("Damage", damage / DAMAGE_MAX, format(damage)));
 			lore.add(bar("Range", range / RANGE_MAX, format(range)));
-			lore.add(bar("Fire Rate", FIRE_RATE_REF / Math.max(1, gun.getFireRate()),
-					Math.max(1, gun.getFireRate()) + "t"));
+			double fireRate = Math.max(0.05, gun.getFireRate());
+			lore.add(bar("Fire Rate", FIRE_RATE_REF / fireRate, format(fireRate) + "t"));
 			if (gun.getBulletCount() > 1) {
 				lore.add(line("<gray>Pellets <dark_gray>┃ <color>" + gun.getBulletCount()));
 			}

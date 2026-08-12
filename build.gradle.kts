@@ -13,7 +13,7 @@ plugins {
 }
 
 group = "gg.deepsite"
-version = "26.1.0"
+version = "26.1.1-dev"
 val MAINTAINERS = listOf("ThebigTijn")
 
 lombok {

@@ -29,10 +29,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class ShootingHandler {
 
 	private static final long BURST_SHOT_DELAY_TICKS = 2L;
+	private static final int MAX_SHOTS_PER_TICK = 4;
+	private static final float PITCH_JITTER = 0.08f;
 	private static final long SEMI_RELEASE_MS = 100L;
 	private static final long AUTO_RELEASE_MS = 150L;
 
@@ -41,6 +44,7 @@ public class ShootingHandler {
 	private final Map<UUID, BukkitTask> reloadTasks = new ConcurrentHashMap<>();
 	private final Map<UUID, BukkitTask> autoTasks = new ConcurrentHashMap<>();
 	private final Map<UUID, Long> lastTrigger = new ConcurrentHashMap<>();
+	private final Map<UUID, Double> nextShot = new ConcurrentHashMap<>();
 	private final Map<FiringMode, ShotExecutor> executors = new EnumMap<>(FiringMode.class);
 
 	@Getter
@@ -117,21 +121,35 @@ public class ShootingHandler {
 			return;
 		}
 
-		if (player.hasCooldown(weapon)) return;
+		UUID id = player.getUniqueId();
+		double now = plugin.getServer().getCurrentTick();
+		Double next = nextShot.get(id);
+		if (next != null && now < next) return;
 
 		int burstCount = Math.max(1, gun.getBurstCount());
 		long burstSpan = (burstCount - 1) * BURST_SHOT_DELAY_TICKS;
 		int actionTicks = gun.getActionOpenTime() + gun.getActionCloseTime();
-		int cooldownTicks = (int) burstSpan + Math.max(1, gun.getFireRate()) + actionTicks;
-		player.setCooldown(weapon, cooldownTicks);
+		double intervalTicks = burstSpan + Math.max(0.05, gun.getFireRate()) + actionTicks;
 
-		fireShot(player, gun);
-		for (int shot = 1; shot < burstCount; shot++) {
-			plugin.getServer().getScheduler().runTaskLater(plugin,
-					() -> {
-						if (player.isOnline() && !player.isDead()) fireShot(player, gun);
-					},
-					shot * BURST_SHOT_DELAY_TICKS);
+		int maxDue = gun.isAutomatic() ? MAX_SHOTS_PER_TICK : 1;
+		double deadline = next != null && now - next < intervalTicks * maxDue ? next : now;
+		int due = 0;
+		while (deadline <= now && due < maxDue) {
+			deadline += intervalTicks;
+			due++;
+		}
+		nextShot.put(id, deadline);
+		player.setCooldown(weapon, (int) intervalTicks);
+
+		for (int volley = 0; volley < due; volley++) {
+			fireShot(player, gun, volley == 0);
+			for (int shot = 1; shot < burstCount; shot++) {
+				plugin.getServer().getScheduler().runTaskLater(plugin,
+						() -> {
+							if (player.isOnline() && !player.isDead()) fireShot(player, gun, true);
+						},
+						shot * BURST_SHOT_DELAY_TICKS);
+			}
 		}
 
 		if (actionTicks > 0) cycleFirearmAction(player, gun, burstSpan);
@@ -194,6 +212,7 @@ public class ShootingHandler {
 		autoTasks.values().forEach(BukkitTask::cancel);
 		autoTasks.clear();
 		lastTrigger.clear();
+		nextShot.clear();
 		recoilManager.stop();
 	}
 
@@ -269,7 +288,7 @@ public class ShootingHandler {
 		if (task != null) task.cancel();
 	}
 
-	private void fireShot(Player player, PewpewGunItem gun) {
+	private void fireShot(Player player, PewpewGunItem gun, boolean playSound) {
 		ItemStack held = player.getInventory().getItemInMainHand();
 		if (!isSameGun(held, gun)) return;
 
@@ -288,10 +307,13 @@ public class ShootingHandler {
 			player.getInventory().setItemInMainHand(held);
 		}
 
-		if (gun.getFireSound() != null && !gun.getFireSound().isEmpty()) {
-			gun.getFireSound().forEach(sound -> sound.playAt(player.getLocation()));
-		} else {
-			player.getWorld().playSound(player.getLocation(), Sound.ENTITY_BLAZE_SHOOT, 0.6f, 1.6f);
+		if (playSound) {
+			float jitter = 1.0f + (ThreadLocalRandom.current().nextFloat() - 0.5f) * PITCH_JITTER;
+			if (gun.getFireSound() != null && !gun.getFireSound().isEmpty()) {
+				gun.getFireSound().forEach(sound -> sound.playAt(player.getLocation(), jitter));
+			} else {
+				player.getWorld().playSound(player.getLocation(), Sound.ENTITY_BLAZE_SHOOT, 0.6f, 1.6f * jitter);
+			}
 		}
 
 		ShotExecutor executor = executors.getOrDefault(gun.getFiringMode(), executors.get(FiringMode.HITSCAN));

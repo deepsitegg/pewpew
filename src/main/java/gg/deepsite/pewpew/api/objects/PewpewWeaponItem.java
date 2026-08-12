@@ -17,7 +17,7 @@ import java.util.List;
 public class PewpewWeaponItem extends PewPewItem {
 
 	private double baseDamage;
-	private int fireRate;
+	private double fireRate;
 	private int reloadTime;
 	private String ammoType;
 	private int maxAmmo;
