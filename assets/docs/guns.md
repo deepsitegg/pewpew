@@ -129,6 +129,12 @@ fireSound: # or a block
   key: "minecraft:entity.blaze.shoot"   # vanilla key, or a custom resource-pack key
   volume: 1.0
   pitch: 1.4
+
+fireSound: # or a list, all played together (layering)
+  - key: "minecraft:entity.blaze.shoot"
+    volume: 1.0
+    pitch: 1.4
+  - "minecraft:entity.generic.explode"
 ```
 
 Names without a namespace are treated as vanilla and converted (`ENTITY_BLAZE_SHOOT` → `minecraft:entity.blaze.shoot`).

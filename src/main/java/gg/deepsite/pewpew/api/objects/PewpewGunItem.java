@@ -54,8 +54,8 @@ public class PewpewGunItem extends PewpewWeaponItem {
 	private double falloffMinMultiplier;
 	private Particle trailParticle;
 	private Particle impactParticle;
-	private PewpewSound fireSound;
-	private PewpewSound hitSound;
+	private List<PewpewSound> fireSound;
+	private List<PewpewSound> hitSound;
 	private String hitMessage;
 	private List<DefaultAttachment> defaultAttachments;
 

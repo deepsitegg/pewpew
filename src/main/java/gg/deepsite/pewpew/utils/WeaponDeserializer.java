@@ -221,8 +221,8 @@ public class WeaponDeserializer {
 		double falloffMinMultiplier = Math.max(0.0, node.node("falloffMinMultiplier").getDouble(1.0));
 		Particle trailParticle = parseParticle(fileName, id, node.node("trailParticle").getString(), Particle.CRIT);
 		Particle impactParticle = parseParticle(fileName, id, node.node("impactParticle").getString(), null);
-		PewpewSound fireSound = parseSound(fileName, id, node.node("fireSound"));
-		PewpewSound hitSound = parseSound(fileName, id, node.node("hitSound"));
+		List<PewpewSound> fireSound = parseSounds(fileName, id, node.node("fireSound"));
+		List<PewpewSound> hitSound = parseSounds(fileName, id, node.node("hitSound"));
 		String hitMessage = node.node("hitMessage").getString();
 
 		String reloadTypeRaw = node.node("reloadType").getString("MAGAZINE");
@@ -475,6 +475,20 @@ public class WeaponDeserializer {
 
 	private static double clamp(double value, double min, double max) {
 		return Math.max(min, Math.min(max, value));
+	}
+
+	private static List<PewpewSound> parseSounds(String fileName, String id, ConfigurationNode node) {
+		if (node.virtual()) return null;
+		if (node.isList()) {
+			List<PewpewSound> sounds = new ArrayList<>();
+			for (ConfigurationNode child : node.childrenList()) {
+				PewpewSound sound = parseSound(fileName, id, child);
+				if (sound != null) sounds.add(sound);
+			}
+			return sounds.isEmpty() ? null : sounds;
+		}
+		PewpewSound single = parseSound(fileName, id, node);
+		return single == null ? null : List.of(single);
 	}
 
 	private static PewpewSound parseSound(String fileName, String id, ConfigurationNode node) {

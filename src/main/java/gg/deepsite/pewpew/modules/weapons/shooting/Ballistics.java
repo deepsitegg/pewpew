@@ -65,8 +65,8 @@ public class Ballistics {
 
 	public static void hitFeedback(@NotNull Player shooter, @NotNull PewpewGunItem gun,
 	                               @NotNull LivingEntity victim, double damage, boolean headshot) {
-		if (gun.getHitSound() != null) {
-			gun.getHitSound().play(shooter);
+		if (gun.getHitSound() != null && !gun.getHitSound().isEmpty()) {
+			gun.getHitSound().forEach(sound -> sound.play(shooter));
 		} else {
 			shooter.playSound(shooter, Sound.BLOCK_NOTE_BLOCK_PLING, 1.0f, headshot ? 1.8f : 1.0f);
 		}

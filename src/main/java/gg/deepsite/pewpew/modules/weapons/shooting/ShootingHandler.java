@@ -288,8 +288,8 @@ public class ShootingHandler {
 			player.getInventory().setItemInMainHand(held);
 		}
 
-		if (gun.getFireSound() != null) {
-			gun.getFireSound().playAt(player.getLocation());
+		if (gun.getFireSound() != null && !gun.getFireSound().isEmpty()) {
+			gun.getFireSound().forEach(sound -> sound.playAt(player.getLocation()));
 		} else {
 			player.getWorld().playSound(player.getLocation(), Sound.ENTITY_BLAZE_SHOOT, 0.6f, 1.6f);
 		}
