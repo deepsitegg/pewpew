@@ -14,8 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 @Getter
 @Setter
-public final class
-PewpewPlugin extends JavaPlugin {
+public final class PewpewPlugin extends JavaPlugin {
 
 	@Getter
 	private static PewpewPlugin instance;
