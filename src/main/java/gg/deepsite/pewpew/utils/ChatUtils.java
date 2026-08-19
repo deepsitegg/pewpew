@@ -16,7 +16,9 @@ import java.util.regex.Pattern;
 
 @UtilityClass
 public final class ChatUtils {
-	public static TextColor PRIMARY = TextColor.fromHexString("#ff5151");
+	private static final Pattern LEGACY_CODES = Pattern.compile("§[0-9a-fk-orx]", Pattern.CASE_INSENSITIVE);
+
+	public static TextColor PRIMARY =TextColor.fromHexString("#ff5151");
 	public static TextColor SUCCESS = TextColor.fromHexString("#12ff2a");
 	public static TextColor ERROR = TextColor.fromHexString("#FC3838");
 	public static TextColor WARNING = TextColor.fromHexString("#FBFB00");
@@ -51,7 +53,12 @@ public final class ChatUtils {
 					tags.resolver(TagResolver.resolver("color_alt", Tag.styling(TextColor.fromHexString(tint(textColor.asHexString(), 0.15)))));
 				}).build();
 
-		return extendedInstance.deserialize(replaceArguments(message, args));
+		return extendedInstance.deserialize(stripLegacy(replaceArguments(message, args)));
+	}
+
+	@PackagePrivate
+	private static String stripLegacy(String message) {
+		return LEGACY_CODES.matcher(message).replaceAll("");
 	}
 
 	@PackagePrivate
