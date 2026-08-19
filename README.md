@@ -132,6 +132,13 @@ defaults and descriptions:
 Pewpew is licensed under the [PolyForm Noncommercial License 1.0.0](LICENSE.md) - free to use, modify, and share for
 **noncommercial** purposes only.
 
+**Additional permission:** as an exception to the noncommercial restriction, running Pewpew on a server that sells
+ranks, cosmetics or other items, or that accepts donations, is permitted. That permission does **not** cover:
+
+- selling, licensing or otherwise commercially distributing Pewpew, or a modified, rebranded or redesigned version of it
+- selling Pewpew items - guns, ammo, attachments or throwables - or access to Pewpew features, as store, shop or
+  webshop products
+
 Copyright 2026 ThebigTijn (https://deepsite.gg). Redistributions must keep the license and the `Required Notice`
 (see [NOTICE](NOTICE)).
 
