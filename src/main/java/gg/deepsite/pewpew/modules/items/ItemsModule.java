@@ -14,7 +14,11 @@ import gg.deepsite.pewpew.utils.PersistentDataUtil;
 import gg.deepsite.pewpew.utils.WeaponDeserializer;
 import lombok.Getter;
 import org.apache.commons.io.FileUtils;
+import org.bukkit.Bukkit;
+import org.spongepowered.configurate.ConfigurationNode;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.permissions.Permission;
+import org.bukkit.permissions.PermissionDefault;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -54,8 +58,18 @@ public class ItemsModule extends SpigotModule<PewpewPlugin> {
 		loadItems();
 	}
 
+	public static final String USE_PERMISSION_PREFIX = "pewpew.use.";
+
 	public void register(@NotNull PewPewItem item) {
 		items.put(item.getId(), item);
+		registerUsePermission(item.getId());
+	}
+
+	private static void registerUsePermission(@NotNull String id) {
+		String node = USE_PERMISSION_PREFIX + id;
+		if (Bukkit.getPluginManager().getPermission(node) != null) return;
+		Bukkit.getPluginManager().addPermission(
+				new Permission(node, "Use the Pewpew item '" + id + "'.", PermissionDefault.TRUE));
 	}
 
 	public boolean unregister(@NotNull String id) {
@@ -130,16 +144,23 @@ public class ItemsModule extends SpigotModule<PewpewPlugin> {
 
 		int guns = 0, throwables = 0, attachments = 0;
 
+		Map<String, ConfigurationNode> roots = new LinkedHashMap<>();
 		for (File file : files) {
 			ItemConfiguration config = new ItemConfiguration(itemsFolder, file.getName());
-			if (config.getRootNode() == null) continue;
+			if (config.getRootNode() != null) roots.put(file.getName(), config.getRootNode());
+		}
+		Map<String, ConfigurationNode> templates = WeaponDeserializer.index(roots.values());
+		boolean allowExtends = PewpewPlugin.getDefaultConfiguration().isExtendsEnabled();
+		boolean allowAbstract = PewpewPlugin.getDefaultConfiguration().isAbstractEnabled();
 
-			List<PewPewItem> items = WeaponDeserializer.deserializeAll(file.getName(), config.getRootNode());
+		for (var fileEntry : roots.entrySet()) {
+			List<PewPewItem> items = WeaponDeserializer.deserializeAll(fileEntry.getKey(), fileEntry.getValue(),
+					templates, allowExtends, allowAbstract);
 
 			for (PewPewItem item : items) {
 				if (isRegistered(item.getId())) {
 					log.warning("Duplicate item id '" + item.getId() + "' found in '"
-							+ file.getName() + "', overwriting previous entry.");
+							+ fileEntry.getKey() + "', overwriting previous entry.");
 				}
 				register(item);
 

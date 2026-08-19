@@ -6,7 +6,9 @@ import gg.deepsite.pewpew.api.events.PewpewGunExplodeEvent;
 import gg.deepsite.pewpew.api.events.PewpewHitEvent;
 import gg.deepsite.pewpew.api.events.PewpewThrowableDetonateEvent;
 import gg.deepsite.pewpew.api.objects.ExplosiveConfig;
+import gg.deepsite.pewpew.api.objects.PewpewAmmoItem;
 import gg.deepsite.pewpew.api.objects.PewpewGunItem;
+import gg.deepsite.pewpew.modules.weapons.ammo.AmmoUtil;
 import gg.deepsite.pewpew.api.objects.PewpewThrowableItem;
 import gg.deepsite.pewpew.integrations.CombatTagIntegration;
 import gg.deepsite.pewpew.modules.items.ItemsModule;
@@ -38,9 +40,10 @@ public class ProjectileShotExecutor implements ShotExecutor {
 	public void execute(@NotNull Player shooter, @NotNull PewpewGunItem gun, @NotNull ItemStack weapon) {
 		double recoilMultiplier = AttachmentUtil.recoilMultiplier(weapon);
 		boolean scoped = ScopeState.isScoped(shooter);
-		double spread = gun.getSpread() * recoilMultiplier;
-		if (scoped) spread *= AttachmentUtil.aimSpreadMultiplier(weapon);
-		double damage = AttachmentUtil.effectiveDamage(gun, weapon);
+		double spread = Spread.effective(shooter, gun, weapon, scoped);
+		PewpewAmmoItem ammo = AmmoUtil.statsOf(weapon);
+		double damage = AttachmentUtil.effectiveDamage(gun, weapon) * AmmoUtil.damageMultiplier(ammo);
+		double projectileSpeed = gun.getProjectileSpeed() * AmmoUtil.velocityMultiplier(ammo);
 		boolean gravity = gun.getTrajectory() != null
 				? gun.getTrajectory() == Trajectory.ARC
 				: gun.getBulletDrop() > 0;
@@ -48,7 +51,7 @@ public class ProjectileShotExecutor implements ShotExecutor {
 		int pellets = Math.max(1, gun.getBulletCount());
 
 		for (int pellet = 0; pellet < pellets; pellet++) {
-			Vector velocity = Ballistics.applySpread(aim, spread).multiply(gun.getProjectileSpeed());
+			Vector velocity = Ballistics.applySpread(aim, spread).multiply(projectileSpeed);
 			if (gun.getPayload() != null) {
 				launchPayload(shooter, gun, velocity, gravity);
 				continue;
@@ -62,6 +65,8 @@ public class ProjectileShotExecutor implements ShotExecutor {
 					.set(PROJECTILE_DAMAGE_KEY, PersistentDataType.DOUBLE, damage);
 			if (gun.getTrailParticle() != null) trail(projectile, gun.getTrailParticle());
 		}
+
+		Spread.addShot(shooter, gun);
 
 		double recoil = gun.getRecoil() * recoilMultiplier;
 		if (scoped) recoil *= AttachmentUtil.aimRecoilMultiplier(weapon);
@@ -150,7 +155,7 @@ public class ProjectileShotExecutor implements ShotExecutor {
 			GunHitTracker.record(target, shooterPlayer, gun);
 			if (target instanceof Player victim) CombatTagIntegration.tag(victim, shooterPlayer);
 		}
-		Ballistics.dealProjectileDamage(target, damage, causing, projectile);
+		Ballistics.dealProjectileDamage(target, damage, causing, projectile, gun.getDamageType());
 		if (shooterPlayer != null) {
 			Ballistics.applyKnockback(target, shooterPlayer, gun.getKnockback());
 		}

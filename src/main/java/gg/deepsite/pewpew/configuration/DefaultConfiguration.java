@@ -10,6 +10,23 @@ public class DefaultConfiguration extends ConfigurateConfig {
 
 	public DefaultConfiguration(File file) {
 		super(file, "config.yml", "config.yml", true);
+		migrate(ConfigMigrations.MAIN, ConfigMigrations.MAIN_VERSION, "config.yml");
+	}
+
+	public boolean isExtendsEnabled() {
+		return getRootNode().node("advanced", "extends").getBoolean(false);
+	}
+
+	public boolean isAbstractEnabled() {
+		return getRootNode().node("advanced", "abstract").getBoolean(false);
+	}
+
+	public boolean isAmmoStatsEnabled() {
+		return getRootNode().node("advanced", "ammo-stats").getBoolean(false);
+	}
+
+	public boolean isLegacySpread() {
+		return getRootNode().node("compatibility", "legacy-spread").getBoolean(false);
 	}
 
 	public boolean isStatDisplayEnabled() {

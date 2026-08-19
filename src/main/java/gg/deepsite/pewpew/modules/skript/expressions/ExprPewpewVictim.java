@@ -7,6 +7,7 @@ import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
 import gg.deepsite.pewpew.api.events.PewpewHitEvent;
+import gg.deepsite.pewpew.api.events.PewpewKillEvent;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.Nullable;
@@ -21,8 +22,8 @@ public class ExprPewpewVictim extends SimpleExpression<LivingEntity> {
 
 	@Override
 	public boolean init(Expression<?>[] expressions, int matchedPattern, Kleenean isDelayed, ParseResult parseResult) {
-		if (!getParser().isCurrentEvent(PewpewHitEvent.class)) {
-			Skript.error("'pewpew victim' can only be used in a pewpew hit event");
+		if (!getParser().isCurrentEvent(PewpewHitEvent.class, PewpewKillEvent.class)) {
+			Skript.error("'pewpew victim' can only be used in a pewpew hit or kill event");
 			return false;
 		}
 		return true;
@@ -31,8 +32,9 @@ public class ExprPewpewVictim extends SimpleExpression<LivingEntity> {
 	@Override
 	@Nullable
 	protected LivingEntity[] get(Event event) {
-		if (!(event instanceof PewpewHitEvent hit)) return new LivingEntity[0];
-		return new LivingEntity[]{hit.getTarget()};
+		if (event instanceof PewpewHitEvent hit) return new LivingEntity[]{hit.getTarget()};
+		if (event instanceof PewpewKillEvent kill) return new LivingEntity[]{kill.getVictim()};
+		return new LivingEntity[0];
 	}
 
 	@Override

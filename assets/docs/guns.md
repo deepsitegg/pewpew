@@ -48,13 +48,59 @@ Add an `explosive:` block to a `PROJECTILE` gun to detonate on impact (rocket la
 | Field           | Type             | Default | Description                                                                                                                     |
 |-----------------|------------------|---------|---------------------------------------------------------------------------------------------------------------------------------|
 | `automatic`     | bool             | `false` | Hold right-click to fire continuously at `fireRate`. False fires once per click.                                                |
-| `burstCount`    | int              | `1`     | Shots fired per trigger pull, 2 ticks apart.                                                                                    |
+| `burstCount`    | int              | `1`     | Shots fired per trigger pull.                                                                                                   |
+| `burstDelay`    | int (ticks)      | `2`     | Ticks between the shots of a burst. Only used when `burstCount` is above 1.                                                     |
 | `bulletCount`   | int              | `1`     | Pellets/projectiles per shot, each independently spread (shotgun buckshot).                                                     |
 | `spread`        | double (degrees) | `1.5`   | Bullet cone half-angle. `0` = pinpoint. Scaled by grip and scope.                                                               |
 | `recoil`        | double (degrees) | `0.0`   | Camera kick strength per shot. Scaled by grip and scope, then shaped by `recoilProfile`.                                        |
 | `knockback`     | double           | `0.0`   | Extra knockback pushed onto the victim on a landed hit, away from the shooter. `0` = vanilla only.                              |
 | `selfKnockback` | double           | `0.0`   | Recoil shove on the shooter (backward), for hand-cannon feel. `0` = none.                                                       |
 | `bulletDrop`    | double           | `0.0`   | For `HITSCAN`: vertical curve per block (ballistic arc). For `PROJECTILE`: any value `> 0` enables gravity. `0` flies straight. |
+
+## Spread by movement, and bloom
+
+By default a gun's `spread` is the same whether you are standing still, sprinting or falling. Two optional blocks change
+that. Both are off unless configured, so leaving them out keeps the old behaviour exactly.
+
+`spreadModifiers` multiplies `spread` by the shooter's state. The movement states are exclusive and checked in the order
+sprinting, sneaking, walking, standing, so only one of them applies. `midair` and `inWater` then multiply on top of that.
+
+```yaml
+spread: 2.0
+spreadModifiers:
+  sprinting: 2.5
+  walking: 1.4
+  sneaking: 0.6
+  standing: 1.0
+  midair: 3.0
+  inWater: 1.5
+```
+
+| Field       | Type   | Default | Description                                                            |
+|-------------|--------|---------|------------------------------------------------------------------------|
+| `sprinting` | double | `1.0`   | Applied while sprinting.                                               |
+| `sneaking`  | double | `1.0`   | Applied while sneaking, and beats `walking`.                           |
+| `walking`   | double | `1.0`   | Applied while moving on foot without sprinting or sneaking.            |
+| `standing`  | double | `1.0`   | Applied while not moving.                                              |
+| `midair`    | double | `1.0`   | Multiplied in whenever the shooter is off the ground.                  |
+| `inWater`   | double | `1.0`   | Multiplied in whenever the shooter is in water.                        |
+
+**Bloom** widens the cone as you keep firing and closes it again once you stop, so holding the trigger costs accuracy.
+
+```yaml
+bloomPerShot: 0.15
+bloomMax: 2.0
+bloomDecay: 0.08
+```
+
+| Field          | Type                     | Default | Description                                                                          |
+|----------------|--------------------------|---------|--------------------------------------------------------------------------------------|
+| `bloomPerShot` | double (degrees)         | `0.0`   | Extra spread added by every shot. `0` disables bloom.                                |
+| `bloomMax`     | double (degrees)         | `0.0`   | Ceiling on accumulated bloom. `0` = no ceiling.                                      |
+| `bloomDecay`   | double (degrees / tick)  | `0.0`   | How fast bloom shrinks while not firing. `0` means it never recovers, so set it.     |
+
+Bloom is added to `spread` after the state multipliers, so `spreadModifiers` scales the weapon's base accuracy while
+bloom is a flat penalty for sustained fire.
 
 ## Recoil profile
 
@@ -82,6 +128,38 @@ recoilProfile:
 | `recoveryPenalty`    | double (0–1)          | `0.0`   | Share of every kick the camera never gives back, as a percentage. `0.0` = full recovery, `0.25` = a quarter of each shot's kick sticks and your aim walks up over a burst, `1.0` = nothing recovers. Needs `recovery > 0`. |
 | `speed`              | double                | `1.0`   | Multiplier on the per-tick rotation actually applied. `<1` = the whole animation plays slower.                                                                                                                             |
 | `maxAccumulation`    | double (degrees)      | `12.0`  | Ceiling on total accumulated kick, so full-auto cannot walk your camera into the sky. `0` = no ceiling.                                                                                                                    |
+| `pattern`            | list of `[x, y]`      | -       | A fixed spray pattern. See below. When set, it replaces `verticalMean`/`verticalVariance`/`horizontalMean`/`horizontalVariance`.                                                                                          |
+| `patternLoop`        | bool                  | `false` | What happens when a magazine outlasts the pattern. `false` = keep repeating the last step, `true` = start over from the first.                                                                                            |
+| `patternReset`       | int (ticks)           | `20`    | How long the player must stop firing before the pattern restarts from shot one. `20` = one second.                                                                                                                        |
+
+### Spray patterns
+
+By default recoil is statistical: every shot rolls its own kick, so a burst is never quite the same twice. A `pattern`
+makes it deterministic instead, the way an AK sprays the same shape every time in a competitive shooter. Players can
+learn it and pull against it, which turns recoil control into a skill rather than a dice roll.
+
+Each entry is `[horizontal, vertical]`, as a fraction of `recoil`. Positive horizontal is right, positive vertical is up.
+Shot one uses the first entry, shot two the second, and so on.
+
+```yaml
+recoil: 1.2
+recoilProfile:
+  smoothing: 0.5
+  recovery: 0.4
+  pattern:
+    - [ 0.0, 1.0 ]   # first shots climb straight up
+    - [ 0.0, 1.1 ]
+    - [ 0.1, 1.2 ]
+    - [ 0.3, 1.0 ]   # then pull right
+    - [ 0.4, 0.8 ]
+    - [ 0.2, 0.6 ]
+    - [ -0.2, 0.5 ]  # and drift back left
+    - [ -0.4, 0.4 ]
+```
+
+The counter resets after `patternReset` ticks without firing, so tapping restarts the spray while holding the trigger
+walks it. `damping`, `recovery`, `smoothing` and `maxAccumulation` all still apply on top - the pattern decides the
+direction of each kick, the rest decides how the camera moves.
 
 ## Damage modifiers
 
@@ -94,6 +172,19 @@ recoilProfile:
 | `falloffEnd`           | double (blocks) | `0.0`   | Distance where damage reaches the minimum. `0` (or ≤ start) disables falloff.              |
 | `falloffMinMultiplier` | double          | `1.0`   | Damage multiplier at and beyond `falloffEnd` (e.g. `0.25` = 25% damage at long range).     |
 | `shieldDisableTime`    | int (ticks)     | `0`     | Hitting a blocking player disables their shield for this long (the axe effect). `0` = off. |
+| `damageType`           | damage type     | `minecraft:arrow` | The Minecraft damage type this gun deals.                                        |
+
+### `damageType`
+
+Damage is applied *after* falloff, headshot and crit multipliers. The damage type decides what Minecraft then does with
+that number.
+
+- `minecraft:arrow` (the default) makes the shot behave like an arrow: armor, Protection and Projectile Protection scale
+  the damage down, exactly like a bow.
+- `minecraft:generic` ignores armor and Protection, so the damage you configure is the damage the target takes. Use this
+  when you want your configured numbers to be exact and armor to be irrelevant to guns.
+
+Any damage type from the game registry works. Unknown values fall back to `minecraft:arrow` with a console warning.
 
 ## Effects on hit
 

@@ -56,6 +56,15 @@ dependencies {
     compileOnly("com.sk89q.worldedit:worldedit-bukkit:7.3.0") { isTransitive = false }
     compileOnly("com.sk89q.worldedit:worldedit-core:7.3.0") { isTransitive = false }
 
+    testImplementation("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
+    testImplementation("org.spongepowered:configurate-yaml:4.1.2")
+    testImplementation(platform("org.junit:junit-bom:5.11.4"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
 
 tasks.withType<ShadowJar> {
@@ -102,7 +111,7 @@ publishing {
         maven {
             name = "deepsite"
             url = uri(
-                if (version.toString().endsWith("SNAPSHOT"))
+                if (version.toString().let { it.endsWith("SNAPSHOT") || it.endsWith("-dev") })
                     "https://maven.deepsite.gg/snapshots"
                 else
                     "https://maven.deepsite.gg/releases"

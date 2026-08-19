@@ -4,10 +4,12 @@ import gg.deepsite.pewpew.PewpewPlugin;
 import gg.deepsite.pewpew.api.enums.*;
 import gg.deepsite.pewpew.api.objects.*;
 import gg.deepsite.pewpew.api.objects.attachment.*;
+import gg.deepsite.pewpew.utils.configuration.ConfigMigrator;
 import lombok.experimental.UtilityClass;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
 import org.bukkit.Registry;
+import org.bukkit.damage.DamageType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
@@ -15,21 +17,156 @@ import org.jetbrains.annotations.Nullable;
 import org.spongepowered.configurate.ConfigurationNode;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 @UtilityClass
 public class WeaponDeserializer {
 
+	public static final String EXTENDS_KEY = "extends";
+	public static final String ABSTRACT_KEY = "abstract";
+
 	@NotNull
 	public static List<PewPewItem> deserializeAll(String fileName, ConfigurationNode root) {
+		return deserializeAll(fileName, root, Map.of(), false, false);
+	}
+
+	@NotNull
+	public static List<PewPewItem> deserializeAll(String fileName, ConfigurationNode root,
+	                                              @NotNull Map<String, ConfigurationNode> templates,
+	                                              boolean allowExtends, boolean allowAbstract) {
+		Logger log = PewpewPlugin.getInstance().getLogger();
 		List<PewPewItem> result = new ArrayList<>();
+
 		for (var entry : root.childrenMap().entrySet()) {
 			String id = entry.getKey().toString();
-			PewPewItem item = deserializeOne(fileName, id, entry.getValue());
+			if (ConfigMigrator.VERSION_KEY.equals(id)) continue;
+
+			ConfigurationNode raw = entry.getValue();
+
+			if (!allowExtends && !raw.node(EXTENDS_KEY).virtual()) {
+				log.warning("[WeaponDeserializer] '" + id + "' in " + fileName + " uses 'extends', which is off."
+						+ " Set advanced.extends to true in config.yml to use it.");
+			}
+			if (!allowAbstract && raw.node(ABSTRACT_KEY).getBoolean(false)) {
+				log.warning("[WeaponDeserializer] '" + id + "' in " + fileName + " is marked 'abstract', which is off."
+						+ " Set advanced.abstract to true in config.yml to use it.");
+			}
+
+			if (allowAbstract && raw.node(ABSTRACT_KEY).getBoolean(false)) continue;
+
+			ConfigurationNode node = allowExtends ? resolveExtends(id, raw, templates, log) : raw;
+			PewPewItem item = deserializeOne(fileName, id, node);
 			if (item != null) result.add(item);
 		}
 		return result;
+	}
+
+	@NotNull
+	public static Map<String, ConfigurationNode> index(@NotNull Collection<ConfigurationNode> roots) {
+		Map<String, ConfigurationNode> templates = new HashMap<>();
+		for (ConfigurationNode root : roots) {
+			for (var entry : root.childrenMap().entrySet()) {
+				String id = entry.getKey().toString();
+				if (ConfigMigrator.VERSION_KEY.equals(id)) continue;
+				templates.putIfAbsent(id, entry.getValue());
+			}
+		}
+		return templates;
+	}
+
+	@NotNull
+	public static ConfigurationNode resolveExtends(@NotNull String id, @NotNull ConfigurationNode node,
+	                                               @NotNull Map<String, ConfigurationNode> templates,
+	                                               @NotNull Logger log) {
+		return resolve(id, node, templates, new LinkedHashSet<>(), log);
+	}
+
+	@NotNull
+	private static ConfigurationNode resolve(String id, ConfigurationNode node,
+	                                         Map<String, ConfigurationNode> templates,
+	                                         Set<String> chain, Logger log) {
+		String parentId = node.node(EXTENDS_KEY).getString();
+		if (parentId == null || parentId.isBlank()) return node;
+
+		if (!chain.add(id)) {
+			log.warning("[WeaponDeserializer] '" + id + "' has a circular 'extends' chain ("
+					+ String.join(" -> ", chain) + " -> " + id + "); ignoring the rest of it.");
+			return withoutExtends(node);
+		}
+		if (chain.contains(parentId)) {
+			log.warning("[WeaponDeserializer] '" + id + "' extends '" + parentId
+					+ "', which extends back into itself; ignoring 'extends'.");
+			return withoutExtends(node);
+		}
+
+		ConfigurationNode parent = templates.get(parentId);
+		if (parent == null) {
+			log.warning("[WeaponDeserializer] '" + id + "' extends unknown item '" + parentId + "'; ignoring 'extends'.");
+			return withoutExtends(node);
+		}
+
+		ConfigurationNode merged = withoutExtends(node);
+		try {
+			merged.mergeFrom(asTemplate(resolve(parentId, parent, templates, chain, log)));
+		} catch (Exception e) {
+			log.warning("[WeaponDeserializer] Could not apply 'extends: " + parentId + "' to '" + id + "': " + e.getMessage());
+		}
+		return merged;
+	}
+
+	@NotNull
+	private static ConfigurationNode withoutExtends(ConfigurationNode node) {
+		ConfigurationNode copy = node.copy();
+		copy.removeChild(EXTENDS_KEY);
+		return copy;
+	}
+
+	@NotNull
+	private static ConfigurationNode asTemplate(ConfigurationNode node) {
+		ConfigurationNode copy = node.copy();
+		copy.removeChild(EXTENDS_KEY);
+		copy.removeChild(ABSTRACT_KEY);
+		return copy;
+	}
+
+	private static final Set<String> COMMON_KEYS = Set.of(
+			"type", "name", "lore", "itemModel", "hideItemFlags", "customModelData", "maxStack", EXTENDS_KEY, ABSTRACT_KEY);
+
+	private static final Map<ItemType, Set<String>> TYPE_KEYS = Map.of(
+			ItemType.GUN, Set.of(
+					"actionCloseTime", "actionOpenTime", "allowedAttachmentSlots", "ammoType", "automatic",
+					"baseDamage", "bulletCount", "bulletDrop", "burstCount", "burstDelay", "consumesAmmo",
+					"critChance", "critMultiplier", "damageType", "deathMessage", "defaultAttachments", "explosive",
+					"falloffEnd", "falloffMinMultiplier", "falloffStart", "fireRate", "fireSound", "firingMode",
+					"headshotMultiplier", "hitMessage", "hitSound", "impactParticle", "knockback", "maxAmmo",
+					"payload", "projectileModel", "projectileSpeed", "range", "recoil", "recoilProfile",
+					"reloadTime", "reloadType", "selfKnockback", "shieldDisableTime", "shooterEffects", "spread",
+					"spreadModifiers", "bloomPerShot", "bloomMax", "bloomDecay",
+					"trailParticle", "trajectory", "victimEffects"),
+			ItemType.AMMO, Set.of(
+					"ammoType", "roundsPerItem", "damageMultiplier", "velocityMultiplier", "penetration"),
+			ItemType.THROWABLE, Set.of(
+					"blastRadius", "effect", "effectAmplifier", "effectDuration", "explosionDamage",
+					"explosionKnockback", "fireTicks", "fuseTime", "throwForce"),
+			ItemType.ATTACHMENT, Set.of(
+					"adsSpeedModifier", "aimRecoilMultiplier", "aimSpreadMultiplier", "ammoBonus", "attachmentType",
+					"damageModifier", "rangeModifier", "recoilModifier", "reloadModifier", "zoom"));
+
+	@NotNull
+	public static List<String> unknownKeys(@NotNull ItemType type, @NotNull ConfigurationNode node) {
+		Set<String> known = TYPE_KEYS.getOrDefault(type, Set.of());
+		List<String> unknown = new ArrayList<>();
+		for (Object key : node.childrenMap().keySet()) {
+			String name = key.toString();
+			if (!COMMON_KEYS.contains(name) && !known.contains(name)) unknown.add(name);
+		}
+		return unknown;
 	}
 
 	@Nullable
@@ -45,6 +182,11 @@ public class WeaponDeserializer {
 		} catch (IllegalArgumentException e) {
 			warn(fileName, id, "unknown type '" + typeRaw + "'");
 			return null;
+		}
+
+		for (String unknown : unknownKeys(type, node)) {
+			PewpewPlugin.getInstance().getLogger().warning("[WeaponDeserializer] '" + id + "' in " + fileName
+					+ " has an unknown field '" + unknown + "', which does nothing. Check it for typos.");
 		}
 
 		String name = node.node("name").getString();
@@ -91,6 +233,9 @@ public class WeaponDeserializer {
 		}
 
 		int roundsPerItem = node.node("roundsPerItem").getInt(1);
+		double damageMultiplier = Math.max(0.0, node.node("damageMultiplier").getDouble(1.0));
+		double velocityMultiplier = Math.max(0.0, node.node("velocityMultiplier").getDouble(1.0));
+		int penetration = Math.max(0, node.node("penetration").getInt(0));
 
 		return PewpewAmmoItem.builder()
 				.id(id)
@@ -101,6 +246,9 @@ public class WeaponDeserializer {
 				.itemModel(itemModel)
 				.ammoType(ammoType)
 				.roundsPerItem(roundsPerItem)
+				.damageMultiplier(damageMultiplier)
+				.velocityMultiplier(velocityMultiplier)
+				.penetration(penetration)
 				.build();
 	}
 
@@ -200,13 +348,19 @@ public class WeaponDeserializer {
 		boolean consumesAmmo = node.node("consumesAmmo").getBoolean(false);
 		int burstCount = node.node("burstCount").getInt(1);
 		double spread = node.node("spread").getDouble(1.5);
+		SpreadModifiers spreadModifiers = parseSpreadModifiers(node.node("spreadModifiers"));
+		double bloomPerShot = Math.max(0.0, node.node("bloomPerShot").getDouble(0.0));
+		double bloomMax = Math.max(0.0, node.node("bloomMax").getDouble(0.0));
+		double bloomDecay = Math.max(0.0, node.node("bloomDecay").getDouble(0.0));
 		double recoil = node.node("recoil").getDouble(0.0);
 		RecoilProfile recoilProfile = parseRecoilProfile(node.node("recoilProfile"));
 		double knockback = Math.max(0.0, node.node("knockback").getDouble(0.0));
 		double selfKnockback = Math.max(0.0, node.node("selfKnockback").getDouble(0.0));
 		int bulletCount = Math.max(1, node.node("bulletCount").getInt(1));
 		double bulletDrop = node.node("bulletDrop").getDouble(0.0);
+		int burstDelay = Math.max(1, node.node("burstDelay").getInt(2));
 		double headshotMultiplier = node.node("headshotMultiplier").getDouble(1.0);
+		DamageType damageType = parseDamageType(fileName, id, node.node("damageType").getString());
 		boolean automatic = node.node("automatic").getBoolean(false);
 		int actionOpenTime = Math.max(0, node.node("actionOpenTime").getInt(0));
 		int actionCloseTime = Math.max(0, node.node("actionCloseTime").getInt(0));
@@ -306,7 +460,13 @@ public class WeaponDeserializer {
 				.selfKnockback(selfKnockback)
 				.bulletCount(bulletCount)
 				.bulletDrop(bulletDrop)
+				.spreadModifiers(spreadModifiers)
+				.bloomPerShot(bloomPerShot)
+				.bloomMax(bloomMax)
+				.bloomDecay(bloomDecay)
+				.burstDelay(burstDelay)
 				.headshotMultiplier(headshotMultiplier)
+				.damageType(damageType)
 				.automatic(automatic)
 				.actionOpenTime(actionOpenTime)
 				.actionCloseTime(actionCloseTime)
@@ -456,6 +616,18 @@ public class WeaponDeserializer {
 	}
 
 	@Nullable
+	private static DamageType parseDamageType(String fileName, String id, @Nullable String name) {
+		if (name == null || name.isBlank()) return null;
+		NamespacedKey key = NamespacedKey.fromString(name.trim().toLowerCase());
+		DamageType type = key == null ? null : Registry.DAMAGE_TYPE.get(key);
+		if (type == null) {
+			warn(fileName, id, "unknown damageType '" + name + "', using the default");
+			return null;
+		}
+		return type;
+	}
+
+	@Nullable
 	private static RecoilProfile parseRecoilProfile(ConfigurationNode node) {
 		if (node.virtual()) return RecoilProfile.DEFAULT;
 		RecoilProfile defaults = RecoilProfile.DEFAULT;
@@ -470,7 +642,37 @@ public class WeaponDeserializer {
 				.recoveryPenalty((float) clamp(node.node("recoveryPenalty").getDouble(defaults.getRecoveryPenalty()), 0.0, 1.0))
 				.speed((float) Math.max(0.0, node.node("speed").getDouble(defaults.getSpeed())))
 				.maxAccumulation((float) Math.max(0.0, node.node("maxAccumulation").getDouble(defaults.getMaxAccumulation())))
+				.pattern(parseRecoilPattern(node.node("pattern")))
+				.patternLoop(node.node("patternLoop").getBoolean(defaults.isPatternLoop()))
+				.patternReset(Math.max(1, node.node("patternReset").getInt(defaults.getPatternReset())))
 				.build();
+	}
+
+	@Nullable
+	private static SpreadModifiers parseSpreadModifiers(ConfigurationNode node) {
+		if (node.virtual()) return null;
+		SpreadModifiers defaults = SpreadModifiers.DEFAULT;
+		return SpreadModifiers.builder()
+				.sprinting(Math.max(0.0, node.node("sprinting").getDouble(defaults.getSprinting())))
+				.walking(Math.max(0.0, node.node("walking").getDouble(defaults.getWalking())))
+				.sneaking(Math.max(0.0, node.node("sneaking").getDouble(defaults.getSneaking())))
+				.standing(Math.max(0.0, node.node("standing").getDouble(defaults.getStanding())))
+				.midair(Math.max(0.0, node.node("midair").getDouble(defaults.getMidair())))
+				.inWater(Math.max(0.0, node.node("inWater").getDouble(defaults.getInWater())))
+				.build();
+	}
+
+	@Nullable
+	private static List<float[]> parseRecoilPattern(ConfigurationNode node) {
+		if (node.virtual() || node.childrenList().isEmpty()) return null;
+
+		List<float[]> pattern = new ArrayList<>();
+		for (ConfigurationNode step : node.childrenList()) {
+			List<? extends ConfigurationNode> pair = step.childrenList();
+			if (pair.size() < 2) continue;
+			pattern.add(new float[]{(float) pair.get(0).getDouble(0.0), (float) pair.get(1).getDouble(0.0)});
+		}
+		return pattern.isEmpty() ? null : pattern;
 	}
 
 	private static double clamp(double value, double min, double max) {

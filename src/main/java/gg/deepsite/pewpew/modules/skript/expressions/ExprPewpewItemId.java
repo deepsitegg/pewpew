@@ -21,7 +21,9 @@ public class ExprPewpewItemId extends SimpleExpression<String> {
 	@Override
 	public boolean init(Expression<?>[] expressions, int matchedPattern, Kleenean isDelayed, ParseResult parseResult) {
 		if (!getParser().isCurrentEvent(PewpewShootEvent.class, PewpewHitEvent.class, PewpewReloadEvent.class,
-				PewpewThrowEvent.class, PewpewThrowableDetonateEvent.class)) {
+				PewpewThrowEvent.class, PewpewThrowableDetonateEvent.class, PewpewKillEvent.class,
+				PewpewReloadCompleteEvent.class, PewpewScopeEvent.class, PewpewAttachmentEvent.class,
+				PewpewHitBlockEvent.class, PewpewGunExplodeEvent.class)) {
 			Skript.error("'pewpew item id' can only be used in a pewpew event");
 			return false;
 		}
@@ -37,6 +39,12 @@ public class ExprPewpewItemId extends SimpleExpression<String> {
 			case PewpewReloadEvent e -> e.getGun().getId();
 			case PewpewThrowEvent e -> e.getThrowable().getId();
 			case PewpewThrowableDetonateEvent e -> e.getThrowable().getId();
+			case PewpewKillEvent e -> e.getGun().getId();
+			case PewpewReloadCompleteEvent e -> e.getGun().getId();
+			case PewpewHitBlockEvent e -> e.getGun().getId();
+			case PewpewGunExplodeEvent e -> e.getGun().getId();
+			case PewpewScopeEvent e -> e.getGun() == null ? null : e.getGun().getId();
+			case PewpewAttachmentEvent e -> e.getGun() == null ? null : e.getGun().getId();
 			default -> null;
 		};
 		return id == null ? new String[0] : new String[]{id};

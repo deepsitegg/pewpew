@@ -2,6 +2,9 @@ package gg.deepsite.pewpew.api.objects;
 
 import lombok.Builder;
 import lombok.Getter;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 @Getter
 @Builder
@@ -27,6 +30,17 @@ public class RecoilProfile {
 	private final float speed = 1.0f;
 	@Builder.Default
 	private final float maxAccumulation = 12.0f;
+
+	@Nullable
+	private final List<float[]> pattern;
+	@Builder.Default
+	private final boolean patternLoop = false;
+	@Builder.Default
+	private final int patternReset = 20;
+
+	public boolean hasPattern() {
+		return pattern != null && !pattern.isEmpty();
+	}
 
 	public static final RecoilProfile DEFAULT = RecoilProfile.builder().build();
 }

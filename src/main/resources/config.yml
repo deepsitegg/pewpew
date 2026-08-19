@@ -1,3 +1,34 @@
+# Config format version. Bumped once per Pewpew release that changes this file.
+# Pewpew migrates it automatically on startup and keeps a .bak of the previous
+# version next to it. Do not edit by hand.
+config-version: 2
+
+# Behaviour that changed in a Pewpew update, so you can keep the old behaviour.
+# Servers upgrading from an older version get the old behaviour switched on here;
+# fresh installs get the new behaviour. Turn a flag off to move to the new one.
+compatibility:
+  # Old spread rotated around the world axes, giving a square spread that shrank
+  # when looking up or down. false = a true cone of 'spread' degrees in every
+  # direction. Turning this off changes where your pellets land: retune 'spread'.
+  legacy-spread: false
+
+# Extra item-file syntax, off by default. Turn a feature on to use it; leaving it
+# off means Pewpew warns instead of silently doing nothing when an item uses it.
+advanced:
+  # 'extends: <other-id>' on an item copies every field from that item first, then
+  # applies its own on top. The parent may live in any file in items/, and may
+  # itself extend something else.
+  extends: false
+  # 'abstract: true' makes an item a template only: it is never registered, never
+  # shows up in /pewpew list and cannot be given, but other items can extend it.
+  # Needs 'extends' to be useful.
+  abstract: false
+  # Ammo items carry stats ('damageMultiplier', 'velocityMultiplier', 'penetration')
+  # that apply to the gun they are loaded into. Off means ammo is only a counter,
+  # exactly as before. Ammo always multiplies the gun's own numbers, it never
+  # replaces them, so 'baseDamage' and 'damageType' stay in charge.
+  ammo-stats: false
+
 lore:
   stat-display: true
 

@@ -5,6 +5,7 @@ import ch.njol.skript.lang.util.SimpleEvent;
 import ch.njol.skript.registrations.EventValues;
 import gg.deepsite.pewpew.api.events.*;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -47,6 +48,59 @@ public final class EvtPewpew {
 						+ "event-player is the shooter, event-location the blast point. Cancellable.")
 				.examples("on pewpew gun explode:", "\tset pewpew damage to pewpew damage * 2")
 				.since("26.0.2");
+
+		Skript.registerEvent("Pewpew Kill", SimpleEvent.class, PewpewKillEvent.class, "pewpew kill[ed]")
+				.description("Called when a player dies to a Pewpew gun. event-player is the killer, "
+						+ "'pewpew victim' the player who died. Set 'pewpew death message' to change the broadcast.")
+				.examples("on pewpew kill:", "	send \"headshot!\" to event-player")
+				.since("26.1.1");
+
+		Skript.registerEvent("Pewpew Reload Complete", SimpleEvent.class, PewpewReloadCompleteEvent.class,
+						"pewpew reload(ed|[ ]complete[d]|[ ]finish[ed])")
+				.description("Called when a reload finishes and rounds are actually in the magazine. "
+						+ "Use 'pewpew ammo' for the new count.")
+				.examples("on pewpew reload complete:", "	send action bar \"%pewpew ammo% rounds\" to event-player")
+				.since("26.1.1");
+
+		Skript.registerEvent("Pewpew Scope", SimpleEvent.class, PewpewScopeEvent.class,
+						"pewpew (scope|aim)[ing] [(1¦in|2¦out)]")
+				.description("Called when a player scopes in or out with a Pewpew gun. "
+						+ "Use 'pewpew is scoping in' to tell the two apart. Cancellable.")
+				.examples("on pewpew scope:", "	if pewpew is scoping in:", "		send \"steady...\" to event-player")
+				.since("26.1.1");
+
+		Skript.registerEvent("Pewpew Attachment", SimpleEvent.class, PewpewAttachmentEvent.class,
+						"pewpew attachment [(install|remove)]")
+				.description("Called when a player fits or removes an attachment in the bench. "
+						+ "'pewpew attachment id' is the attachment, 'pewpew attachment slot' the slot. Cancellable.")
+				.examples("on pewpew attachment:",
+						"	if pewpew attachment id is \"gold_scope\":",
+						"		cancel event")
+				.since("26.1.1");
+
+		Skript.registerEvent("Pewpew Hit Block", SimpleEvent.class, PewpewHitBlockEvent.class,
+						"pewpew hit block")
+				.description("Called when a Pewpew shot stops on a block instead of an entity. "
+						+ "event-block is what was hit, event-location the impact point.")
+				.examples("on pewpew hit block:", "	set event-block to air")
+				.since("26.1.1");
+
+		EventValues.registerEventValue(PewpewKillEvent.class, Player.class,
+				PewpewKillEvent::getOnlineKiller, EventValues.TIME_NOW);
+		EventValues.registerEventValue(PewpewReloadCompleteEvent.class, Player.class,
+				PewpewReloadCompleteEvent::getPlayer, EventValues.TIME_NOW);
+		EventValues.registerEventValue(PewpewScopeEvent.class, Player.class,
+				PewpewScopeEvent::getPlayer, EventValues.TIME_NOW);
+		EventValues.registerEventValue(PewpewAttachmentEvent.class, Player.class,
+				PewpewAttachmentEvent::getPlayer, EventValues.TIME_NOW);
+		EventValues.registerEventValue(PewpewHitBlockEvent.class, Player.class,
+				PewpewHitBlockEvent::getShooter, EventValues.TIME_NOW);
+		EventValues.registerEventValue(PewpewHitBlockEvent.class, Block.class,
+				PewpewHitBlockEvent::getBlock, EventValues.TIME_NOW);
+		EventValues.registerEventValue(PewpewHitBlockEvent.class, Location.class,
+				PewpewHitBlockEvent::getLocation, EventValues.TIME_NOW);
+		EventValues.registerEventValue(PewpewKillEvent.class, LivingEntity.class,
+				PewpewKillEvent::getVictim, EventValues.TIME_NOW);
 
 		EventValues.registerEventValue(PewpewShootEvent.class, Player.class,
 				PewpewShootEvent::getShooter, EventValues.TIME_NOW);

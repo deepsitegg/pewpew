@@ -1,5 +1,6 @@
 package gg.deepsite.pewpew.modules.weapons.shooting;
 
+import gg.deepsite.pewpew.PewpewPlugin;
 import gg.deepsite.pewpew.api.objects.PewpewGunItem;
 import gg.deepsite.pewpew.utils.ChatUtils;
 import lombok.experimental.UtilityClass;
@@ -29,14 +30,43 @@ public class Ballistics {
 	public static Vector applySpread(@NotNull Vector direction, double spreadDegrees) {
 		if (spreadDegrees <= 0) return direction;
 		ThreadLocalRandom random = ThreadLocalRandom.current();
-		double yaw = Math.toRadians((random.nextDouble() * 2 - 1) * spreadDegrees);
-		double pitch = Math.toRadians((random.nextDouble() * 2 - 1) * spreadDegrees);
-		return direction.clone().rotateAroundY(yaw).rotateAroundX(pitch).normalize();
+		if (legacySpread()) {
+			double yaw = Math.toRadians((random.nextDouble() * 2 - 1) * spreadDegrees);
+			double pitch = Math.toRadians((random.nextDouble() * 2 - 1) * spreadDegrees);
+			return direction.clone().rotateAroundY(yaw).rotateAroundX(pitch).normalize();
+		}
+		double angle = Math.toRadians(spreadDegrees) * Math.sqrt(random.nextDouble());
+		double azimuth = random.nextDouble() * 2 * Math.PI;
+		return spread(direction, angle, azimuth);
+	}
+
+	@NotNull
+	static Vector spread(@NotNull Vector direction, double angle, double azimuth) {
+		Vector forward = direction.clone().normalize();
+		Vector reference = Math.abs(forward.getY()) > 0.999 ? new Vector(1, 0, 0) : new Vector(0, 1, 0);
+		Vector right = forward.getCrossProduct(reference).normalize();
+		Vector up = right.getCrossProduct(forward).normalize();
+		double radial = Math.sin(angle);
+		return forward.multiply(Math.cos(angle))
+				.add(right.multiply(Math.cos(azimuth) * radial))
+				.add(up.multiply(Math.sin(azimuth) * radial))
+				.normalize();
+	}
+
+	private static boolean legacySpread() {
+		return PewpewPlugin.getDefaultConfiguration() != null
+				&& PewpewPlugin.getDefaultConfiguration().isLegacySpread();
+	}
+
+	@NotNull
+	public static DamageType resolveDamageType(@Nullable DamageType configured) {
+		return configured != null ? configured : DamageType.ARROW;
 	}
 
 	public static void dealProjectileDamage(@NotNull LivingEntity target, double amount,
-	                                        @NotNull Entity causing, @NotNull Entity direct) {
-		DamageSource source = DamageSource.builder(DamageType.ARROW)
+	                                        @NotNull Entity causing, @NotNull Entity direct,
+	                                        @Nullable DamageType damageType) {
+		DamageSource source = DamageSource.builder(resolveDamageType(damageType))
 				.withCausingEntity(causing)
 				.withDirectEntity(direct)
 				.build();

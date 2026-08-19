@@ -1,7 +1,10 @@
 package gg.deepsite.pewpew.modules.weapons.shooting;
 
+import gg.deepsite.pewpew.api.events.PewpewHitBlockEvent;
 import gg.deepsite.pewpew.api.events.PewpewHitEvent;
+import gg.deepsite.pewpew.api.objects.PewpewAmmoItem;
 import gg.deepsite.pewpew.api.objects.PewpewGunItem;
+import gg.deepsite.pewpew.modules.weapons.ammo.AmmoUtil;
 import gg.deepsite.pewpew.integrations.CombatTagIntegration;
 import gg.deepsite.pewpew.modules.weapons.attachment.AttachmentUtil;
 import gg.deepsite.pewpew.modules.weapons.shooting.recoil.RecoilManager;
@@ -14,6 +17,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
 public class HitscanShotExecutor implements ShotExecutor {
 
@@ -30,10 +37,11 @@ public class HitscanShotExecutor implements ShotExecutor {
 		Location eye = shooter.getEyeLocation();
 		double recoilMultiplier = AttachmentUtil.recoilMultiplier(weapon);
 		boolean scoped = ScopeState.isScoped(shooter);
-		double spread = gun.getSpread() * recoilMultiplier;
-		if (scoped) spread *= AttachmentUtil.aimSpreadMultiplier(weapon);
+		double spread = Spread.effective(shooter, gun, weapon, scoped);
 		double range = AttachmentUtil.effectiveRange(gun, weapon);
-		double damage = AttachmentUtil.effectiveDamage(gun, weapon);
+		PewpewAmmoItem ammo = AmmoUtil.statsOf(weapon);
+		double damage = AttachmentUtil.effectiveDamage(gun, weapon) * AmmoUtil.damageMultiplier(ammo);
+		int pierce = AmmoUtil.penetration(ammo);
 		int pellets = Math.max(1, gun.getBulletCount());
 
 		for (int pellet = 0; pellet < pellets; pellet++) {
@@ -41,9 +49,11 @@ public class HitscanShotExecutor implements ShotExecutor {
 			if (gun.getBulletDrop() > 0) {
 				fireBallistic(shooter, gun, eye, direction, range, gun.getBulletDrop(), damage);
 			} else {
-				fireStraight(shooter, gun, eye, direction, range, damage);
+				fireStraight(shooter, gun, eye, direction, range, damage, pierce);
 			}
 		}
+
+		Spread.addShot(shooter, gun);
 
 		double recoil = gun.getRecoil() * recoilMultiplier;
 		if (scoped) recoil *= AttachmentUtil.aimRecoilMultiplier(weapon);
@@ -52,24 +62,51 @@ public class HitscanShotExecutor implements ShotExecutor {
 	}
 
 	private void fireStraight(Player shooter, PewpewGunItem gun, Location eye, Vector direction, double range,
-	                          double damage) {
-		RayTraceResult result = shooter.getWorld().rayTrace(
-				eye, direction, range,
-				FluidCollisionMode.NEVER, true, 0.1,
-				entity -> entity instanceof LivingEntity && !entity.equals(shooter)
-		);
+	                          double damage, int pierce) {
+		Set<UUID> hit = new HashSet<>();
+		Location origin = eye.clone();
+		double remaining = range;
+		double traveled = 0;
+		int left = pierce;
 
-		double traceLength = result != null
-				? result.getHitPosition().distance(eye.toVector())
-				: range;
-		spawnTracer(eye, direction, traceLength, gun.getTrailParticle());
+		while (remaining > 0) {
+			RayTraceResult result = shooter.getWorld().rayTrace(
+					origin, direction, remaining,
+					FluidCollisionMode.NEVER, true, 0.1,
+					entity -> entity instanceof LivingEntity && !entity.equals(shooter)
+							&& !hit.contains(entity.getUniqueId())
+			);
 
-		if (result != null) {
-			Ballistics.impact(gun.getImpactParticle(), result.getHitPosition().toLocation(shooter.getWorld()));
-			if (result.getHitEntity() instanceof LivingEntity target) {
-				applyHit(shooter, gun, target, result.getHitPosition().getY(), traceLength, damage);
+			if (result == null) {
+				spawnTracer(eye, direction, range, gun.getTrailParticle());
+				return;
 			}
+
+			double step = result.getHitPosition().distance(origin.toVector());
+			traveled += step;
+			Ballistics.impact(gun.getImpactParticle(), result.getHitPosition().toLocation(shooter.getWorld()));
+
+			if (!(result.getHitEntity() instanceof LivingEntity target)) {
+				new PewpewHitBlockEvent(shooter, gun, result.getHitBlock(),
+						result.getHitPosition().toLocation(shooter.getWorld()), traveled).callEvent();
+				spawnTracer(eye, direction, traveled, gun.getTrailParticle());
+				return;
+			}
+
+			hit.add(target.getUniqueId());
+			applyHit(shooter, gun, target, result.getHitPosition().getY(), traveled, damage);
+
+			if (left-- <= 0) {
+				spawnTracer(eye, direction, traveled, gun.getTrailParticle());
+				return;
+			}
+
+			origin = result.getHitPosition().toLocation(shooter.getWorld());
+			origin.add(direction.clone().multiply(0.01));
+			remaining = range - traveled;
 		}
+
+		spawnTracer(eye, direction, range, gun.getTrailParticle());
 	}
 
 	private void fireBallistic(Player shooter, PewpewGunItem gun, Location eye, Vector direction, double range, double drop,
@@ -89,6 +126,9 @@ public class HitscanShotExecutor implements ShotExecutor {
 				Ballistics.impact(gun.getImpactParticle(), result.getHitPosition().toLocation(shooter.getWorld()));
 				if (result.getHitEntity() instanceof LivingEntity target) {
 					applyHit(shooter, gun, target, result.getHitPosition().getY(), traveled, damage);
+				} else {
+					new PewpewHitBlockEvent(shooter, gun, result.getHitBlock(),
+							result.getHitPosition().toLocation(shooter.getWorld()), traveled).callEvent();
 				}
 				return;
 			}
@@ -114,7 +154,7 @@ public class HitscanShotExecutor implements ShotExecutor {
 
 		GunHitTracker.record(target, shooter, gun);
 		if (target instanceof Player victim) CombatTagIntegration.tag(victim, shooter);
-		Ballistics.dealProjectileDamage(target, damage, shooter, shooter);
+		Ballistics.dealProjectileDamage(target, damage, shooter, shooter, gun.getDamageType());
 		Ballistics.applyKnockback(target, shooter, gun.getKnockback());
 		Ballistics.disableShield(target, gun.getShieldDisableTime());
 		Ballistics.applyEffects(target, gun.getVictimEffects());

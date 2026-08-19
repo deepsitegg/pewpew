@@ -26,6 +26,7 @@ public class SkriptModule extends SpigotModule<PewpewPlugin> {
 		try {
 
 			addon.loadClasses("gg.deepsite.pewpew.modules.skript", "expressions");
+			addon.loadClasses("gg.deepsite.pewpew.modules.skript", "conditions");
 			addon.loadClasses("gg.deepsite.pewpew.modules.skript", "effects");
 			addon.loadClasses("gg.deepsite.pewpew.modules.skript", "events");
 

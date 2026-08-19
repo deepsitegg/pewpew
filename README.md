@@ -20,6 +20,9 @@ per-weapon sounds and effects, all configurable.
 - **Semi-auto** and **full-auto** (`automatic`) - hold to fire at the weapon's true fire rate
 - **Burst fire** (`burstCount`)
 - **Spread** cones and **camera recoil** that climbs as you fire
+- **Movement accuracy** - per-state spread multipliers for sprinting, sneaking, walking, midair and swimming
+- **Bloom** - the cone widens while you hold the trigger and recovers when you stop
+- **Spray patterns** - give a gun a fixed recoil pattern players can learn and pull against, instead of random kick
 - **Bullet drop** - ballistic arc for hitscan, gravity for projectiles
 - **Buckshot** - multiple pellets per shot (`bulletCount`), each independently spread
 - **Damage falloff** over distance
@@ -27,6 +30,7 @@ per-weapon sounds and effects, all configurable.
 ### Ammo & reloading
 
 - Inventory-fed ammo by `ammoType`, or free-reloading magazines
+- **Ammo stats** - per-ammo damage, velocity and entity penetration multipliers, so AP and subsonic rounds differ
 - `MAGAZINE` and `SINGLE` (shell-by-shell) reload styles
 - **Bolt/pump firearm action** with open/close cycle sounds
 - Ammo count shown live as the item's **durability bar**
@@ -39,6 +43,7 @@ per-weapon sounds and effects, all configurable.
 - **Potion effects** on the victim and/or shooter
 - **Custom death messages** per weapon
 - Damage registers as real projectile damage, so Projectile Protection, knockback and kill credit all work
+- **Configurable damage type** per weapon - set `minecraft:generic` to ignore armor and deal your exact configured damage
 
 ### Attachments
 
@@ -58,6 +63,8 @@ per-weapon sounds and effects, all configurable.
 ### Tooling
 
 - **Damage dummy** (`/dummy`) - shows your per-hit and total damage; shift-right-click it to fit armor and shields
+- **Skript support** - 11 events, 9 expressions and 6 conditions, no addon needed. See [skript.md](assets/docs/skript.md)
+- **Developer API** - 11 Bukkit events covering shooting, hits, kills, reloads, scoping, attachments and explosions
 
 ---
 
@@ -83,6 +90,19 @@ per-weapon sounds and effects, all configurable.
 | `/pewpew version`            | Show plugin version       | -                           |
 | `/dummy`                     | Spawn a damage-test dummy | `pewpew.command.dummy`      |
 | `/dummy clear`               | Remove all dummies        | `pewpew.command.dummy`      |
+
+Command permissions default to op, and `pewpew.*` grants all of them.
+
+Every item also gets its own permission, `pewpew.use.<id>`, registered when the item loads. These default to **true**,
+so all weapons work out of the box. Take one away to gate a weapon:
+
+```
+-pewpew.use.awm          # nobody with this negation can shoot the AWM
+pewpew.use.awm           # grant it back to a rank
+```
+
+The check covers shooting, throwing and opening the attachment bench, and the denial message is
+`no-permission` in `messages.yml`.
 
 ---
 

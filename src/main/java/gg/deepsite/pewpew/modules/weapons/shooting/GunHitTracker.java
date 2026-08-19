@@ -21,8 +21,20 @@ public class GunHitTracker {
 
 	private static final Map<UUID, Hit> HITS = new ConcurrentHashMap<>();
 
+	private static final int EVICT_THRESHOLD = 128;
+
 	public static void record(@NotNull LivingEntity victim, @NotNull Player killer, @NotNull PewpewGunItem gun) {
+		if (HITS.size() > EVICT_THRESHOLD) evictExpired();
 		HITS.put(victim.getUniqueId(), new Hit(gun.getId(), killer.getUniqueId(), System.currentTimeMillis()));
+	}
+
+	private static void evictExpired() {
+		long now = System.currentTimeMillis();
+		HITS.entrySet().removeIf(entry -> now - entry.getValue().time() > EXPIRY_MS);
+	}
+
+	public static void clear() {
+		HITS.clear();
 	}
 
 	@Nullable

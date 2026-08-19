@@ -11,6 +11,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.bukkit.Material;
+import org.bukkit.damage.DamageType;
 import org.bukkit.Particle;
 import org.bukkit.potion.PotionEffect;
 
@@ -31,8 +32,13 @@ public class PewpewGunItem extends PewpewWeaponItem {
 	private ExplosiveConfig explosive;
 	private String payload;
 	private int burstCount;
+	private int burstDelay;
 	private ReloadType reloadType;
 	private double spread;
+	private SpreadModifiers spreadModifiers;
+	private double bloomPerShot;
+	private double bloomMax;
+	private double bloomDecay;
 	private double recoil;
 	private RecoilProfile recoilProfile;
 	private double knockback;
@@ -40,6 +46,7 @@ public class PewpewGunItem extends PewpewWeaponItem {
 	private int bulletCount;
 	private double bulletDrop;
 	private double headshotMultiplier;
+	private DamageType damageType;
 	private boolean automatic;
 	private int actionOpenTime;
 	private int actionCloseTime;

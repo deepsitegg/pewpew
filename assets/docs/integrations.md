@@ -61,3 +61,16 @@ If OpenMinetopia is absent nothing is checked.
 All player-facing strings live in `plugins/Pewpew/messages.yml`
 ([MiniMessage](https://docs.advntr.dev/minimessage/format.html), same custom tags as item text). Missing keys fall back
 to the built-in defaults. Run `/pewpew reload` to apply changes.
+
+## Skript
+
+Pewpew registers its Skript syntax automatically whenever Skript is installed. See [skript.md](skript.md) for the full
+list of events, expressions and conditions.
+
+## Permissions
+
+Command permissions are declared in the plugin and default to op; `pewpew.*` grants every one of them.
+
+Each item registers `pewpew.use.<id>` when it loads, defaulting to **true** so every weapon works without setup. Negate
+it (`-pewpew.use.awm`) to stop a group from shooting, throwing or attaching to that item; players who are denied get the
+`no-permission` message.

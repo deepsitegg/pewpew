@@ -11,6 +11,7 @@ import java.util.List;
 public final class OpenMinetopiaIntegration {
 
 	private static boolean available = false;
+	private static boolean broken = false;
 	private static Object handcuffManager;
 	private static Method isHandcuffedMethod;
 	private static Object placeManager;
@@ -44,7 +45,7 @@ public final class OpenMinetopiaIntegration {
 		try {
 			return (boolean) isHandcuffedMethod.invoke(handcuffManager, player);
 		} catch (Throwable t) {
-			return false;
+			return fail(t);
 		}
 	}
 
@@ -58,8 +59,17 @@ public final class OpenMinetopiaIntegration {
 			String name = (String) getPlaceNameMethod.invoke(place);
 			return name != null && banned.stream().anyMatch(name::equalsIgnoreCase);
 		} catch (Throwable t) {
-			return false;
+			return fail(t);
 		}
+	}
+
+	private static boolean fail(Throwable t) {
+		if (!broken) {
+			broken = true;
+			PewpewPlugin.getInstance().getLogger().severe("The OpenMinetopia hook stopped working (" + t
+					+ "). Blocking weapon use until this is fixed, or disable the hook in config.yml.");
+		}
+		return true;
 	}
 
 	private static boolean enabled() {

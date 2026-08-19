@@ -31,6 +31,10 @@ public class MessagesConfig extends ConfigurateConfig {
 		return get("no-ammo-in-inventory", "<error>Out of <reset>%1<error> in your inventory.");
 	}
 
+	public String noPermission() {
+		return get("no-permission", "<error>You are not allowed to use this weapon.");
+	}
+
 	public String worldGuardDeny() {
 		return get("worldguard-deny", "<error>You cannot use weapons here.");
 	}

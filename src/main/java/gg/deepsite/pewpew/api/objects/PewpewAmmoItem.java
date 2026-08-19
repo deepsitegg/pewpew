@@ -15,4 +15,7 @@ public class PewpewAmmoItem extends PewPewItem {
 
 	private String ammoType;
 	private int roundsPerItem;
+	private double damageMultiplier;
+	private double velocityMultiplier;
+	private int penetration;
 }

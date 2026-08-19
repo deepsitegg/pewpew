@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class RecoilController {
@@ -27,6 +28,8 @@ public class RecoilController {
 	private float keptPitch;
 	private float appliedYaw;
 	private float appliedPitch;
+	private int shot;
+	private int idleTicks;
 
 	public RecoilController(@NotNull Player player, @NotNull RecoilProfile profile) {
 		this.player = player;
@@ -40,8 +43,20 @@ public class RecoilController {
 	public void kick(double degrees) {
 		if (degrees <= 0) return;
 
-		float vertical = (float) degrees * spread(profile.getVerticalMean(), profile.getVerticalVariance());
-		float horizontal = (float) degrees * spread(profile.getHorizontalMean(), profile.getHorizontalVariance());
+		idleTicks = 0;
+		float vertical;
+		float horizontal;
+
+		if (profile.hasPattern()) {
+			List<float[]> pattern = profile.getPattern();
+			float[] step = pattern.get(patternIndex(shot, pattern.size(), profile.isPatternLoop()));
+			horizontal = (float) degrees * step[0];
+			vertical = (float) degrees * step[1];
+			shot++;
+		} else {
+			vertical = (float) degrees * spread(profile.getVerticalMean(), profile.getVerticalVariance());
+			horizontal = (float) degrees * spread(profile.getHorizontalMean(), profile.getHorizontalVariance());
+		}
 
 		targetPitch -= vertical;
 		targetYaw += horizontal;
@@ -59,8 +74,16 @@ public class RecoilController {
 		}
 	}
 
+	static int patternIndex(int shot, int size, boolean loop) {
+		if (size <= 0) return 0;
+		if (loop) return Math.floorMod(shot, size);
+		return Math.min(shot, size - 1);
+	}
+
 	public boolean tick() {
 		if (!player.isOnline() || player.isDead()) return true;
+
+		if (++idleTicks > profile.getPatternReset()) shot = 0;
 
 		targetYaw *= (1f - profile.getDamping());
 		targetPitch *= (1f - profile.getDamping());
@@ -84,7 +107,7 @@ public class RecoilController {
 			appliedPitch += deltaPitch;
 		}
 
-		return settled();
+		return settled() && (!profile.hasPattern() || shot == 0);
 	}
 
 	private void applyAbsolute(float deltaYaw, float deltaPitch) {

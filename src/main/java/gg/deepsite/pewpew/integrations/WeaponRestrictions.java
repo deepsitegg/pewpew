@@ -1,8 +1,11 @@
 package gg.deepsite.pewpew.integrations;
 
 import gg.deepsite.pewpew.PewpewPlugin;
+import gg.deepsite.pewpew.api.objects.PewPewItem;
+import gg.deepsite.pewpew.modules.items.ItemsModule;
 import gg.deepsite.pewpew.utils.ChatUtils;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 public final class WeaponRestrictions {
 
@@ -10,8 +13,14 @@ public final class WeaponRestrictions {
 	}
 
 	public static boolean denied(Player player, boolean sendMessage) {
+		return denied(player, null, sendMessage);
+	}
+
+	public static boolean denied(Player player, @Nullable PewPewItem item, boolean sendMessage) {
 		String message = null;
-		if (!WorldGuardIntegration.allows(player)) {
+		if (item != null && !player.hasPermission(ItemsModule.USE_PERMISSION_PREFIX + item.getId())) {
+			message = PewpewPlugin.getMessagesConfig().noPermission();
+		} else if (!WorldGuardIntegration.allows(player)) {
 			message = PewpewPlugin.getMessagesConfig().worldGuardDeny();
 		} else if (OpenMinetopiaIntegration.isHandcuffed(player)) {
 			message = PewpewPlugin.getMessagesConfig().openMinetopiaHandcuffedDeny();

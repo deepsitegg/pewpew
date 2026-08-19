@@ -37,7 +37,7 @@ public class ThrowingListener implements Listener {
 		if (!(item instanceof PewpewThrowableItem throwable)) return;
 
 		event.setCancelled(true);
-		if (WeaponRestrictions.denied(event.getPlayer(), true)) return;
+		if (WeaponRestrictions.denied(event.getPlayer(), throwable, true)) return;
 		throwableHandler.tryThrow(event.getPlayer(), throwable, held);
 	}
 }

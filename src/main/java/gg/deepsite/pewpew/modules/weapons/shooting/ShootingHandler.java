@@ -3,6 +3,7 @@ package gg.deepsite.pewpew.modules.weapons.shooting;
 import gg.deepsite.pewpew.PewpewPlugin;
 import gg.deepsite.pewpew.api.enums.FiringMode;
 import gg.deepsite.pewpew.api.enums.ReloadType;
+import gg.deepsite.pewpew.api.events.PewpewReloadCompleteEvent;
 import gg.deepsite.pewpew.api.events.PewpewReloadEvent;
 import gg.deepsite.pewpew.api.events.PewpewShootEvent;
 import gg.deepsite.pewpew.api.objects.PewPewItem;
@@ -33,7 +34,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class ShootingHandler {
 
-	private static final long BURST_SHOT_DELAY_TICKS = 2L;
 	private static final int MAX_SHOTS_PER_TICK = 4;
 	private static final float PITCH_JITTER = 0.08f;
 	private static final long SEMI_RELEASE_MS = 100L;
@@ -127,7 +127,8 @@ public class ShootingHandler {
 		if (next != null && now < next) return;
 
 		int burstCount = Math.max(1, gun.getBurstCount());
-		long burstSpan = (burstCount - 1) * BURST_SHOT_DELAY_TICKS;
+		long burstDelay = Math.max(1, gun.getBurstDelay());
+		long burstSpan = (burstCount - 1) * burstDelay;
 		int actionTicks = gun.getActionOpenTime() + gun.getActionCloseTime();
 		double intervalTicks = burstSpan + Math.max(0.05, gun.getFireRate()) + actionTicks;
 
@@ -148,7 +149,7 @@ public class ShootingHandler {
 						() -> {
 							if (player.isOnline() && !player.isDead()) fireShot(player, gun, true);
 						},
-						shot * BURST_SHOT_DELAY_TICKS);
+						shot * burstDelay);
 			}
 		}
 
@@ -205,6 +206,17 @@ public class ShootingHandler {
 		return reloading.contains(player.getUniqueId());
 	}
 
+	public void clearPlayer(@NotNull UUID id) {
+		BukkitTask reload = reloadTasks.remove(id);
+		if (reload != null) reload.cancel();
+		BukkitTask auto = autoTasks.remove(id);
+		if (auto != null) auto.cancel();
+		reloading.remove(id);
+		Spread.clear(id);
+		lastTrigger.remove(id);
+		nextShot.remove(id);
+	}
+
 	public void clearCooldowns() {
 		reloadTasks.values().forEach(BukkitTask::cancel);
 		reloadTasks.clear();
@@ -213,6 +225,8 @@ public class ShootingHandler {
 		autoTasks.clear();
 		lastTrigger.clear();
 		nextShot.clear();
+		GunHitTracker.clear();
+		Spread.clearAll();
 		recoilManager.stop();
 	}
 
@@ -238,7 +252,7 @@ public class ShootingHandler {
 
 		int newAmmo;
 		if (gun.isConsumesAmmo()) {
-			newAmmo = AmmoUtil.loadOneItem(player.getInventory(), gun.getAmmoType(), current, maxAmmo);
+			newAmmo = AmmoUtil.loadOneItem(player.getInventory(), gun.getAmmoType(), current, maxAmmo, held);
 			if (newAmmo <= current) {
 				player.sendActionBar(noAmmoMessage(gun));
 				endReload(id);
@@ -252,7 +266,10 @@ public class ShootingHandler {
 		player.getInventory().setItemInMainHand(held);
 		player.getWorld().playSound(player.getLocation(), Sound.BLOCK_PISTON_EXTEND, 0.7f, 1.4f);
 
-		if (newAmmo >= maxAmmo) endReload(id);
+		if (newAmmo >= maxAmmo) {
+			endReload(id);
+			new PewpewReloadCompleteEvent(player, gun, held, newAmmo, newAmmo - current).callEvent();
+		}
 	}
 
 	private void finishMagazineReload(Player player, PewpewGunItem gun) {
@@ -267,7 +284,7 @@ public class ShootingHandler {
 		int current = AmmoUtil.get(held);
 		int newAmmo;
 		if (gun.isConsumesAmmo()) {
-			newAmmo = AmmoUtil.loadMagazine(player.getInventory(), gun.getAmmoType(), current, maxAmmo);
+			newAmmo = AmmoUtil.loadMagazine(player.getInventory(), gun.getAmmoType(), current, maxAmmo, held);
 			if (newAmmo <= current) {
 				player.sendActionBar(noAmmoMessage(gun));
 				return;
@@ -280,6 +297,7 @@ public class ShootingHandler {
 		GunLoreRenderer.apply(held, gun);
 		player.getInventory().setItemInMainHand(held);
 		player.getWorld().playSound(player.getLocation(), Sound.BLOCK_PISTON_EXTEND, 0.8f, 1.4f);
+		new PewpewReloadCompleteEvent(player, gun, held, newAmmo, newAmmo - current).callEvent();
 	}
 
 	private void endReload(UUID id) {
@@ -292,7 +310,7 @@ public class ShootingHandler {
 		ItemStack held = player.getInventory().getItemInMainHand();
 		if (!isSameGun(held, gun)) return;
 
-		if (WeaponRestrictions.denied(player, false)) return;
+		if (WeaponRestrictions.denied(player, gun, false)) return;
 
 		if (!new PewpewShootEvent(player, gun, held).callEvent()) return;
 

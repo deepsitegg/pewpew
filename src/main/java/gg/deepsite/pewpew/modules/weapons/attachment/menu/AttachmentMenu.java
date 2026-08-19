@@ -2,6 +2,7 @@ package gg.deepsite.pewpew.modules.weapons.attachment.menu;
 
 import com.jazzkuh.inventorylib.objects.icon.Icon;
 import gg.deepsite.pewpew.api.enums.AttachmentType;
+import gg.deepsite.pewpew.api.events.PewpewAttachmentEvent;
 import gg.deepsite.pewpew.api.objects.PewPewItem;
 import gg.deepsite.pewpew.api.objects.PewpewGunItem;
 import gg.deepsite.pewpew.api.objects.attachment.PewpewAttachment;
@@ -10,6 +11,7 @@ import gg.deepsite.pewpew.modules.weapons.lore.GunLoreRenderer;
 import gg.deepsite.pewpew.utils.ChatUtils;
 import gg.deepsite.pewpew.utils.item.ItemBuilder;
 import gg.deepsite.pewpew.utils.item.ItemFactory;
+import org.jetbrains.annotations.Nullable;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -95,6 +97,8 @@ public class AttachmentMenu extends AbstractGunMenu {
 
 		if (!consumeOne(attachment.getId())) return;
 
+		if (!new PewpewAttachmentEvent(viewer, gunOf(gun), gun, attachment, type, true).callEvent()) return;
+
 		PewpewAttachment existing = AttachmentUtil.get(gun, type);
 		if (existing != null) giveBack(existing);
 
@@ -121,6 +125,7 @@ public class AttachmentMenu extends AbstractGunMenu {
 
 		PewpewAttachment fitted = AttachmentUtil.get(gun, type);
 		if (fitted == null) return;
+		if (!new PewpewAttachmentEvent(viewer, gunOf(gun), gun, fitted, type, false).callEvent()) return;
 
 		AttachmentUtil.clear(gun, type);
 		GunLoreRenderer.refresh(gun);
@@ -170,4 +175,10 @@ public class AttachmentMenu extends AbstractGunMenu {
 	private ItemStack filler() {
 		return new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).setName("<dark_gray>-").toItemStack();
 	}
+
+	@Nullable
+	private PewpewGunItem gunOf(ItemStack stack) {
+		return itemsModule().fromItemStack(stack) instanceof PewpewGunItem gun ? gun : null;
+	}
+
 }

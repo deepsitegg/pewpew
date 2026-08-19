@@ -1,6 +1,7 @@
 package gg.deepsite.pewpew.modules.weapons.listeners;
 
 import gg.deepsite.pewpew.PewpewPlugin;
+import gg.deepsite.pewpew.api.events.PewpewKillEvent;
 import gg.deepsite.pewpew.api.objects.PewPewItem;
 import gg.deepsite.pewpew.api.objects.PewpewGunItem;
 import gg.deepsite.pewpew.integrations.WeaponRestrictions;
@@ -20,6 +21,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -48,7 +50,7 @@ public class ShootingListener implements Listener {
 		if (!(item instanceof PewpewGunItem gun)) return;
 
 		event.setCancelled(true);
-		if (WeaponRestrictions.denied(event.getPlayer(), true)) return;
+		if (WeaponRestrictions.denied(event.getPlayer(), gun, true)) return;
 		shootingHandler.onTrigger(event.getPlayer(), gun, held);
 	}
 
@@ -78,18 +80,27 @@ public class ShootingListener implements Listener {
 	}
 
 	@EventHandler
+	public void onQuit(PlayerQuitEvent event) {
+		shootingHandler.clearPlayer(event.getPlayer().getUniqueId());
+	}
+
+	@EventHandler
 	public void onDeath(PlayerDeathEvent event) {
 		Player victim = event.getEntity();
 		GunHitTracker.Hit hit = GunHitTracker.consume(victim.getUniqueId());
 		if (hit == null) return;
-		if (!(itemsModule().get(hit.gunId()) instanceof PewpewGunItem gun) || gun.getDeathMessage() == null) return;
+		if (!(itemsModule().get(hit.gunId()) instanceof PewpewGunItem gun)) return;
 
 		OfflinePlayer killer = Bukkit.getOfflinePlayer(hit.killerId());
 		String killerName = killer.getName() != null ? killer.getName() : "Unknown";
-		String message = gun.getDeathMessage()
+		String message = gun.getDeathMessage() == null ? null : gun.getDeathMessage()
 				.replace("%victim%", victim.getName())
 				.replace("%killer%", killerName)
 				.replace("%weapon%", gun.getName());
-		event.deathMessage(ChatUtils.format(message));
+
+		PewpewKillEvent killEvent = new PewpewKillEvent(victim, killer, gun, message);
+		killEvent.callEvent();
+
+		if (killEvent.getDeathMessage() != null) event.deathMessage(ChatUtils.format(killEvent.getDeathMessage()));
 	}
 }

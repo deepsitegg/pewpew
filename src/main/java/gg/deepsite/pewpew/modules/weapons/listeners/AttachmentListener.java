@@ -33,10 +33,10 @@ public class AttachmentListener implements Listener {
 		if (hovered == null) return;
 
 		PewPewItem item = itemsModule().fromItemStack(hovered);
-		if (!(item instanceof PewpewGunItem)) return;
+		if (!(item instanceof PewpewGunItem gun)) return;
 
 		event.setCancelled(true);
-		if (WeaponRestrictions.denied(player, true)) return;
+		if (WeaponRestrictions.denied(player, gun, true)) return;
 
 		int gunSlot = event.getSlot();
 		PewpewPlugin.getInstance().getServer().getScheduler().runTask(

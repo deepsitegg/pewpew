@@ -3,6 +3,7 @@ package gg.deepsite.pewpew.utils.configuration;
 import gg.deepsite.pewpew.PewpewPlugin;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import org.jetbrains.annotations.NotNull;
 import org.apache.commons.io.FileUtils;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.loader.HeaderMode;
@@ -10,13 +11,16 @@ import org.spongepowered.configurate.yaml.NodeStyle;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
 import java.io.*;
+import java.util.List;
 
 @Getter
 public abstract class ConfigurateConfig {
 	protected final YamlConfigurationLoader loader;
+	protected final File configFile;
 	protected ConfigurationNode rootNode;
 
 	public ConfigurateConfig(File file, String name, String def, boolean mergeDefaults) {
+		configFile = new File(file, name);
 		loader = YamlConfigurationLoader.builder()
 				.path(file.toPath().resolve(name))
 				.indent(2)
@@ -30,6 +34,28 @@ public abstract class ConfigurateConfig {
 			rootNode = loader.load();
 		} catch (IOException e) {
 			PewpewPlugin.getInstance().getLogger().warning("An error occurred while loading this configuration: " + e.getMessage());
+		}
+	}
+
+	protected void migrate(@NotNull List<ConfigMigrator.Migration> migrations, int currentVersion, @NotNull String label) {
+		if (rootNode == null) return;
+		int from = ConfigMigrator.versionOf(rootNode);
+		if (from >= currentVersion) return;
+
+		backup(from);
+		if (ConfigMigrator.migrate(rootNode, migrations, currentVersion, label,
+				PewpewPlugin.getInstance().getLogger())) saveConfiguration();
+	}
+
+	private void backup(int fromVersion) {
+		if (!configFile.exists()) return;
+		File target = new File(configFile.getParentFile(), configFile.getName() + ".v" + fromVersion + ".bak");
+		try {
+			FileUtils.copyFile(configFile, target);
+			PewpewPlugin.getInstance().getLogger().info("Backed up " + configFile.getName() + " to " + target.getName());
+		} catch (IOException e) {
+			PewpewPlugin.getInstance().getLogger()
+					.warning("Could not back up " + configFile.getName() + " before migrating: " + e.getMessage());
 		}
 	}
 
