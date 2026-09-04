@@ -6,3 +6,5 @@ pluginManagement {
 }
 
 rootProject.name = "Pewpew"
+
+include("core", "paper")
