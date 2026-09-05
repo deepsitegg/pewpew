@@ -3,6 +3,7 @@ package gg.deepsite.pewpew.modules.items.commands;
 import gg.deepsite.pewpew.PewpewPlugin;
 import gg.deepsite.pewpew.api.objects.PewPewItem;
 import gg.deepsite.pewpew.api.objects.PewpewAmmoItem;
+import gg.deepsite.pewpew.api.objects.PewpewMagazineItem;
 import gg.deepsite.pewpew.api.objects.PewpewGunItem;
 import gg.deepsite.pewpew.api.objects.PewpewThrowableItem;
 import gg.deepsite.pewpew.api.objects.attachment.PewpewAttachment;
@@ -28,6 +29,7 @@ public final class ItemsCommand {
 		if (item instanceof PewpewThrowableItem) return "THROWABLE";
 		if (item instanceof PewpewAttachment) return "ATTACHMENT";
 		if (item instanceof PewpewAmmoItem) return "AMMO";
+		if (item instanceof PewpewMagazineItem) return "MAGAZINE";
 		return "ITEM";
 	}
 

@@ -1,5 +1,7 @@
 package gg.deepsite.pewpew.modules.weapons.shooting;
 
+import gg.deepsite.pewpew.api.enums.SoundEvent;
+import gg.deepsite.pewpew.utils.Sounds;
 import gg.deepsite.pewpew.PewpewPlugin;
 import gg.deepsite.pewpew.api.objects.PewpewEffect;
 import gg.deepsite.pewpew.api.objects.PewpewGunItem;
@@ -13,7 +15,6 @@ import net.kyori.adventure.key.Key;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
-import org.bukkit.Sound;
 import org.bukkit.damage.DamageSource;
 import org.bukkit.damage.DamageType;
 import org.bukkit.entity.Entity;
@@ -91,7 +92,7 @@ public class Ballistics {
 		if (gun.getHitSound() != null && !gun.getHitSound().isEmpty()) {
 			gun.getHitSound().forEach(sound -> shooter.playSound(sound.adventure()));
 		} else {
-			shooter.playSound(shooter, Sound.BLOCK_NOTE_BLOCK_PLING, 1.0f, headshot ? 1.8f : 1.0f);
+			Sounds.to(shooter, headshot ? SoundEvent.HIT_MARKER_HEADSHOT : SoundEvent.HIT_MARKER);
 		}
 		if (gun.getHitMessage() != null) {
 			shooter.sendActionBar(ChatUtils.format(gun.getHitMessage()
@@ -117,7 +118,7 @@ public class Ballistics {
 	public static void disableShield(@NotNull LivingEntity target, int ticks) {
 		if (ticks <= 0 || !(target instanceof Player player) || !player.isBlocking()) return;
 		player.setCooldown(Material.SHIELD, ticks);
-		player.getWorld().playSound(player.getLocation(), Sound.ITEM_SHIELD_BREAK, 1.0f, 1.0f);
+		Sounds.at(player, SoundEvent.HIT_SHIELD_BREAK);
 	}
 
 	public static boolean rollCrit(double chance) {
@@ -127,7 +128,7 @@ public class Ballistics {
 	public static void critEffect(@NotNull Player shooter, @NotNull LivingEntity target) {
 		target.getWorld().spawnParticle(org.bukkit.Particle.CRIT,
 				target.getLocation().add(0, target.getHeight() * 0.6, 0), 14, 0.3, 0.4, 0.3, 0.15);
-		shooter.playSound(shooter, Sound.ENTITY_PLAYER_ATTACK_CRIT, 1.0f, 1.2f);
+		Sounds.to(shooter, SoundEvent.HIT_CRIT);
 	}
 
 }

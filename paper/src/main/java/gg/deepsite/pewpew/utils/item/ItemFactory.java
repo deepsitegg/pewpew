@@ -1,9 +1,11 @@
 package gg.deepsite.pewpew.utils.item;
 
 import gg.deepsite.pewpew.api.objects.PewPewItem;
+import gg.deepsite.pewpew.api.objects.PewpewMagazineItem;
 import gg.deepsite.pewpew.api.objects.attachment.PewpewAttachment;
 import gg.deepsite.pewpew.modules.items.ItemsModule;
 import gg.deepsite.pewpew.modules.weapons.lore.AttachmentLoreRenderer;
+import gg.deepsite.pewpew.modules.weapons.lore.MagazineLoreRenderer;
 import lombok.experimental.UtilityClass;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemFlag;
@@ -25,6 +27,7 @@ public class ItemFactory {
 
 		ItemStack stack = ItemsModule.stamp(builder.toItemStack(), item);
 		if (item instanceof PewpewAttachment attachment) AttachmentLoreRenderer.apply(stack, attachment);
+		if (item instanceof PewpewMagazineItem magazine) MagazineLoreRenderer.apply(stack, magazine);
 		return stack;
 	}
 }

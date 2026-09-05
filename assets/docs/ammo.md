@@ -3,6 +3,10 @@
 Plus the [common fields](common-fields.md). Ammo items are consumed when a gun with `consumesAmmo: true` reloads,
 matched by `ammoType`.
 
+With `advanced.magazines` on, ammo is loaded into [magazine items](magazines.md) instead of straight into the gun, and
+a gun with no magazine available loads loose ammo into its chamber one round at a time. Everything below describes the
+default behaviour, with magazines off.
+
 | Field           | Type   | Default | Required | Description                                                                                                                                   |
 |-----------------|--------|---------|----------|-----------------------------------------------------------------------------------------------------------------------------------------------|
 | `ammoType`      | string | -       | yes      | The type tag a gun matches against (e.g. `rifle_round`). A gun pulls only ammo whose `ammoType` equals its own.                               |

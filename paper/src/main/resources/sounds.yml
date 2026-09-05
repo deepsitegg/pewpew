@@ -1,0 +1,127 @@
+# Every sound Pewpew plays that is not defined on an item itself.
+#
+# Per-item sounds stay in items/: a gun's 'fireSound' and 'hitSound' override
+# 'gun.fire' and 'hit.marker' for that gun. Everything here is the fallback.
+#
+# Each entry takes the same shape as a gun's fireSound: a plain name, a block
+# with key/volume/pitch, or a list of those played together.
+#
+#   gun.dry-fire: "BLOCK_DISPENSER_FAIL"
+#   gun.dry-fire:
+#     key: "mypack:gun.dryfire"
+#     volume: 0.8
+#     pitch: 1.2
+#   gun.dry-fire:
+#     - "block.dispenser.fail"
+#     - key: "mypack:gun.click"
+#       volume: 0.4
+#
+# Names without a namespace are treated as vanilla and converted
+# (BLOCK_DISPENSER_FAIL -> minecraft:block.dispenser.fail). Anything with a ':'
+# is used as-is, so resource-pack sounds work.
+#
+# Set an entry to 'none' to play nothing at all.
+
+sounds:
+  gun:
+    # Fallback shot sound, used by guns that define no 'fireSound'.
+    fire:
+      key: "entity.blaze.shoot"
+      volume: 0.6
+      pitch: 1.6
+    # Trigger pulled on an empty gun.
+    dry-fire:
+      key: "block.dispenser.fail"
+      volume: 0.8
+      pitch: 1.2
+    # Bolt/slide cycling, for guns with actionOpenTime/actionCloseTime set.
+    action-close:
+      key: "block.piston.contract"
+      volume: 0.7
+      pitch: 0.8
+    action-open:
+      key: "block.piston.extend"
+      volume: 0.7
+      pitch: 0.8
+
+  reload:
+    # reloadType MAGAZINE: one sound at the start, one when it completes.
+    magazine-start:
+      key: "block.piston.contract"
+      volume: 0.8
+      pitch: 1.2
+    magazine-finish:
+      key: "block.piston.extend"
+      volume: 0.8
+      pitch: 1.4
+    # reloadType SINGLE: once at the start, then once per round loaded.
+    single-start:
+      key: "block.piston.contract"
+      volume: 0.8
+    single-round:
+      key: "block.piston.extend"
+      volume: 0.7
+      pitch: 1.4
+
+  # Only used while advanced.magazines is on. See docs/magazines.md.
+  magazine:
+    swap-start:
+      key: "block.piston.contract"
+      volume: 0.8
+      pitch: 1.2
+    swap-finish:
+      key: "block.piston.extend"
+      volume: 0.8
+      pitch: 1.4
+    # Clicking ammo onto a magazine in your inventory.
+    fill:
+      key: "block.piston.contract"
+      volume: 0.6
+      pitch: 1.6
+
+  # Played to the shooter, not positionally.
+  hit:
+    # Fallback hitmarker, used by guns that define no 'hitSound'.
+    marker: "block.note_block.pling"
+    marker-headshot:
+      key: "block.note_block.pling"
+      pitch: 1.8
+    crit:
+      key: "entity.player.attack.crit"
+      pitch: 1.2
+    shield-break: "item.shield.break"
+
+  explosion:
+    blast:
+      key: "entity.generic.explode"
+      volume: 2.0
+
+  throwable:
+    throw:
+      key: "entity.snowball.throw"
+      volume: 0.8
+      pitch: 0.8
+    explode:
+      key: "entity.generic.explode"
+      volume: 2.0
+    smoke:
+      key: "entity.tnt.primed"
+      pitch: 1.4
+    flash:
+      key: "item.firecharge.use"
+      volume: 1.5
+      pitch: 0.6
+    poison: "entity.generic.splash"
+    fire:
+      key: "item.firecharge.use"
+      volume: 1.2
+
+  menu:
+    equip:
+      key: "item.armor.equip_generic"
+      volume: 0.7
+      pitch: 1.4
+    unequip:
+      key: "item.armor.equip_generic"
+      volume: 0.7
+      pitch: 1.2

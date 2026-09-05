@@ -149,6 +149,8 @@ public class WeaponDeserializer {
 					"trailParticle", "trajectory", "victimEffects"),
 			ItemType.AMMO, Set.of(
 					"ammoType", "roundsPerItem", "damageMultiplier", "velocityMultiplier", "penetration"),
+			ItemType.MAGAZINE, Set.of(
+					"ammoType", "capacity", "reloadModifier"),
 			ItemType.THROWABLE, Set.of(
 					"blastRadius", "effect", "effectAmplifier", "effectDuration", "explosionDamage",
 					"explosionKnockback", "fireTicks", "fuseTime", "throwForce"),
@@ -215,9 +217,40 @@ public class WeaponDeserializer {
 			case ATTACHMENT ->
 					deserializeAttachment(fileName, id, node, name, lore, hideItemFlags, customModelData, itemModel);
 			case AMMO -> deserializeAmmo(fileName, id, node, name, lore, hideItemFlags, customModelData, itemModel);
+			case MAGAZINE ->
+					deserializeMagazine(fileName, id, node, name, lore, hideItemFlags, customModelData, itemModel);
 		};
 		if (item != null) item.setMaxStack(maxStack);
 		return item;
+	}
+
+	@Nullable
+	private static PewpewMagazineItem deserializeMagazine(String fileName, String id, ConfigurationNode node,
+	                                                      String name, List<String> lore, boolean hideItemFlags,
+	                                                      int customModelData, String itemModel) {
+		String ammoType = node.node("ammoType").getString();
+		if (ammoType == null) {
+			warn(fileName, id, "missing required field 'ammoType'");
+			return null;
+		}
+
+		int capacity = node.node("capacity").getInt(0);
+		if (capacity <= 0) {
+			warn(fileName, id, "missing required field 'capacity', which must be at least 1");
+			return null;
+		}
+
+		return PewpewMagazineItem.builder()
+				.id(id)
+				.name(name)
+				.lore(lore)
+				.hideItemFlags(hideItemFlags)
+				.customModelData(customModelData)
+				.itemModel(itemModel)
+				.ammoType(ammoType)
+				.capacity(capacity)
+				.reloadModifier(Math.max(0.0, node.node("reloadModifier").getDouble(1.0)))
+				.build();
 	}
 
 	@Nullable
@@ -669,7 +702,7 @@ public class WeaponDeserializer {
 		return Math.max(min, Math.min(max, value));
 	}
 
-	private static List<PewpewSound> parseSounds(String fileName, String id, ConfigurationNode node) {
+	public static List<PewpewSound> parseSounds(String fileName, String id, ConfigurationNode node) {
 		if (node.virtual()) return null;
 		if (node.isList()) {
 			List<PewpewSound> sounds = new ArrayList<>();

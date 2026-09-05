@@ -28,6 +28,13 @@ advanced:
   # exactly as before. Ammo always multiplies the gun's own numbers, it never
   # replaces them, so 'baseDamage' and 'damageType' stay in charge.
   ammo-stats: false
+  # Magazines become real items ('type: MAGAZINE') that hold rounds of their own.
+  # Reloading swaps a whole magazine into the gun and ejects the partial one back
+  # into the inventory with its rounds intact, and every gun gains a chamber that
+  # holds one round on top of the magazine. Fill a magazine by picking up ammo and
+  # clicking it in your inventory. Off means ammo loads straight into the gun,
+  # exactly as before.
+  magazines: false
 
 lore:
   stat-display: true

@@ -4,8 +4,10 @@ import gg.deepsite.pewpew.PewpewPlugin;
 import gg.deepsite.pewpew.api.enums.AttachmentType;
 import gg.deepsite.pewpew.api.objects.PewPewItem;
 import gg.deepsite.pewpew.api.objects.PewpewGunItem;
+import gg.deepsite.pewpew.api.objects.PewpewMagazineItem;
 import gg.deepsite.pewpew.api.objects.attachment.*;
 import gg.deepsite.pewpew.modules.items.ItemsModule;
+import gg.deepsite.pewpew.modules.weapons.magazine.MagazineUtil;
 import lombok.experimental.UtilityClass;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
@@ -84,11 +86,13 @@ public class AttachmentUtil {
 	}
 
 	public static int effectiveMaxAmmo(@NotNull PewpewGunItem gun, @NotNull ItemStack stack) {
-		int max = gun.getMaxAmmo();
-		if (get(stack, AttachmentType.MAGAZINE) instanceof PewpewMagazineAttachment magazine) {
-			max += magazine.getAmmoBonus();
+		int bonus = get(stack, AttachmentType.MAGAZINE) instanceof PewpewMagazineAttachment magazine
+				? magazine.getAmmoBonus() : 0;
+		if (MagazineUtil.enabled() && gun.isConsumesAmmo()) {
+			PewpewMagazineItem inserted = MagazineUtil.inserted(stack);
+			return Math.max(1, (inserted == null ? 0 : inserted.getCapacity() + bonus) + 1);
 		}
-		return Math.max(1, max);
+		return Math.max(1, gun.getMaxAmmo() + bonus);
 	}
 
 	public static int effectiveReloadTime(@NotNull PewpewGunItem gun, @NotNull ItemStack stack) {
@@ -97,6 +101,8 @@ public class AttachmentUtil {
 				&& magazine.getReloadModifier() > 0) {
 			time *= magazine.getReloadModifier();
 		}
+		PewpewMagazineItem inserted = MagazineUtil.enabled() ? MagazineUtil.inserted(stack) : null;
+		if (inserted != null && inserted.getReloadModifier() > 0) time *= inserted.getReloadModifier();
 		return Math.max(1, (int) Math.round(time));
 	}
 

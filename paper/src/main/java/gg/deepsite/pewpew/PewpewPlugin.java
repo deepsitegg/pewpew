@@ -4,6 +4,7 @@ import com.jazzkuh.commandlib.spigot.SpigotCommandLoader;
 import com.jazzkuh.modulemanager.spigot.SpigotModuleManager;
 import gg.deepsite.pewpew.configuration.DefaultConfiguration;
 import gg.deepsite.pewpew.configuration.MessagesConfig;
+import gg.deepsite.pewpew.configuration.SoundsConfig;
 import gg.deepsite.pewpew.integrations.WorldGuardIntegration;
 import gg.deepsite.pewpew.utils.ChatUtils;
 import gg.deepsite.pewpew.utils.PewpewLog;
@@ -32,6 +33,10 @@ public final class PewpewPlugin extends JavaPlugin {
 	@Setter
 	private static MessagesConfig messagesConfig;
 
+	@Getter
+	@Setter
+	private static SoundsConfig soundsConfig;
+
 	public PewpewPlugin() {
 		instance = this;
 		PewpewLog.set(getLogger());
@@ -57,6 +62,9 @@ public final class PewpewPlugin extends JavaPlugin {
 
 		messagesConfig = new MessagesConfig(this.getDataFolder());
 		messagesConfig.saveConfiguration();
+
+		soundsConfig = new SoundsConfig(this.getDataFolder());
+		soundsConfig.saveConfiguration();
 
 		WorldGuardIntegration.register();
 

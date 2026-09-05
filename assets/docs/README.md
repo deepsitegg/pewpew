@@ -3,23 +3,24 @@
 Every item is defined in YAML under `plugins/Pewpew/items/`. Each file is a map of `id: { fields }`. After editing, run
 `/pewpew reload`.
 
-There are four item types, set by the `type` field:
+There are five item types, set by the `type` field:
 
 | Type         | File              | Docs                             |
 |--------------|-------------------|----------------------------------|
 | `GUN`        | `guns.yml`        | [guns.md](guns.md)               |
 | `AMMO`       | `ammo.yml`        | [ammo.md](ammo.md)               |
+| `MAGAZINE`   | `magazines.yml`   | [magazines.md](magazines.md)     |
 | `ATTACHMENT` | `attachments.yml` | [attachments.md](attachments.md) |
 | `THROWABLE`  | `throwables.yml`  | [throwables.md](throwables.md)   |
 
 All types share a set of [common fields](common-fields.md).
 
-Optional plugin hooks (WorldGuard, CombatTagPlus, OpenMinetopia) and the `messages.yml` file are documented
-in [integrations.md](integrations.md). Skript events, expressions and conditions are in [skript.md](skript.md).
+Optional plugin hooks (WorldGuard, CombatTagPlus, OpenMinetopia) and the `messages.yml` and `sounds.yml` files are
+documented in [integrations.md](integrations.md). Skript events, expressions and conditions are in [skript.md](skript.md).
 
 ## Bundled files
 
-The four bundled item files are written only when `plugins/Pewpew/items/` does not exist, so updates never overwrite or
+The five bundled item files are written only when `plugins/Pewpew/items/` does not exist, so updates never overwrite or
 add to your own files. Add as many extra `.yml` files as you like: every `.yml` in the folder is loaded. To get the
 defaults back, delete the whole `items/` folder.
 

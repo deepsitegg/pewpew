@@ -6,7 +6,9 @@ import gg.deepsite.pewpew.api.objects.PewPewItem;
 import gg.deepsite.pewpew.api.objects.PewpewGunItem;
 import gg.deepsite.pewpew.api.objects.attachment.PewpewAttachment;
 import gg.deepsite.pewpew.modules.items.ItemsModule;
+import gg.deepsite.pewpew.api.objects.PewpewMagazineItem;
 import gg.deepsite.pewpew.modules.weapons.ammo.AmmoUtil;
+import gg.deepsite.pewpew.modules.weapons.magazine.MagazineUtil;
 import gg.deepsite.pewpew.modules.weapons.attachment.AttachmentUtil;
 import gg.deepsite.pewpew.utils.ChatUtils;
 import lombok.experimental.UtilityClass;
@@ -81,6 +83,10 @@ public class GunLoreRenderer {
 
 		lore.add(Component.empty());
 		lore.add(ammoLine(stack, gun));
+		if (MagazineUtil.enabled() && AmmoUtil.usesAmmo(gun) && gun.isConsumesAmmo()) {
+			PewpewMagazineItem inserted = MagazineUtil.inserted(stack);
+			lore.add(line("<gray>Magazine <dark_gray>┃ " + (inserted != null ? inserted.getName() : "<dark_gray>None")));
+		}
 
 		applyAmmoDurability(meta, stack, gun);
 

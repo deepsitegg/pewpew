@@ -25,6 +25,10 @@ public class DefaultConfiguration extends ConfigurateConfig {
 		return getRootNode().node("advanced", "ammo-stats").getBoolean(false);
 	}
 
+	public boolean isMagazinesEnabled() {
+		return getRootNode().node("advanced", "magazines").getBoolean(false);
+	}
+
 	public boolean isLegacySpread() {
 		return getRootNode().node("compatibility", "legacy-spread").getBoolean(false);
 	}

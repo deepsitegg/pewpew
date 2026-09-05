@@ -6,6 +6,7 @@ import gg.deepsite.pewpew.api.objects.PewpewGunItem;
 import gg.deepsite.pewpew.modules.items.ItemsModule;
 import gg.deepsite.pewpew.utils.PersistentDataUtil;
 import gg.deepsite.pewpew.modules.weapons.attachment.AttachmentUtil;
+import gg.deepsite.pewpew.modules.weapons.magazine.MagazineUtil;
 import lombok.experimental.UtilityClass;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.Inventory;
@@ -22,6 +23,7 @@ public class AmmoUtil {
 	public static final NamespacedKey AMMO_TYPE_KEY = new NamespacedKey("pewpew", "ammo_type");
 	public static final NamespacedKey AMMO_ROUNDS_KEY = new NamespacedKey("pewpew", "ammo_rounds");
 	public static final NamespacedKey LOADED_AMMO_KEY = new NamespacedKey("pewpew", "loaded_ammo");
+	public static final NamespacedKey CHAMBER_KEY = new NamespacedKey("pewpew", "chamber");
 
 	public static boolean usesAmmo(@NotNull PewpewGunItem gun) {
 		return gun.getMaxAmmo() > 0;
@@ -33,23 +35,37 @@ public class AmmoUtil {
 	}
 
 	public static int get(@NotNull ItemStack stack) {
+		return pool(stack) + chamber(stack);
+	}
+
+	public static int pool(@NotNull ItemStack stack) {
 		ItemMeta meta = stack.getItemMeta();
 		if (meta == null) return 0;
 		Integer value = meta.getPersistentDataContainer().get(AMMO_KEY, PersistentDataType.INTEGER);
-		return value != null ? value : 0;
+		return value != null ? Math.max(0, value) : 0;
+	}
+
+	public static int chamber(@NotNull ItemStack stack) {
+		ItemMeta meta = stack.getItemMeta();
+		if (meta == null) return 0;
+		Integer value = meta.getPersistentDataContainer().get(CHAMBER_KEY, PersistentDataType.INTEGER);
+		return value != null && value > 0 ? 1 : 0;
 	}
 
 	public static void set(@NotNull ItemStack stack, int rounds) {
 		ItemMeta meta = stack.getItemMeta();
 		if (meta == null) return;
-		meta.getPersistentDataContainer().set(AMMO_KEY, PersistentDataType.INTEGER, Math.max(0, rounds));
+		int total = Math.max(0, rounds);
+		int chambered = MagazineUtil.enabled() ? Math.min(1, total) : 0;
+		meta.getPersistentDataContainer().set(CHAMBER_KEY, PersistentDataType.INTEGER, chambered);
+		meta.getPersistentDataContainer().set(AMMO_KEY, PersistentDataType.INTEGER, total - chambered);
 		stack.setItemMeta(meta);
 	}
 
 	public static void init(@NotNull ItemStack stack, @NotNull PewpewGunItem gun) {
-		if (usesAmmo(gun) && !has(stack)) {
-			set(stack, AttachmentUtil.effectiveMaxAmmo(gun, stack));
-		}
+		if (!usesAmmo(gun) || has(stack)) return;
+		boolean startEmpty = MagazineUtil.enabled() && gun.isConsumesAmmo();
+		set(stack, startEmpty ? 0 : AttachmentUtil.effectiveMaxAmmo(gun, stack));
 	}
 
 	public static void stampAmmo(@NotNull ItemStack stack, @NotNull String ammoType, int roundsPerItem) {

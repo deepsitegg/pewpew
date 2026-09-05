@@ -62,6 +62,42 @@ All player-facing strings live in `plugins/Pewpew/messages.yml`
 ([MiniMessage](https://docs.advntr.dev/minimessage/format.html), same custom tags as item text). Missing keys fall back
 to the built-in defaults. Run `/pewpew reload` to apply changes.
 
+## Sounds
+
+Every sound Pewpew plays that is not defined on an item lives in `plugins/Pewpew/sounds.yml`: reloading, the bolt
+cycling, dry-firing, hitmarkers, explosions, throwables and the menus. Missing keys fall back to the built-in defaults,
+and `/pewpew reload` applies changes.
+
+Each entry takes the same [sound format](guns.md#sound-format) as a gun's `fireSound`: a plain name, a
+`key`/`volume`/`pitch` block, or a list of those played together. Set an entry to `none` to play nothing at all.
+
+```yaml
+sounds:
+  gun:
+    dry-fire: "none"                 # silence it
+    fire:
+      key: "mypack:gun.generic.fire" # resource-pack sound
+      volume: 0.9
+  reload:
+    magazine-finish:                 # layer two sounds
+      - "block.piston.extend"
+      - key: "mypack:mag.seat"
+        volume: 0.5
+```
+
+| Group       | Keys                                                                 |
+|-------------|----------------------------------------------------------------------|
+| `gun`       | `fire`, `dry-fire`, `action-close`, `action-open`                     |
+| `reload`    | `magazine-start`, `magazine-finish`, `single-start`, `single-round`   |
+| `magazine`  | `swap-start`, `swap-finish`, `fill` (see [magazines.md](magazines.md))|
+| `hit`       | `marker`, `marker-headshot`, `crit`, `shield-break`                   |
+| `explosion` | `blast`                                                              |
+| `throwable` | `throw`, `explode`, `smoke`, `flash`, `poison`, `fire`                |
+| `menu`      | `equip`, `unequip`                                                    |
+
+A gun's own `fireSound` and `hitSound` override `gun.fire` and `hit.marker` for that gun, so use `sounds.yml` for the
+fallback and the item file for per-weapon sounds.
+
 ## Skript
 
 Pewpew registers its Skript syntax automatically whenever Skript is installed. See [skript.md](skript.md) for the full

@@ -1,4 +1,6 @@
 package gg.deepsite.pewpew.modules.dummy.menu;
+import gg.deepsite.pewpew.api.enums.SoundEvent;
+import gg.deepsite.pewpew.utils.Sounds;
 
 import com.jazzkuh.inventorylib.objects.Menu;
 import com.jazzkuh.inventorylib.objects.icon.Icon;
@@ -7,7 +9,6 @@ import gg.deepsite.pewpew.utils.ChatUtils;
 import gg.deepsite.pewpew.utils.item.ItemBuilder;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -74,7 +75,7 @@ public class DummyArmorMenu extends Menu {
 		equipment.setItem(SLOTS[index], incoming);
 		if (previous != null && !previous.getType().isAir()) giveBack(previous);
 
-		viewer.playSound(viewer.getLocation(), Sound.ITEM_ARMOR_EQUIP_GENERIC, 0.7f, 1.4f);
+		Sounds.at(viewer, SoundEvent.MENU_EQUIP);
 		refresh();
 	}
 
@@ -87,7 +88,7 @@ public class DummyArmorMenu extends Menu {
 
 		equipment.setItem(SLOTS[index], null);
 		giveBack(fitted);
-		viewer.playSound(viewer.getLocation(), Sound.ITEM_ARMOR_EQUIP_GENERIC, 0.7f, 1.2f);
+		Sounds.at(viewer, SoundEvent.MENU_UNEQUIP);
 		refresh();
 	}
 

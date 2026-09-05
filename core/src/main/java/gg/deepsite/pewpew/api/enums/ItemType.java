@@ -4,5 +4,6 @@ public enum ItemType {
 	GUN,
 	THROWABLE,
 	ATTACHMENT,
-	AMMO
+	AMMO,
+	MAGAZINE
 }

@@ -7,6 +7,7 @@ import gg.deepsite.pewpew.PewpewPlugin;
 import gg.deepsite.pewpew.api.objects.PewPewItem;
 import gg.deepsite.pewpew.api.objects.PewpewEffect;
 import gg.deepsite.pewpew.api.objects.PewpewGunItem;
+import gg.deepsite.pewpew.api.objects.PewpewMagazineItem;
 import gg.deepsite.pewpew.api.objects.PewpewThrowableItem;
 import gg.deepsite.pewpew.api.objects.attachment.PewpewAttachment;
 import gg.deepsite.pewpew.configuration.ItemConfiguration;
@@ -34,7 +35,7 @@ import java.util.logging.Logger;
 @SuppressWarnings("unused")
 public class ItemsModule extends SpigotModule<PewpewPlugin> {
 
-	private static final String[] BUNDLED_FILES = {"guns.yml", "throwables.yml", "attachments.yml", "ammo.yml"};
+	private static final String[] BUNDLED_FILES = {"guns.yml", "throwables.yml", "attachments.yml", "ammo.yml", "magazines.yml"};
 
 	public static final String PDC_KEY = "item_id";
 
@@ -173,7 +174,7 @@ public class ItemsModule extends SpigotModule<PewpewPlugin> {
 			return;
 		}
 
-		int guns = 0, throwables = 0, attachments = 0;
+		int guns = 0, throwables = 0, attachments = 0, magazines = 0;
 
 		Map<String, ConfigurationNode> roots = new LinkedHashMap<>();
 		for (File file : files) {
@@ -199,10 +200,11 @@ public class ItemsModule extends SpigotModule<PewpewPlugin> {
 				if (item instanceof PewpewGunItem) guns++;
 				else if (item instanceof PewpewThrowableItem) throwables++;
 				else if (item instanceof PewpewAttachment) attachments++;
+				else if (item instanceof PewpewMagazineItem) magazines++;
 			}
 		}
 
 		log.info("Loaded " + guns + " gun(s), " + throwables + " throwable(s), "
-				+ attachments + " attachment(s) from items/");
+				+ attachments + " attachment(s), " + magazines + " magazine(s) from items/");
 	}
 }

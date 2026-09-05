@@ -1,0 +1,149 @@
+# Magazine items, only used while 'advanced.magazines' is true in config.yml.
+#
+# A magazine is an item that holds rounds of one ammoType. Pick up ammo and click
+# a magazine in your inventory to fill it. Reloading a gun swaps the fullest
+# matching magazine in and ejects the old one, rounds intact, so nothing is lost.
+# Every gun also gains a chamber holding one round on top of the magazine.
+#
+# 'capacity' replaces the gun's own maxAmmo while a magazine is inserted.
+
+pistol_9mm_mag:
+  type: MAGAZINE
+  name: "<gray>9mm Magazine"
+  lore:
+    - "<dark_gray>Double-stack pistol magazine"
+  itemModel: "minecraft:iron_nugget"
+  maxStack: 1
+  ammoType: pistol_9mm
+  capacity: 17
+
+smg_9mm_mag:
+  type: MAGAZINE
+  name: "<gray>9mm SMG Magazine"
+  itemModel: "minecraft:iron_nugget"
+  maxStack: 1
+  ammoType: pistol_9mm
+  capacity: 30
+  reloadModifier: 1.1
+
+pistol_45_mag:
+  type: MAGAZINE
+  name: "<gray>.45 ACP Magazine"
+  itemModel: "minecraft:iron_nugget"
+  maxStack: 1
+  ammoType: pistol_45
+  capacity: 25
+
+pdw_57_mag:
+  type: MAGAZINE
+  name: "<gray>5.7mm Magazine"
+  itemModel: "minecraft:iron_nugget"
+  maxStack: 1
+  ammoType: pdw_57
+  capacity: 50
+  reloadModifier: 1.2
+
+magnum_44_cylinder:
+  type: MAGAZINE
+  name: "<gray>.44 Speedloader"
+  itemModel: "minecraft:iron_nugget"
+  maxStack: 1
+  ammoType: magnum_44
+  capacity: 6
+  reloadModifier: 0.8
+
+magnum_50ae_mag:
+  type: MAGAZINE
+  name: "<gray>.50 AE Magazine"
+  itemModel: "minecraft:iron_nugget"
+  maxStack: 1
+  ammoType: magnum_50ae
+  capacity: 7
+
+rifle_762x39_mag:
+  type: MAGAZINE
+  name: "<gray>7.62x39 Magazine"
+  lore:
+    - "<dark_gray>Curved steel AK magazine"
+  itemModel: "minecraft:iron_ingot"
+  maxStack: 1
+  ammoType: rifle_762x39
+  capacity: 30
+
+rifle_762x39_drum:
+  type: MAGAZINE
+  name: "<gray>7.62x39 Drum"
+  itemModel: "minecraft:iron_block"
+  maxStack: 1
+  ammoType: rifle_762x39
+  capacity: 75
+  reloadModifier: 1.5
+
+rifle_556_mag:
+  type: MAGAZINE
+  name: "<gray>STANAG Magazine"
+  itemModel: "minecraft:iron_ingot"
+  maxStack: 1
+  ammoType: rifle_556
+  capacity: 30
+
+rifle_556_drum:
+  type: MAGAZINE
+  name: "<gray>5.56 Drum"
+  itemModel: "minecraft:iron_block"
+  maxStack: 1
+  ammoType: rifle_556
+  capacity: 60
+  reloadModifier: 1.4
+
+rifle_762x51_mag:
+  type: MAGAZINE
+  name: "<gray>7.62x51 Magazine"
+  itemModel: "minecraft:iron_ingot"
+  maxStack: 1
+  ammoType: rifle_762x51
+  capacity: 20
+
+sniper_338_mag:
+  type: MAGAZINE
+  name: "<gray>.338 Magazine"
+  itemModel: "minecraft:iron_ingot"
+  maxStack: 1
+  ammoType: sniper_338
+  capacity: 5
+
+bmg_50_mag:
+  type: MAGAZINE
+  name: "<gray>.50 BMG Magazine"
+  itemModel: "minecraft:iron_ingot"
+  maxStack: 1
+  ammoType: bmg_50
+  capacity: 10
+  reloadModifier: 1.3
+
+shotgun_tube:
+  type: MAGAZINE
+  name: "<gray>Shell Holder"
+  lore:
+    - "<dark_gray>Side-saddle of loose shells"
+  itemModel: "minecraft:leather"
+  maxStack: 1
+  ammoType: shotgun_shell
+  capacity: 8
+
+belt_556_box:
+  type: MAGAZINE
+  name: "<gray>5.56 Ammo Box"
+  itemModel: "minecraft:chest"
+  maxStack: 1
+  ammoType: belt_556
+  capacity: 100
+  reloadModifier: 1.6
+
+grenade_40mm_pouch:
+  type: MAGAZINE
+  name: "<gray>40mm Pouch"
+  itemModel: "minecraft:leather"
+  maxStack: 1
+  ammoType: grenade_40mm
+  capacity: 6

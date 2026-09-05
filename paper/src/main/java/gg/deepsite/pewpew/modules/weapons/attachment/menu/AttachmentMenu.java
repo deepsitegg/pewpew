@@ -1,4 +1,6 @@
 package gg.deepsite.pewpew.modules.weapons.attachment.menu;
+import gg.deepsite.pewpew.api.enums.SoundEvent;
+import gg.deepsite.pewpew.utils.Sounds;
 
 import com.jazzkuh.inventorylib.objects.icon.Icon;
 import gg.deepsite.pewpew.api.enums.AttachmentType;
@@ -14,7 +16,6 @@ import gg.deepsite.pewpew.utils.item.ItemFactory;
 import org.jetbrains.annotations.Nullable;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
@@ -105,7 +106,7 @@ public class AttachmentMenu extends AbstractGunMenu {
 		AttachmentUtil.set(gun, type, attachment.getId());
 		GunLoreRenderer.refresh(gun);
 		writeBack(gun);
-		viewer.playSound(viewer.getLocation(), Sound.ITEM_ARMOR_EQUIP_GENERIC, 0.7f, 1.4f);
+		Sounds.at(viewer, SoundEvent.MENU_EQUIP);
 		refresh();
 	}
 
@@ -131,7 +132,7 @@ public class AttachmentMenu extends AbstractGunMenu {
 		GunLoreRenderer.refresh(gun);
 		writeBack(gun);
 		giveBack(fitted);
-		viewer.playSound(viewer.getLocation(), Sound.ITEM_ARMOR_EQUIP_GENERIC, 0.7f, 1.2f);
+		Sounds.at(viewer, SoundEvent.MENU_UNEQUIP);
 		refresh();
 	}
 

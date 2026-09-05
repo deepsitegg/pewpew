@@ -5,6 +5,7 @@ import com.jazzkuh.commandlib.spigot.AnnotationCommand;
 import gg.deepsite.pewpew.PewpewPlugin;
 import gg.deepsite.pewpew.configuration.DefaultConfiguration;
 import gg.deepsite.pewpew.configuration.MessagesConfig;
+import gg.deepsite.pewpew.configuration.SoundsConfig;
 import gg.deepsite.pewpew.modules.items.ItemsModule;
 import gg.deepsite.pewpew.modules.items.commands.ItemsCommand;
 import gg.deepsite.pewpew.utils.ChatUtils;
@@ -35,6 +36,8 @@ public class PewpewCommand extends AnnotationCommand {
 		PewpewPlugin.getDefaultConfiguration().saveConfiguration();
 		PewpewPlugin.setMessagesConfig(new MessagesConfig(PewpewPlugin.getInstance().getDataFolder()));
 		PewpewPlugin.getMessagesConfig().saveConfiguration();
+		PewpewPlugin.setSoundsConfig(new SoundsConfig(PewpewPlugin.getInstance().getDataFolder()));
+		PewpewPlugin.getSoundsConfig().saveConfiguration();
 		PewpewPlugin.getModuleManager().get(ItemsModule.class).reload();
 		sender.sendMessage(ChatUtils.prefix("<success>Configuration reloaded."));
 	}

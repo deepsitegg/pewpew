@@ -1,5 +1,7 @@
 package gg.deepsite.pewpew.modules.weapons.shooting;
 
+import gg.deepsite.pewpew.api.enums.SoundEvent;
+import gg.deepsite.pewpew.utils.Sounds;
 import gg.deepsite.pewpew.PewpewPlugin;
 import gg.deepsite.pewpew.api.objects.ExplosiveConfig;
 import gg.deepsite.pewpew.shooting.DamageMath;
@@ -26,7 +28,7 @@ public final class Explosions {
 	                            @Nullable Player source) {
 		double radius = cfg.blastRadius();
 		world.spawnParticle(Particle.EXPLOSION_EMITTER, center, 1);
-		world.playSound(center, Sound.ENTITY_GENERIC_EXPLODE, 2.0f, 1.0f);
+		Sounds.at(world, center, SoundEvent.EXPLOSION_BLAST);
 
 		for (LivingEntity living : world.getNearbyLivingEntities(center, radius)) {
 			double factor = DamageMath.blastFactor(living.getLocation().distance(center), radius);
@@ -54,7 +56,6 @@ public final class Explosions {
 					if (x * x + y * y + z * z > r2) continue;
 					Block block = world.getBlockAt(center.getBlockX() + x, center.getBlockY() + y, center.getBlockZ() + z);
 					Material type = block.getType();
-					// ponytail: flattens everything breakable (skips air + indestructible only); no drops, no ore-specific loot
 					if (type.isAir() || type.getHardness() < 0) continue;
 					if (cfg.rebuildEnabled()) saved.add(block.getState());
 					block.setType(Material.AIR, false);

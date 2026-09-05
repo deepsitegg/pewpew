@@ -3,6 +3,7 @@ package gg.deepsite.pewpew.modules.weapons.shooting;
 import gg.deepsite.pewpew.PewpewPlugin;
 import gg.deepsite.pewpew.api.enums.FiringMode;
 import gg.deepsite.pewpew.api.enums.ReloadType;
+import gg.deepsite.pewpew.api.enums.SoundEvent;
 import gg.deepsite.pewpew.api.events.PewpewReloadCompleteEvent;
 import gg.deepsite.pewpew.api.events.PewpewReloadEvent;
 import gg.deepsite.pewpew.api.events.PewpewShootEvent;
@@ -12,14 +13,15 @@ import gg.deepsite.pewpew.api.objects.PewpewGunItem;
 import gg.deepsite.pewpew.integrations.WeaponRestrictions;
 import gg.deepsite.pewpew.modules.items.ItemsModule;
 import gg.deepsite.pewpew.modules.weapons.ammo.AmmoUtil;
+import gg.deepsite.pewpew.modules.weapons.magazine.MagazineUtil;
 import gg.deepsite.pewpew.modules.weapons.attachment.AttachmentUtil;
 import gg.deepsite.pewpew.modules.weapons.lore.GunLoreRenderer;
 import gg.deepsite.pewpew.modules.weapons.shooting.recoil.RecoilManager;
 import gg.deepsite.pewpew.utils.ChatUtils;
+import gg.deepsite.pewpew.utils.Sounds;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
@@ -161,11 +163,11 @@ public class ShootingHandler {
 		long openAt = burstSpan + 1;
 		plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
 			if (player.isOnline())
-				player.getWorld().playSound(player.getLocation(), Sound.BLOCK_PISTON_CONTRACT, 0.7f, 0.8f);
+				Sounds.at(player, SoundEvent.GUN_ACTION_CLOSE);
 		}, openAt);
 		plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
 			if (player.isOnline())
-				player.getWorld().playSound(player.getLocation(), Sound.BLOCK_PISTON_EXTEND, 0.7f, 0.8f);
+				Sounds.at(player, SoundEvent.GUN_ACTION_OPEN);
 		}, openAt + gun.getActionOpenTime());
 	}
 
@@ -174,13 +176,19 @@ public class ShootingHandler {
 		UUID id = player.getUniqueId();
 		if (reloading.contains(id)) return;
 
-		if (AmmoUtil.get(weapon) >= AttachmentUtil.effectiveMaxAmmo(gun, weapon)) {
+		boolean swap = MagazineUtil.enabled() && gun.isConsumesAmmo()
+				&& MagazineUtil.findBetter(player.getInventory(), gun, weapon) >= 0;
+
+		if (!swap && AmmoUtil.get(weapon) >= AttachmentUtil.effectiveMaxAmmo(gun, weapon)) {
 			player.sendActionBar(ChatUtils.format(PewpewPlugin.getMessagesConfig().magazineFull()));
 			return;
 		}
 
-		if (gun.isConsumesAmmo() && AmmoUtil.countInInventory(player.getInventory(), gun.getAmmoType()) <= 0) {
-			player.sendActionBar(noAmmoMessage(gun));
+		if (!swap && gun.isConsumesAmmo()
+				&& AmmoUtil.countInInventory(player.getInventory(), gun.getAmmoType()) <= 0) {
+			player.sendActionBar(MagazineUtil.enabled()
+					? ChatUtils.format(PewpewPlugin.getMessagesConfig().noMagazine())
+					: noAmmoMessage(gun));
 			return;
 		}
 
@@ -190,13 +198,18 @@ public class ShootingHandler {
 		reloading.add(id);
 		player.sendActionBar(ChatUtils.format(PewpewPlugin.getMessagesConfig().reloading(), ChatUtils.PRIMARY));
 
-		if (gun.getReloadType() == ReloadType.SINGLE) {
-			player.getWorld().playSound(player.getLocation(), Sound.BLOCK_PISTON_CONTRACT, 0.8f, 1.0f);
+		if (swap) {
+			Sounds.at(player, SoundEvent.MAGAZINE_SWAP_START);
+			BukkitTask task = plugin.getServer().getScheduler().runTaskLater(plugin,
+					() -> finishMagazineSwap(player, gun), reloadTicks);
+			reloadTasks.put(id, task);
+		} else if (gun.getReloadType() == ReloadType.SINGLE) {
+			Sounds.at(player, SoundEvent.RELOAD_SINGLE_START);
 			BukkitTask task = plugin.getServer().getScheduler().runTaskTimer(plugin,
 					() -> loadSingleRound(player, gun), reloadTicks, reloadTicks);
 			reloadTasks.put(id, task);
 		} else {
-			player.getWorld().playSound(player.getLocation(), Sound.BLOCK_PISTON_CONTRACT, 0.8f, 1.2f);
+			Sounds.at(player, SoundEvent.RELOAD_MAGAZINE_START);
 			BukkitTask task = plugin.getServer().getScheduler().runTaskLater(plugin,
 					() -> finishMagazineReload(player, gun), reloadTicks);
 			reloadTasks.put(id, task);
@@ -244,7 +257,7 @@ public class ShootingHandler {
 			return;
 		}
 
-		int maxAmmo = AttachmentUtil.effectiveMaxAmmo(gun, held);
+		int maxAmmo = looseMaxAmmo(gun, held);
 		int current = AmmoUtil.get(held);
 		if (current >= maxAmmo) {
 			endReload(id);
@@ -265,12 +278,33 @@ public class ShootingHandler {
 		AmmoUtil.set(held, newAmmo);
 		GunLoreRenderer.apply(held, gun);
 		player.getInventory().setItemInMainHand(held);
-		player.getWorld().playSound(player.getLocation(), Sound.BLOCK_PISTON_EXTEND, 0.7f, 1.4f);
+		Sounds.at(player, SoundEvent.RELOAD_SINGLE_ROUND);
 
 		if (newAmmo >= maxAmmo) {
 			endReload(id);
 			new PewpewReloadCompleteEvent(player, gun, held, newAmmo, newAmmo - current).callEvent();
 		}
+	}
+
+	private void finishMagazineSwap(Player player, PewpewGunItem gun) {
+		UUID id = player.getUniqueId();
+		endReload(id);
+		if (!player.isOnline()) return;
+
+		ItemStack held = player.getInventory().getItemInMainHand();
+		if (!isSameGun(held, gun)) return;
+
+		int current = AmmoUtil.get(held);
+		if (!MagazineUtil.swap(player, held, gun)) {
+			player.sendActionBar(ChatUtils.format(PewpewPlugin.getMessagesConfig().noMagazine()));
+			return;
+		}
+
+		int newAmmo = AmmoUtil.get(held);
+		GunLoreRenderer.apply(held, gun);
+		player.getInventory().setItemInMainHand(held);
+		Sounds.at(player, SoundEvent.MAGAZINE_SWAP_FINISH);
+		new PewpewReloadCompleteEvent(player, gun, held, newAmmo, newAmmo - current).callEvent();
 	}
 
 	private void finishMagazineReload(Player player, PewpewGunItem gun) {
@@ -281,7 +315,7 @@ public class ShootingHandler {
 		ItemStack held = player.getInventory().getItemInMainHand();
 		if (!isSameGun(held, gun)) return;
 
-		int maxAmmo = AttachmentUtil.effectiveMaxAmmo(gun, held);
+		int maxAmmo = looseMaxAmmo(gun, held);
 		int current = AmmoUtil.get(held);
 		int newAmmo;
 		if (gun.isConsumesAmmo()) {
@@ -297,8 +331,14 @@ public class ShootingHandler {
 		AmmoUtil.set(held, newAmmo);
 		GunLoreRenderer.apply(held, gun);
 		player.getInventory().setItemInMainHand(held);
-		player.getWorld().playSound(player.getLocation(), Sound.BLOCK_PISTON_EXTEND, 0.8f, 1.4f);
+		Sounds.at(player, SoundEvent.RELOAD_MAGAZINE_FINISH);
 		new PewpewReloadCompleteEvent(player, gun, held, newAmmo, newAmmo - current).callEvent();
+	}
+
+	private static int looseMaxAmmo(PewpewGunItem gun, ItemStack held) {
+		int max = AttachmentUtil.effectiveMaxAmmo(gun, held);
+		if (!MagazineUtil.enabled() || !gun.isConsumesAmmo()) return max;
+		return Math.min(max, AmmoUtil.pool(held) + 1);
 	}
 
 	private void endReload(UUID id) {
@@ -333,7 +373,7 @@ public class ShootingHandler {
 				gun.getFireSound().forEach(sound ->
 						player.getWorld().playSound(sound.adventure(jitter), at.getX(), at.getY(), at.getZ()));
 			} else {
-				player.getWorld().playSound(player.getLocation(), Sound.ENTITY_BLAZE_SHOOT, 0.6f, 1.6f * jitter);
+				Sounds.at(player, SoundEvent.GUN_FIRE, jitter);
 			}
 		}
 
@@ -342,7 +382,7 @@ public class ShootingHandler {
 	}
 
 	private void signalEmpty(Player player) {
-		player.getWorld().playSound(player.getLocation(), Sound.BLOCK_DISPENSER_FAIL, 0.8f, 1.2f);
+		Sounds.at(player, SoundEvent.GUN_DRY_FIRE);
 		player.sendActionBar(ChatUtils.format(PewpewPlugin.getMessagesConfig().outOfAmmo(), ChatUtils.PRIMARY));
 	}
 

@@ -27,6 +27,14 @@ public class MessagesConfig extends ConfigurateConfig {
 		return get("out-of-ammo", "<error>Out of ammo <dark_gray>┃ <gray>press <color><key:key.swapOffhand><gray> to reload");
 	}
 
+	public String noMagazine() {
+		return get("no-magazine", "<error>No loaded magazine in your inventory.");
+	}
+
+	public String magazineAmmoMismatch() {
+		return get("magazine-ammo-mismatch", "<error>That magazine already holds different ammo.");
+	}
+
 	public String noAmmoInInventory() {
 		return get("no-ammo-in-inventory", "<error>Out of <reset>%1<error> in your inventory.");
 	}

@@ -231,6 +231,10 @@ fireSound: # or a list, all played together (layering)
 Names without a namespace are treated as vanilla and converted (`ENTITY_BLAZE_SHOOT` → `minecraft:entity.blaze.shoot`).
 Anything with a `:` is used as-is, so custom resource-pack sounds work (`mypack:gun.ak.fire`).
 
+Omitting `fireSound` or `hitSound` falls back to `sounds.gun.fire` / `sounds.hit.marker` in `sounds.yml`, which also
+holds every other sound Pewpew plays (reloading, dry-firing, explosions, menus). See
+[integrations.md](integrations.md#sounds).
+
 ## Attachments
 
 | Field                    | Type         | Default | Description                                                                                                |
