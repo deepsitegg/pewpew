@@ -29,6 +29,14 @@ public class DefaultConfiguration extends ConfigurateConfig {
 		return getRootNode().node("advanced", "magazines").getBoolean(false);
 	}
 
+	public boolean isImpactsEnabled() {
+		return getRootNode().node("impacts", "enabled").getBoolean(true);
+	}
+
+	public int getImpactsMaxPerGun() {
+		return Math.max(1, getRootNode().node("impacts", "max-per-gun").getInt(8));
+	}
+
 	public boolean isLegacySpread() {
 		return getRootNode().node("compatibility", "legacy-spread").getBoolean(false);
 	}

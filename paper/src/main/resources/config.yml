@@ -36,6 +36,14 @@ advanced:
   # exactly as before.
   magazines: false
 
+# A shot that lands on a block leaves a small dark square where it hit. Impacts
+# are display entities, never written to disk, and gone after a restart.
+impacts:
+  enabled: true
+  # Newest impacts kept per gun. Firing past this removes that gun's oldest one.
+  # Every impact also disappears on its own after 30 seconds.
+  max-per-gun: 8
+
 lore:
   stat-display: true
 

@@ -1,11 +1,13 @@
 package gg.deepsite.pewpew.modules.weapons.listeners;
 
 import gg.deepsite.pewpew.PewpewPlugin;
+import gg.deepsite.pewpew.api.events.PewpewHitBlockEvent;
 import gg.deepsite.pewpew.api.events.PewpewKillEvent;
 import gg.deepsite.pewpew.api.objects.PewPewItem;
 import gg.deepsite.pewpew.api.objects.PewpewGunItem;
 import gg.deepsite.pewpew.integrations.WeaponRestrictions;
 import gg.deepsite.pewpew.modules.items.ItemsModule;
+import gg.deepsite.pewpew.modules.weapons.WeaponsModule;
 import gg.deepsite.pewpew.modules.weapons.shooting.GunHitTracker;
 import gg.deepsite.pewpew.modules.weapons.shooting.ProjectileShotExecutor;
 import gg.deepsite.pewpew.modules.weapons.shooting.ShootingHandler;
@@ -64,6 +66,13 @@ public class ShootingListener implements Listener {
 
 		event.setCancelled(true);
 		shootingHandler.startReload(event.getPlayer(), gun, mainHand);
+	}
+
+	@EventHandler
+	public void onHitBlock(PewpewHitBlockEvent event) {
+		WeaponsModule weapons = PewpewPlugin.getModuleManager().get(WeaponsModule.class);
+		if (weapons == null) return;
+		weapons.getBulletImpacts().spawn(event.getGun(), event.getLocation(), event.getBlock());
 	}
 
 	@EventHandler

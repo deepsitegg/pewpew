@@ -13,6 +13,7 @@ import gg.deepsite.pewpew.modules.weapons.listeners.MagazineListener;
 import gg.deepsite.pewpew.modules.weapons.listeners.ScopeListener;
 import gg.deepsite.pewpew.modules.weapons.listeners.ShootingListener;
 import gg.deepsite.pewpew.modules.weapons.listeners.ThrowingListener;
+import gg.deepsite.pewpew.modules.weapons.shooting.BulletImpacts;
 import gg.deepsite.pewpew.modules.weapons.shooting.ShootingHandler;
 import gg.deepsite.pewpew.modules.weapons.throwing.ThrowableHandler;
 import lombok.Getter;
@@ -32,6 +33,9 @@ public class WeaponsModule extends SpigotModule<PewpewPlugin> {
 	@Getter
 	private RigAnimator rigAnimator;
 
+	@Getter
+	private BulletImpacts bulletImpacts;
+
 	public WeaponsModule(SpigotModuleManager<PewpewPlugin> moduleManager) {
 		super(moduleManager);
 	}
@@ -47,6 +51,7 @@ public class WeaponsModule extends SpigotModule<PewpewPlugin> {
 		rigAnimator.start();
 		shootingHandler = new ShootingHandler(getPlugin());
 		throwableHandler = new ThrowableHandler(getPlugin());
+		bulletImpacts = new BulletImpacts(getPlugin());
 		registerComponent(new ShootingListener(shootingHandler));
 		registerComponent(new ThrowingListener(throwableHandler));
 		registerComponent(new AttachmentListener());
@@ -67,6 +72,9 @@ public class WeaponsModule extends SpigotModule<PewpewPlugin> {
 		}
 		if (rigAnimator != null) {
 			rigAnimator.stop();
+		}
+		if (bulletImpacts != null) {
+			bulletImpacts.clear();
 		}
 	}
 }
