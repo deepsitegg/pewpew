@@ -98,12 +98,12 @@ public class ShootingHandler {
 			}
 
 			if (AmmoUtil.usesAmmo(gun) && AmmoUtil.get(held) <= 0) {
-				handleEmpty(player, gun, held);
+				handleEmpty(player, gun, held, false);
 				stopAutoFire(id);
 				return;
 			}
 
-			tryShoot(player, gun, held);
+			tryShoot(player, gun, held, false);
 		}, 0L, 1L);
 		autoTasks.put(id, task);
 	}
@@ -114,6 +114,11 @@ public class ShootingHandler {
 	}
 
 	public void tryShoot(@NotNull Player player, @NotNull PewpewGunItem gun, @NotNull ItemStack weapon) {
+		tryShoot(player, gun, weapon, true);
+	}
+
+	public void tryShoot(@NotNull Player player, @NotNull PewpewGunItem gun, @NotNull ItemStack weapon,
+	                     boolean triggerPressed) {
 		AmmoUtil.init(weapon, gun);
 		boolean empty = AmmoUtil.usesAmmo(gun) && AmmoUtil.get(weapon) <= 0;
 
@@ -123,7 +128,7 @@ public class ShootingHandler {
 		}
 
 		if (empty) {
-			handleEmpty(player, gun, weapon);
+			handleEmpty(player, gun, weapon, triggerPressed);
 			return;
 		}
 
@@ -172,6 +177,18 @@ public class ShootingHandler {
 			if (player.isOnline())
 				Sounds.at(player, SoundEvent.GUN_ACTION_OPEN);
 		}, openAt + gun.getActionOpenTime());
+	}
+
+	public boolean ejectMagazine(@NotNull Player player, @NotNull PewpewGunItem gun, @NotNull ItemStack weapon) {
+		if (!MagazineUtil.enabled() || !gun.isConsumesAmmo()) return false;
+		if (isReloading(player) || MagazineUtil.inserted(weapon) == null) return false;
+
+		MagazineUtil.eject(player, weapon);
+		GunLoreRenderer.apply(weapon, gun);
+		player.getInventory().setItemInMainHand(weapon);
+		GunModels.refresh(player);
+		Sounds.at(player, SoundEvent.MAGAZINE_SWAP_START);
+		return true;
 	}
 
 	public boolean startReload(@NotNull Player player, @NotNull PewpewGunItem gun, @NotNull ItemStack weapon) {
@@ -225,6 +242,10 @@ public class ShootingHandler {
 
 	public boolean isReloading(@NotNull Player player) {
 		return reloading.contains(player.getUniqueId());
+	}
+
+	public void cancelReload(@NotNull UUID id) {
+		if (reloading.contains(id)) endReload(id);
 	}
 
 	public void clearPlayer(@NotNull UUID id) {
@@ -369,7 +390,7 @@ public class ShootingHandler {
 		if (AmmoUtil.usesAmmo(gun)) {
 			int ammo = AmmoUtil.get(held);
 			if (ammo <= 0) {
-				handleEmpty(player, gun, held);
+				handleEmpty(player, gun, held, false);
 				return;
 			}
 			AmmoUtil.set(held, ammo - 1);
@@ -394,9 +415,12 @@ public class ShootingHandler {
 		executor.execute(player, gun, held);
 	}
 
-	private void handleEmpty(Player player, PewpewGunItem gun, ItemStack weapon) {
+	private void handleEmpty(Player player, PewpewGunItem gun, ItemStack weapon, boolean triggerPressed) {
 		if (isReloading(player)) return;
-		if (startReload(player, gun, weapon)) return;
+		if (triggerPressed && PewpewPlugin.getDefaultConfiguration().isAutoReloadEnabled()
+				&& startReload(player, gun, weapon)) {
+			return;
+		}
 		signalEmpty(player);
 		int lock = Math.max(4, (int) Math.ceil(gun.getFireRate()));
 		if (player.getCooldown(weapon) < lock) player.setCooldown(weapon, lock);

@@ -44,6 +44,11 @@ impacts:
   # Every impact also disappears on its own after 30 seconds.
   max-per-gun: 8
 
+# Firing a gun that just ran dry starts a reload on its own, instead of only
+# dry-firing and telling the player to press the reload key. Held automatic fire
+# never auto-reloads either way: the trigger has to be pressed again.
+auto-reload: false
+
 lore:
   stat-display: true
 

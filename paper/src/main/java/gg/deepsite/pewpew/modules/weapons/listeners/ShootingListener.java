@@ -23,6 +23,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -65,7 +66,16 @@ public class ShootingListener implements Listener {
 		if (!(item instanceof PewpewGunItem gun)) return;
 
 		event.setCancelled(true);
+		if (event.getPlayer().isSneaking()) {
+			shootingHandler.ejectMagazine(event.getPlayer(), gun, mainHand);
+			return;
+		}
 		shootingHandler.startReload(event.getPlayer(), gun, mainHand);
+	}
+
+	@EventHandler
+	public void onItemHeld(PlayerItemHeldEvent event) {
+		shootingHandler.cancelReload(event.getPlayer().getUniqueId());
 	}
 
 	@EventHandler

@@ -29,6 +29,10 @@ public class DefaultConfiguration extends ConfigurateConfig {
 		return getRootNode().node("advanced", "magazines").getBoolean(false);
 	}
 
+	public boolean isAutoReloadEnabled() {
+		return getRootNode().node("auto-reload").getBoolean(false);
+	}
+
 	public boolean isImpactsEnabled() {
 		return getRootNode().node("impacts", "enabled").getBoolean(true);
 	}
