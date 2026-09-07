@@ -1,5 +1,6 @@
 package gg.deepsite.pewpew.api.objects;
 
+import gg.deepsite.pewpew.api.enums.HoldPose;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,4 +21,5 @@ public class PewPewItem {
 	private int customModelData;
 	private String itemModel;
 	private int maxStack;
+	private HoldPose holdPose;
 }

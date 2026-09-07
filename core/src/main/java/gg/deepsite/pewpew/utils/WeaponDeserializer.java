@@ -14,6 +14,8 @@ import org.spongepowered.configurate.ConfigurationNode;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -134,7 +136,8 @@ public class WeaponDeserializer {
 	}
 
 	private static final Set<String> COMMON_KEYS = Set.of(
-			"type", "name", "lore", "itemModel", "hideItemFlags", "customModelData", "maxStack", EXTENDS_KEY, ABSTRACT_KEY);
+			"type", "name", "lore", "itemModel", "hideItemFlags", "customModelData", "maxStack", "holdPose",
+			EXTENDS_KEY, ABSTRACT_KEY);
 
 	private static final Map<ItemType, Set<String>> TYPE_KEYS = Map.of(
 			ItemType.GUN, Set.of(
@@ -145,7 +148,7 @@ public class WeaponDeserializer {
 					"headshotMultiplier", "hitMessage", "hitSound", "impactParticle", "knockback", "maxAmmo",
 					"payload", "projectileModel", "projectileSpeed", "range", "recoil", "recoilProfile",
 					"reloadTime", "reloadType", "selfKnockback", "shieldDisableTime", "shooterEffects", "spread",
-					"spreadModifiers", "bloomPerShot", "bloomMax", "bloomDecay",
+					"spreadModifiers", "bloomPerShot", "bloomMax", "bloomDecay", "animations", "rig", "animationCooldown",
 					"trailParticle", "trajectory", "victimEffects"),
 			ItemType.AMMO, Set.of(
 					"ammoType", "roundsPerItem", "damageMultiplier", "velocityMultiplier", "penetration"),
@@ -220,7 +223,10 @@ public class WeaponDeserializer {
 			case MAGAZINE ->
 					deserializeMagazine(fileName, id, node, name, lore, hideItemFlags, customModelData, itemModel);
 		};
-		if (item != null) item.setMaxStack(maxStack);
+		if (item != null) {
+			item.setMaxStack(maxStack);
+			item.setHoldPose(parseHoldPose(fileName, id, node));
+		}
 		return item;
 	}
 
@@ -509,6 +515,9 @@ public class WeaponDeserializer {
 				.hitSound(hitSound)
 				.hitMessage(hitMessage)
 				.defaultAttachments(defaultAttachments)
+				.animations(parseAnimations(fileName, id, node.node("animations")))
+				.rigs(parseRigs(fileName, id, node.node("rig")))
+				.animationCooldown(node.node("animationCooldown").getBoolean(true))
 				.build();
 	}
 
@@ -743,6 +752,139 @@ public class WeaponDeserializer {
 		} catch (NumberFormatException e) {
 			return fallback;
 		}
+	}
+
+	@Nullable
+	public static Map<AnimationEvent, PewpewRig> parseRigs(String fileName, String id, ConfigurationNode node) {
+		if (node.virtual()) return null;
+		Map<AnimationEvent, PewpewRig> rigs = new EnumMap<>(AnimationEvent.class);
+		for (var entry : node.childrenMap().entrySet()) {
+			String path = String.valueOf(entry.getKey());
+			AnimationEvent event = AnimationEvent.fromPath(path);
+			if (event == null) {
+				warnField(fileName, id, "unknown rig animation '" + path + "', ignoring");
+				continue;
+			}
+			PewpewRig rig = parseRig(fileName, id, path, entry.getValue());
+			if (rig != null) rigs.put(event, rig);
+		}
+		return rigs.isEmpty() ? null : rigs;
+	}
+
+	@Nullable
+	private static PewpewRig parseRig(String fileName, String id, String path, ConfigurationNode node) {
+		boolean viewmodel = node.node("viewmodel").getBoolean(false);
+		String billboard = node.node("billboard").getString(viewmodel ? "CENTER" : "FIXED").toUpperCase();
+		List<PewpewRig.Part> parts = new ArrayList<>();
+		for (var entry : node.childrenMap().entrySet()) {
+			String partId = String.valueOf(entry.getKey());
+			if ("viewmodel".equals(partId) || "billboard".equals(partId)) continue;
+			ConfigurationNode partNode = entry.getValue();
+			String model = partNode.node("itemModel").getString();
+			if (!validModel(fileName, id, path + "." + partId, model)) continue;
+
+			List<PewpewRig.Keyframe> keyframes = new ArrayList<>();
+			for (ConfigurationNode frameNode : partNode.node("keyframes").childrenList()) {
+				int tick = frameNode.node("tick").getInt(-1);
+				if (tick < 0) {
+					warnField(fileName, id, "rig '" + path + "." + partId
+							+ "' has a keyframe without a 'tick', ignoring it");
+					continue;
+				}
+				keyframes.add(new PewpewRig.Keyframe(tick,
+						floats(frameNode.node("translation"), PewpewRig.Keyframe.ZERO),
+						floats(frameNode.node("rotation"), PewpewRig.Keyframe.ZERO),
+						floats(frameNode.node("scale"), PewpewRig.Keyframe.ONE)));
+			}
+			if (keyframes.isEmpty()) {
+				warnField(fileName, id, "rig '" + path + "." + partId + "' has no keyframes, ignoring");
+				continue;
+			}
+			keyframes.sort(Comparator.comparingInt(PewpewRig.Keyframe::tick));
+			parts.add(new PewpewRig.Part(partId, model, keyframes));
+		}
+		if (parts.isEmpty()) {
+			warnField(fileName, id, "rig '" + path + "' has no usable parts, ignoring");
+			return null;
+		}
+		return new PewpewRig(parts, viewmodel, billboard);
+	}
+
+	private static float[] floats(ConfigurationNode node, float[] fallback) {
+		List<? extends ConfigurationNode> list = node.childrenList();
+		if (list.size() != 3) return fallback.clone();
+		float[] out = new float[3];
+		for (int i = 0; i < 3; i++) out[i] = (float) list.get(i).getDouble(fallback[i]);
+		return out;
+	}
+
+	@Nullable
+	public static HoldPose parseHoldPose(String fileName, String id, ConfigurationNode node) {
+		String raw = node.node("holdPose").getString();
+		if (raw == null) return null;
+		try {
+			return HoldPose.valueOf(raw.toUpperCase());
+		} catch (IllegalArgumentException e) {
+			warnField(fileName, id, "unknown holdPose '" + raw + "', ignoring");
+			return null;
+		}
+	}
+
+	@Nullable
+	public static Map<AnimationEvent, PewpewAnimation> parseAnimations(String fileName, String id,
+	                                                                   ConfigurationNode node) {
+		if (node.virtual()) return null;
+		Map<AnimationEvent, PewpewAnimation> animations = new EnumMap<>(AnimationEvent.class);
+		for (var entry : node.childrenMap().entrySet()) {
+			String path = String.valueOf(entry.getKey());
+			AnimationEvent event = AnimationEvent.fromPath(path);
+			if (event == null) {
+				warnField(fileName, id, "unknown animation '" + path + "', ignoring");
+				continue;
+			}
+			PewpewAnimation animation = parseAnimation(fileName, id, path, entry.getValue());
+			if (animation != null) animations.put(event, animation);
+		}
+		return animations.isEmpty() ? null : animations;
+	}
+
+	@Nullable
+	private static PewpewAnimation parseAnimation(String fileName, String id, String path, ConfigurationNode node) {
+		if (node.isList()) {
+			List<PewpewAnimation.Frame> frames = new ArrayList<>();
+			for (ConfigurationNode child : node.childrenList()) {
+				String model = child.isMap() ? child.node("model").getString() : child.getString();
+				int ticks = child.isMap() ? child.node("ticks").getInt(1) : 1;
+				if (!validModel(fileName, id, path, model) || ticks < 1) continue;
+				frames.add(new PewpewAnimation.Frame(model, ticks));
+			}
+			if (frames.isEmpty()) {
+				warnField(fileName, id, "animation '" + path + "' has no usable frames, ignoring");
+				return null;
+			}
+			return new PewpewAnimation(frames);
+		}
+
+		String base = node.node("model").getString();
+		int frameCount = node.node("frames").getInt(0);
+		int ticks = node.node("ticks").getInt(1);
+		if (!validModel(fileName, id, path, base)) return null;
+		if (frameCount < 1 || ticks < 1) {
+			warnField(fileName, id, "animation '" + path + "' needs 'frames' and 'ticks' of at least 1, ignoring");
+			return null;
+		}
+		return PewpewAnimation.baked(base, frameCount, ticks);
+	}
+
+	private static boolean validModel(String fileName, String id, String path, String model) {
+		if (model != null && model.split(":").length == 2) return true;
+		warnField(fileName, id, "animation '" + path + "' has model '" + model
+				+ "', which is not in the format namespace:key, ignoring");
+		return false;
+	}
+
+	private static void warnField(String fileName, String id, String reason) {
+		PewpewLog.get().warning("[WeaponDeserializer] '" + id + "' in " + fileName + ": " + reason);
 	}
 
 	private static void warn(String fileName, String id, String reason) {

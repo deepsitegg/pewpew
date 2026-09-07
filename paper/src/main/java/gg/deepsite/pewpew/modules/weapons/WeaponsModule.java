@@ -6,6 +6,8 @@ import com.jazzkuh.modulemanager.spigot.SpigotModuleManager;
 import gg.deepsite.pewpew.PewpewPlugin;
 import gg.deepsite.pewpew.integrations.CombatTagIntegration;
 import gg.deepsite.pewpew.integrations.OpenMinetopiaIntegration;
+import gg.deepsite.pewpew.modules.weapons.animation.AnimationManager;
+import gg.deepsite.pewpew.modules.weapons.animation.RigAnimator;
 import gg.deepsite.pewpew.modules.weapons.listeners.AttachmentListener;
 import gg.deepsite.pewpew.modules.weapons.listeners.MagazineListener;
 import gg.deepsite.pewpew.modules.weapons.listeners.ScopeListener;
@@ -24,6 +26,12 @@ public class WeaponsModule extends SpigotModule<PewpewPlugin> {
 	@Getter
 	private ThrowableHandler throwableHandler;
 
+	@Getter
+	private AnimationManager animationManager;
+
+	@Getter
+	private RigAnimator rigAnimator;
+
 	public WeaponsModule(SpigotModuleManager<PewpewPlugin> moduleManager) {
 		super(moduleManager);
 	}
@@ -33,6 +41,10 @@ public class WeaponsModule extends SpigotModule<PewpewPlugin> {
 		Menu.init(getPlugin());
 		CombatTagIntegration.init();
 		OpenMinetopiaIntegration.init();
+		animationManager = new AnimationManager(getPlugin());
+		animationManager.start();
+		rigAnimator = new RigAnimator(getPlugin());
+		rigAnimator.start();
 		shootingHandler = new ShootingHandler(getPlugin());
 		throwableHandler = new ThrowableHandler(getPlugin());
 		registerComponent(new ShootingListener(shootingHandler));
@@ -49,6 +61,12 @@ public class WeaponsModule extends SpigotModule<PewpewPlugin> {
 		}
 		if (throwableHandler != null) {
 			throwableHandler.clearCooldowns();
+		}
+		if (animationManager != null) {
+			animationManager.stop();
+		}
+		if (rigAnimator != null) {
+			rigAnimator.stop();
 		}
 	}
 }

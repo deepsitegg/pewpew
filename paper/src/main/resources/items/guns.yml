@@ -1,3 +1,51 @@
+# Guns.
+#
+# Two optional fields drive how a gun looks in the hand:
+#
+#   holdPose: CROSSBOW
+#     Renders the gun with the vanilla charged-crossbow hold (two-handed, held
+#     out front) instead of the flat paper hold. Right-click stays bound to
+#     firing. Leave it out for the default hold.
+#
+#   animations:
+#     Swaps the item's model over time. Every model is a resource-pack
+#     item model (namespace:key), one per baked Blockbench frame.
+#     Events: fire, reload, reload-round (per round on SINGLE reloads),
+#     scope-in, scope-out.
+#
+#     Explicit frames, each with its own duration in ticks:
+#       animations:
+#         fire:
+#           - model: "mypack:ak_fire_1"
+#             ticks: 1
+#           - model: "mypack:ak_fire_2"
+#             ticks: 2
+#
+#     Or the shorthand for an evenly timed export, which expands to
+#     mypack:ak_reload_1 .. mypack:ak_reload_12 at 2 ticks each:
+#       animations:
+#         reload:
+#           model: "mypack:ak_reload_"
+#           frames: 12
+#           ticks: 2
+#
+#     Reload animations are stretched to the gun's real reload time, so
+#     attachments that change reloadTime keep the animation in sync.
+#
+#     IMPORTANT - stopping the hand bob:
+#     Changing the model of the item a player is holding makes the client
+#     replay its equip animation, so the gun visibly bobs on every frame.
+#     Set "hand_animation_on_swap": false in the item definition of every
+#     frame in your resource pack (assets/<namespace>/items/<name>.json):
+#
+#       {
+#         "model": { "type": "minecraft:model", "model": "mypack:item/ak_fire_1" },
+#         "hand_animation_on_swap": false
+#       }
+#
+#     Without it the animation still plays, it just bobs. The field needs a
+#     1.21.4 or newer client.
+
 glock_17:
   type: GUN
   maxStack: 1

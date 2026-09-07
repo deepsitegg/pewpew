@@ -1,11 +1,13 @@
 package gg.deepsite.pewpew.api.objects;
 
+import gg.deepsite.pewpew.api.enums.AnimationEvent;
 import gg.deepsite.pewpew.api.enums.AttachmentType;
 import gg.deepsite.pewpew.api.enums.FiringMode;
 import gg.deepsite.pewpew.api.enums.ReloadType;
 import gg.deepsite.pewpew.api.enums.Trajectory;
 import gg.deepsite.pewpew.api.objects.attachment.DefaultAttachment;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -13,6 +15,7 @@ import lombok.experimental.SuperBuilder;
 import net.kyori.adventure.key.Key;
 
 import java.util.List;
+import java.util.Map;
 
 @Data
 @SuperBuilder
@@ -62,6 +65,18 @@ public class PewpewGunItem extends PewpewWeaponItem {
 	private List<PewpewSound> hitSound;
 	private String hitMessage;
 	private List<DefaultAttachment> defaultAttachments;
+	private Map<AnimationEvent, PewpewAnimation> animations;
+	private Map<AnimationEvent, PewpewRig> rigs;
+	@Builder.Default
+	private boolean animationCooldown = true;
+
+	public PewpewAnimation getAnimation(AnimationEvent event) {
+		return animations == null ? null : animations.get(event);
+	}
+
+	public PewpewRig getRig(AnimationEvent event) {
+		return rigs == null ? null : rigs.get(event);
+	}
 
 	public boolean isForcedSlot(AttachmentType slot) {
 		if (defaultAttachments == null) return false;

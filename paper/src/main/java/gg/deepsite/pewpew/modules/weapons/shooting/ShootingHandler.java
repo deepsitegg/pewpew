@@ -1,6 +1,7 @@
 package gg.deepsite.pewpew.modules.weapons.shooting;
 
 import gg.deepsite.pewpew.PewpewPlugin;
+import gg.deepsite.pewpew.api.enums.AnimationEvent;
 import gg.deepsite.pewpew.api.enums.FiringMode;
 import gg.deepsite.pewpew.api.enums.ReloadType;
 import gg.deepsite.pewpew.api.enums.SoundEvent;
@@ -17,6 +18,7 @@ import gg.deepsite.pewpew.modules.weapons.magazine.MagazineUtil;
 import gg.deepsite.pewpew.modules.weapons.attachment.AttachmentUtil;
 import gg.deepsite.pewpew.modules.weapons.lore.GunLoreRenderer;
 import gg.deepsite.pewpew.modules.weapons.shooting.recoil.RecoilManager;
+import gg.deepsite.pewpew.utils.Animations;
 import gg.deepsite.pewpew.utils.ChatUtils;
 import gg.deepsite.pewpew.utils.Sounds;
 import lombok.Getter;
@@ -95,7 +97,7 @@ public class ShootingHandler {
 			}
 
 			if (AmmoUtil.usesAmmo(gun) && AmmoUtil.get(held) <= 0) {
-				signalEmpty(player);
+				handleEmpty(player, gun, held);
 				stopAutoFire(id);
 				return;
 			}
@@ -120,7 +122,7 @@ public class ShootingHandler {
 		}
 
 		if (empty) {
-			signalEmpty(player);
+			handleEmpty(player, gun, weapon);
 			return;
 		}
 
@@ -171,17 +173,17 @@ public class ShootingHandler {
 		}, openAt + gun.getActionOpenTime());
 	}
 
-	public void startReload(@NotNull Player player, @NotNull PewpewGunItem gun, @NotNull ItemStack weapon) {
-		if (!AmmoUtil.usesAmmo(gun)) return;
+	public boolean startReload(@NotNull Player player, @NotNull PewpewGunItem gun, @NotNull ItemStack weapon) {
+		if (!AmmoUtil.usesAmmo(gun)) return false;
 		UUID id = player.getUniqueId();
-		if (reloading.contains(id)) return;
+		if (reloading.contains(id)) return false;
 
 		boolean swap = MagazineUtil.enabled() && gun.isConsumesAmmo()
 				&& MagazineUtil.findBetter(player.getInventory(), gun, weapon) >= 0;
 
 		if (!swap && AmmoUtil.get(weapon) >= AttachmentUtil.effectiveMaxAmmo(gun, weapon)) {
 			player.sendActionBar(ChatUtils.format(PewpewPlugin.getMessagesConfig().magazineFull()));
-			return;
+			return false;
 		}
 
 		if (!swap && gun.isConsumesAmmo()
@@ -189,10 +191,10 @@ public class ShootingHandler {
 			player.sendActionBar(MagazineUtil.enabled()
 					? ChatUtils.format(PewpewPlugin.getMessagesConfig().noMagazine())
 					: noAmmoMessage(gun));
-			return;
+			return false;
 		}
 
-		if (!new PewpewReloadEvent(player, gun, weapon).callEvent()) return;
+		if (!new PewpewReloadEvent(player, gun, weapon).callEvent()) return false;
 
 		int reloadTicks = AttachmentUtil.effectiveReloadTime(gun, weapon);
 		reloading.add(id);
@@ -200,20 +202,24 @@ public class ShootingHandler {
 
 		if (swap) {
 			Sounds.at(player, SoundEvent.MAGAZINE_SWAP_START);
+			Animations.play(player, gun, AnimationEvent.RELOAD, reloadTicks);
 			BukkitTask task = plugin.getServer().getScheduler().runTaskLater(plugin,
 					() -> finishMagazineSwap(player, gun), reloadTicks);
 			reloadTasks.put(id, task);
 		} else if (gun.getReloadType() == ReloadType.SINGLE) {
 			Sounds.at(player, SoundEvent.RELOAD_SINGLE_START);
+			Animations.play(player, gun, AnimationEvent.RELOAD_ROUND, reloadTicks);
 			BukkitTask task = plugin.getServer().getScheduler().runTaskTimer(plugin,
 					() -> loadSingleRound(player, gun), reloadTicks, reloadTicks);
 			reloadTasks.put(id, task);
 		} else {
 			Sounds.at(player, SoundEvent.RELOAD_MAGAZINE_START);
+			Animations.play(player, gun, AnimationEvent.RELOAD, reloadTicks);
 			BukkitTask task = plugin.getServer().getScheduler().runTaskLater(plugin,
 					() -> finishMagazineReload(player, gun), reloadTicks);
 			reloadTasks.put(id, task);
 		}
+		return true;
 	}
 
 	public boolean isReloading(@NotNull Player player) {
@@ -227,6 +233,7 @@ public class ShootingHandler {
 		if (auto != null) auto.cancel();
 		reloading.remove(id);
 		Spread.clear(id);
+		Animations.cancel(id);
 		lastTrigger.remove(id);
 		nextShot.remove(id);
 	}
@@ -279,6 +286,7 @@ public class ShootingHandler {
 		GunLoreRenderer.apply(held, gun);
 		player.getInventory().setItemInMainHand(held);
 		Sounds.at(player, SoundEvent.RELOAD_SINGLE_ROUND);
+		Animations.play(player, gun, AnimationEvent.RELOAD_ROUND, AttachmentUtil.effectiveReloadTime(gun, held));
 
 		if (newAmmo >= maxAmmo) {
 			endReload(id);
@@ -343,6 +351,7 @@ public class ShootingHandler {
 
 	private void endReload(UUID id) {
 		reloading.remove(id);
+		Animations.cancel(id);
 		BukkitTask task = reloadTasks.remove(id);
 		if (task != null) task.cancel();
 	}
@@ -358,7 +367,7 @@ public class ShootingHandler {
 		if (AmmoUtil.usesAmmo(gun)) {
 			int ammo = AmmoUtil.get(held);
 			if (ammo <= 0) {
-				signalEmpty(player);
+				handleEmpty(player, gun, held);
 				return;
 			}
 			AmmoUtil.set(held, ammo - 1);
@@ -377,8 +386,18 @@ public class ShootingHandler {
 			}
 		}
 
+		Animations.play(player, gun, AnimationEvent.FIRE);
+
 		ShotExecutor executor = executors.getOrDefault(gun.getFiringMode(), executors.get(FiringMode.HITSCAN));
 		executor.execute(player, gun, held);
+	}
+
+	private void handleEmpty(Player player, PewpewGunItem gun, ItemStack weapon) {
+		if (isReloading(player)) return;
+		if (startReload(player, gun, weapon)) return;
+		signalEmpty(player);
+		int lock = Math.max(4, (int) Math.ceil(gun.getFireRate()));
+		if (player.getCooldown(weapon) < lock) player.setCooldown(weapon, lock);
 	}
 
 	private void signalEmpty(Player player) {
