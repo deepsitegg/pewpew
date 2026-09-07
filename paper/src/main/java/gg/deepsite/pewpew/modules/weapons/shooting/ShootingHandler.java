@@ -14,6 +14,7 @@ import gg.deepsite.pewpew.api.objects.PewpewGunItem;
 import gg.deepsite.pewpew.integrations.WeaponRestrictions;
 import gg.deepsite.pewpew.modules.items.ItemsModule;
 import gg.deepsite.pewpew.modules.weapons.ammo.AmmoUtil;
+import gg.deepsite.pewpew.modules.weapons.animation.GunModels;
 import gg.deepsite.pewpew.modules.weapons.magazine.MagazineUtil;
 import gg.deepsite.pewpew.modules.weapons.attachment.AttachmentUtil;
 import gg.deepsite.pewpew.modules.weapons.lore.GunLoreRenderer;
@@ -311,6 +312,7 @@ public class ShootingHandler {
 		int newAmmo = AmmoUtil.get(held);
 		GunLoreRenderer.apply(held, gun);
 		player.getInventory().setItemInMainHand(held);
+		GunModels.refresh(player);
 		Sounds.at(player, SoundEvent.MAGAZINE_SWAP_FINISH);
 		new PewpewReloadCompleteEvent(player, gun, held, newAmmo, newAmmo - current).callEvent();
 	}

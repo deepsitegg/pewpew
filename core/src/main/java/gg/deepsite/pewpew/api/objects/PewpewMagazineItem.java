@@ -14,6 +14,8 @@ import lombok.experimental.SuperBuilder;
 public class PewpewMagazineItem extends PewPewItem {
 
 	private String ammoType;
+	private String modelSuffix;
+	private int gunModelData;
 	private int capacity;
 	private double reloadModifier;
 }

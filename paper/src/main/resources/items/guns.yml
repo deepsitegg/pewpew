@@ -45,6 +45,21 @@
 #
 #     Without it the animation still plays, it just bobs. The field needs a
 #     1.21.4 or newer client.
+#
+#   State models:
+#     The model in the hand is built from the gun's itemModel plus a suffix per
+#     active state, in this order:
+#
+#       itemModel + magazine modelSuffix + aimModelSuffix + frame
+#
+#     A frame that starts with '_' is such a suffix, a frame written as
+#     namespace:key is used as-is, so existing animations keep working.
+#     customModelData follows the same states by adding up the offsets:
+#
+#       customModelData + magazine gunModelData + aimModelData + frame modelData
+#
+#     Leave aimModelSuffix and aimModelData out and nothing changes when aiming.
+#     See the commented example at the bottom of this file.
 
 glock_17:
   type: GUN
@@ -1080,3 +1095,41 @@ chicken_cannon:
     pitch: 0.8
   hitSound: "minecraft:entity.chicken.hurt"
   deathMessage: "<gray>%victim% <error>was fowl-played by <gray>%killer%"
+
+# Example: a gun whose model follows the installed magazine and the aim/fire
+# state. Uncomment it and its magazines in magazines.yml, then point itemModel
+# at your own pack. With the 30-round magazine in and the trigger pulled while
+# aiming, the client is shown mypack:ak_mag30_aim_shoot / customModelData 1133.
+#
+#ak_modelled:
+#  type: GUN
+#  maxStack: 1
+#  hideItemFlags: true
+#  name: "<gray>AK-Style Rifle"
+#  customModelData: 1100
+#  itemModel: "mypack:ak"
+#  aimModelSuffix: "_aim"
+#  aimModelData: 1
+#  baseDamage: 8.0
+#  fireRate: 3
+#  reloadTime: 50
+#  ammoType: rifle_762x39
+#  maxAmmo: 30
+#  consumesAmmo: true
+#  firingMode: HITSCAN
+#  range: 80.0
+#  spread: 1.6
+#  recoil: 1.4
+#  headshotMultiplier: 2.0
+#  animations:
+#    fire:
+#      - model: "_shoot"
+#        ticks: 2
+#        modelData: 2
+#    reload:
+#      - model: "_reload"
+#        ticks: 50
+#        modelData: 3
+#  allowedAttachmentSlots:
+#    - SCOPE
+#    - MAGAZINE

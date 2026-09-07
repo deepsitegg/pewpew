@@ -4,8 +4,8 @@ import gg.deepsite.pewpew.api.enums.AnimationEvent;
 import gg.deepsite.pewpew.api.objects.PewpewAnimation;
 import gg.deepsite.pewpew.api.objects.PewpewGunItem;
 import gg.deepsite.pewpew.modules.items.ItemsModule;
+import gg.deepsite.pewpew.modules.weapons.shooting.ScopeState;
 import gg.deepsite.pewpew.utils.PersistentDataUtil;
-import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
@@ -65,17 +65,21 @@ public class AnimationManager {
 		active.remove(player.getUniqueId());
 		State state = new State(gun, animation, player.getInventory().getHeldItemSlot());
 		String first = animation.modelAt(0);
-		if (first == null || !apply(player, state, first)) return 0;
+		if (first == null || !apply(player, state, first, animation.modelDataAt(0))) return 0;
 		state.model = first;
 		active.put(player.getUniqueId(), state);
 		return animation.length();
+	}
+
+	public boolean isActive(@NotNull UUID id) {
+		return active.containsKey(id);
 	}
 
 	public void cancel(@NotNull UUID id) {
 		State state = active.remove(id);
 		if (state == null) return;
 		Player player = plugin.getServer().getPlayer(id);
-		if (player != null) apply(player, state, state.gun.getItemModel());
+		if (player != null) apply(player, state, null, 0);
 	}
 
 	private void tick() {
@@ -95,7 +99,7 @@ public class AnimationManager {
 				continue;
 			}
 			if (model.equals(state.model)) continue;
-			if (!apply(player, state, model)) {
+			if (!apply(player, state, model, state.animation.modelDataAt(state.tick))) {
 				active.remove(entry.getKey());
 				continue;
 			}
@@ -103,16 +107,12 @@ public class AnimationManager {
 		}
 	}
 
-	private boolean apply(Player player, State state, @Nullable String model) {
-		if (model == null) return false;
+	private boolean apply(Player player, State state, @Nullable String frame, int frameData) {
 		ItemStack stack = player.getInventory().getItem(state.slot);
 		if (stack == null || !state.gun.getId().equals(PersistentDataUtil.getPewpew(stack, ItemsModule.PDC_KEY))) {
 			return false;
 		}
-		NamespacedKey key = NamespacedKey.fromString(model);
-		if (key == null) return false;
-		if (key.equals(stack.getItemMeta().getItemModel())) return true;
-		stack.editMeta(meta -> meta.setItemModel(key));
+		GunModels.apply(stack, state.gun, ScopeState.isScoped(player), frame, frameData);
 		player.getInventory().setItem(state.slot, stack);
 		return true;
 	}

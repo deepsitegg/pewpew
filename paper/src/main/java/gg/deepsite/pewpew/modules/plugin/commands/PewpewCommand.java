@@ -33,11 +33,8 @@ public class PewpewCommand extends AnnotationCommand {
 	@Permission("pewpew.command.reload")
 	public void reload(CommandSender sender) {
 		PewpewPlugin.setDefaultConfiguration(new DefaultConfiguration(PewpewPlugin.getInstance().getDataFolder()));
-		PewpewPlugin.getDefaultConfiguration().saveConfiguration();
 		PewpewPlugin.setMessagesConfig(new MessagesConfig(PewpewPlugin.getInstance().getDataFolder()));
-		PewpewPlugin.getMessagesConfig().saveConfiguration();
 		PewpewPlugin.setSoundsConfig(new SoundsConfig(PewpewPlugin.getInstance().getDataFolder()));
-		PewpewPlugin.getSoundsConfig().saveConfiguration();
 		PewpewPlugin.getModuleManager().get(ItemsModule.class).reload();
 		sender.sendMessage(ChatUtils.prefix("<success>Configuration reloaded."));
 	}

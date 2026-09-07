@@ -8,6 +8,7 @@ import gg.deepsite.pewpew.api.objects.PewPewItem;
 import gg.deepsite.pewpew.api.objects.PewpewGunItem;
 import gg.deepsite.pewpew.api.objects.attachment.PewpewScopeAttachment;
 import gg.deepsite.pewpew.modules.items.ItemsModule;
+import gg.deepsite.pewpew.modules.weapons.animation.GunModels;
 import gg.deepsite.pewpew.modules.weapons.attachment.AttachmentUtil;
 import gg.deepsite.pewpew.modules.weapons.shooting.ScopeState;
 import gg.deepsite.pewpew.utils.Animations;
@@ -62,6 +63,7 @@ public class ScopeListener implements Listener {
 		ScopeState.setScoped(player, true);
 		PewpewGunItem gun = gunOf(player);
 		if (gun != null) Animations.play(player, gun, AnimationEvent.SCOPE_IN);
+		GunModels.refresh(player);
 	}
 
 	private void scopeOut(Player player) {
@@ -71,6 +73,7 @@ public class ScopeListener implements Listener {
 			player.removePotionEffect(PotionEffectType.SLOWNESS);
 			PewpewGunItem gun = gunOf(player);
 			if (gun != null) Animations.play(player, gun, AnimationEvent.SCOPE_OUT);
+			GunModels.refresh(player);
 		}
 	}
 

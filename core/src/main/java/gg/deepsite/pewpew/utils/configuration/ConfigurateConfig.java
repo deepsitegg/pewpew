@@ -99,23 +99,25 @@ public abstract class ConfigurateConfig {
 					rootNode = loader.load();
 				}
 
-				mergeNodes(rootNode, defaultNode);
-				saveConfiguration();
+				if (mergeNodes(rootNode, defaultNode)) saveConfiguration();
 			}
 		}
 	}
 
 	@SneakyThrows
-	private void mergeNodes(ConfigurationNode target, ConfigurationNode source) {
+	static boolean mergeNodes(ConfigurationNode target, ConfigurationNode source) {
+		boolean changed = false;
 		for (var entry : source.childrenMap().entrySet()) {
 			Object key = entry.getKey();
 			ConfigurationNode sourceChild = entry.getValue();
 
 			if (!target.hasChild(key)) {
 				target.node(key).set(sourceChild);
+				changed = true;
 			} else if (!sourceChild.isNull()) {
-				mergeNodes(target.node(key), sourceChild);
+				changed |= mergeNodes(target.node(key), sourceChild);
 			}
 		}
+		return changed;
 	}
 }

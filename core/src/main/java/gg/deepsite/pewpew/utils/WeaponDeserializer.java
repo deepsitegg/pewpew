@@ -149,11 +149,12 @@ public class WeaponDeserializer {
 					"payload", "projectileModel", "projectileSpeed", "range", "recoil", "recoilProfile",
 					"reloadTime", "reloadType", "selfKnockback", "shieldDisableTime", "shooterEffects", "spread",
 					"spreadModifiers", "bloomPerShot", "bloomMax", "bloomDecay", "animations", "rig", "animationCooldown",
+					"aimModelSuffix", "aimModelData",
 					"trailParticle", "trajectory", "victimEffects"),
 			ItemType.AMMO, Set.of(
 					"ammoType", "roundsPerItem", "damageMultiplier", "velocityMultiplier", "penetration"),
 			ItemType.MAGAZINE, Set.of(
-					"ammoType", "capacity", "reloadModifier"),
+					"ammoType", "capacity", "reloadModifier", "modelSuffix", "gunModelData"),
 			ItemType.THROWABLE, Set.of(
 					"blastRadius", "effect", "effectAmplifier", "effectDuration", "explosionDamage",
 					"explosionKnockback", "fireTicks", "fuseTime", "throwForce"),
@@ -254,6 +255,8 @@ public class WeaponDeserializer {
 				.customModelData(customModelData)
 				.itemModel(itemModel)
 				.ammoType(ammoType)
+				.modelSuffix(node.node("modelSuffix").getString())
+				.gunModelData(node.node("gunModelData").getInt(0))
 				.capacity(capacity)
 				.reloadModifier(Math.max(0.0, node.node("reloadModifier").getDouble(1.0)))
 				.build();
@@ -515,6 +518,8 @@ public class WeaponDeserializer {
 				.hitSound(hitSound)
 				.hitMessage(hitMessage)
 				.defaultAttachments(defaultAttachments)
+				.aimModelSuffix(node.node("aimModelSuffix").getString())
+				.aimModelData(node.node("aimModelData").getInt(0))
 				.animations(parseAnimations(fileName, id, node.node("animations")))
 				.rigs(parseRigs(fileName, id, node.node("rig")))
 				.animationCooldown(node.node("animationCooldown").getBoolean(true))
@@ -855,8 +860,9 @@ public class WeaponDeserializer {
 			for (ConfigurationNode child : node.childrenList()) {
 				String model = child.isMap() ? child.node("model").getString() : child.getString();
 				int ticks = child.isMap() ? child.node("ticks").getInt(1) : 1;
+				int modelData = child.isMap() ? child.node("modelData").getInt(0) : 0;
 				if (!validModel(fileName, id, path, model) || ticks < 1) continue;
-				frames.add(new PewpewAnimation.Frame(model, ticks));
+				frames.add(new PewpewAnimation.Frame(model, ticks, modelData));
 			}
 			if (frames.isEmpty()) {
 				warnField(fileName, id, "animation '" + path + "' has no usable frames, ignoring");
@@ -877,9 +883,9 @@ public class WeaponDeserializer {
 	}
 
 	private static boolean validModel(String fileName, String id, String path, String model) {
-		if (model != null && model.split(":").length == 2) return true;
+		if (model != null && (model.startsWith("_") || model.split(":").length == 2)) return true;
 		warnField(fileName, id, "animation '" + path + "' has model '" + model
-				+ "', which is not in the format namespace:key, ignoring");
+				+ "', which is not in the format namespace:key or a '_suffix', ignoring");
 		return false;
 	}
 

@@ -8,7 +8,11 @@ import java.util.List;
 
 public record PewpewAnimation(@NotNull List<Frame> frames) {
 
-	public record Frame(@NotNull String model, int ticks) {
+	public record Frame(@NotNull String model, int ticks, int modelData) {
+
+		public Frame(@NotNull String model, int ticks) {
+			this(model, ticks, 0);
+		}
 	}
 
 	public PewpewAnimation {
@@ -28,13 +32,24 @@ public record PewpewAnimation(@NotNull List<Frame> frames) {
 		return total;
 	}
 
+	public int modelDataAt(int tick) {
+		Frame frame = frameAt(tick);
+		return frame == null ? 0 : frame.modelData();
+	}
+
 	@Nullable
 	public String modelAt(int tick) {
+		Frame frame = frameAt(tick);
+		return frame == null ? null : frame.model();
+	}
+
+	@Nullable
+	private Frame frameAt(int tick) {
 		if (tick < 0) return null;
 		int elapsed = 0;
 		for (Frame frame : frames) {
 			elapsed += frame.ticks();
-			if (tick < elapsed) return frame.model();
+			if (tick < elapsed) return frame;
 		}
 		return null;
 	}
@@ -44,7 +59,8 @@ public record PewpewAnimation(@NotNull List<Frame> frames) {
 		if (factor <= 0 || factor == 1.0) return this;
 		List<Frame> scaled = new ArrayList<>(frames.size());
 		for (Frame frame : frames) {
-			scaled.add(new Frame(frame.model(), Math.max(1, (int) Math.round(frame.ticks() * factor))));
+			scaled.add(new Frame(frame.model(), Math.max(1, (int) Math.round(frame.ticks() * factor)),
+					frame.modelData()));
 		}
 		return new PewpewAnimation(scaled);
 	}

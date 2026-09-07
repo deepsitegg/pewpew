@@ -67,6 +67,8 @@ public class PewpewGunItem extends PewpewWeaponItem {
 	private List<DefaultAttachment> defaultAttachments;
 	private Map<AnimationEvent, PewpewAnimation> animations;
 	private Map<AnimationEvent, PewpewRig> rigs;
+	private String aimModelSuffix;
+	private int aimModelData;
 	@Builder.Default
 	private boolean animationCooldown = true;
 

@@ -6,6 +6,10 @@
 # Every gun also gains a chamber holding one round on top of the magazine.
 #
 # 'capacity' replaces the gun's own maxAmmo while a magazine is inserted.
+#
+# Optional 'modelSuffix' and 'gunModelData' change how the GUN looks while this
+# magazine is installed, see the state models section in guns.yml. They do not
+# touch the magazine item's own itemModel or customModelData.
 
 pistol_9mm_mag:
   type: MAGAZINE
@@ -147,3 +151,27 @@ grenade_40mm_pouch:
   maxStack: 1
   ammoType: grenade_40mm
   capacity: 6
+
+# Magazines for the commented ak_modelled example in guns.yml. The gun renders
+# as mypack:ak_mag30 with the first one in, mypack:ak_drum75 with the second.
+#
+#ak_mag30:
+#  type: MAGAZINE
+#  name: "<gray>30 Round Magazine"
+#  itemModel: "minecraft:iron_ingot"
+#  maxStack: 1
+#  ammoType: rifle_762x39
+#  capacity: 30
+#  modelSuffix: "_mag30"
+#  gunModelData: 30
+#
+#ak_drum75:
+#  type: MAGAZINE
+#  name: "<gray>75 Round Drum"
+#  itemModel: "minecraft:iron_block"
+#  maxStack: 1
+#  ammoType: rifle_762x39
+#  capacity: 75
+#  reloadModifier: 1.5
+#  modelSuffix: "_drum75"
+#  gunModelData: 75

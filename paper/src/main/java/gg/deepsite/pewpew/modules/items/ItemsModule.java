@@ -149,22 +149,22 @@ public class ItemsModule extends SpigotModule<PewpewPlugin> {
 		Logger log = PewpewPlugin.getInstance().getLogger();
 		File itemsFolder = new File(PewpewPlugin.getInstance().getDataFolder(), "items");
 
-		if (!itemsFolder.exists()) {
-			if (!itemsFolder.mkdirs()) {
-				log.warning("Failed to create items/ folder");
-				return;
-			}
-			for (String fileName : BUNDLED_FILES) {
-				File dest = new File(itemsFolder, fileName);
-				try (InputStream in = PewpewPlugin.class.getResourceAsStream("/items/" + fileName)) {
-					if (in == null) {
-						log.warning("Could not find bundled resource: items/" + fileName);
-						continue;
-					}
-					FileUtils.copyInputStreamToFile(in, dest);
-				} catch (IOException e) {
-					log.warning("Failed to copy default file " + fileName + ": " + e.getMessage());
+		if (!itemsFolder.exists() && !itemsFolder.mkdirs()) {
+			log.warning("Failed to create items/ folder");
+			return;
+		}
+
+		for (String fileName : BUNDLED_FILES) {
+			File dest = new File(itemsFolder, fileName);
+			if (dest.exists()) continue;
+			try (InputStream in = PewpewPlugin.class.getResourceAsStream("/items/" + fileName)) {
+				if (in == null) {
+					log.warning("Could not find bundled resource: items/" + fileName);
+					continue;
 				}
+				FileUtils.copyInputStreamToFile(in, dest);
+			} catch (IOException e) {
+				log.warning("Failed to copy default file " + fileName + ": " + e.getMessage());
 			}
 		}
 

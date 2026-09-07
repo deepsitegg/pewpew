@@ -58,13 +58,8 @@ public final class PewpewPlugin extends JavaPlugin {
 	public void onLoad() {
 
 		defaultConfiguration = new DefaultConfiguration(this.getDataFolder());
-		defaultConfiguration.saveConfiguration();
-
 		messagesConfig = new MessagesConfig(this.getDataFolder());
-		messagesConfig.saveConfiguration();
-
 		soundsConfig = new SoundsConfig(this.getDataFolder());
-		soundsConfig.saveConfiguration();
 
 		WorldGuardIntegration.register();
 
