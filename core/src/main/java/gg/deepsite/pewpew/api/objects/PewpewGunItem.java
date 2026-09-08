@@ -69,6 +69,7 @@ public class PewpewGunItem extends PewpewWeaponItem {
 	private Map<AnimationEvent, PewpewRig> rigs;
 	private String aimModelSuffix;
 	private int aimModelData;
+	private List<String> magazines;
 	@Builder.Default
 	private boolean animationCooldown = true;
 
@@ -78,6 +79,10 @@ public class PewpewGunItem extends PewpewWeaponItem {
 
 	public PewpewRig getRig(AnimationEvent event) {
 		return rigs == null ? null : rigs.get(event);
+	}
+
+	public boolean acceptsMagazine(String magazineId) {
+		return magazines == null || magazines.isEmpty() || magazines.contains(magazineId);
 	}
 
 	public boolean isForcedSlot(AttachmentType slot) {

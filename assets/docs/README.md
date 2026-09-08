@@ -13,7 +13,8 @@ There are five item types, set by the `type` field:
 | `ATTACHMENT` | `attachments.yml` | [attachments.md](attachments.md) |
 | `THROWABLE`  | `throwables.yml`  | [throwables.md](throwables.md)   |
 
-All types share a set of [common fields](common-fields.md).
+All types share a set of [common fields](common-fields.md). Server-wide options live in `config.yml`, documented in
+[configuration.md](configuration.md).
 
 Optional plugin hooks (WorldGuard, CombatTagPlus, OpenMinetopia) and the `messages.yml` and `sounds.yml` files are
 documented in [integrations.md](integrations.md). Skript events, expressions and conditions are in [skript.md](skript.md).

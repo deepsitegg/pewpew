@@ -312,6 +312,7 @@ public class ShootingHandler {
 
 		if (newAmmo >= maxAmmo) {
 			endReload(id);
+			sendReloaded(player);
 			new PewpewReloadCompleteEvent(player, gun, held, newAmmo, newAmmo - current).callEvent();
 		}
 	}
@@ -335,6 +336,7 @@ public class ShootingHandler {
 		player.getInventory().setItemInMainHand(held);
 		GunModels.refresh(player);
 		Sounds.at(player, SoundEvent.MAGAZINE_SWAP_FINISH);
+		sendReloaded(player);
 		new PewpewReloadCompleteEvent(player, gun, held, newAmmo, newAmmo - current).callEvent();
 	}
 
@@ -363,7 +365,12 @@ public class ShootingHandler {
 		GunLoreRenderer.apply(held, gun);
 		player.getInventory().setItemInMainHand(held);
 		Sounds.at(player, SoundEvent.RELOAD_MAGAZINE_FINISH);
+		sendReloaded(player);
 		new PewpewReloadCompleteEvent(player, gun, held, newAmmo, newAmmo - current).callEvent();
+	}
+
+	private static void sendReloaded(Player player) {
+		player.sendActionBar(ChatUtils.format(PewpewPlugin.getMessagesConfig().reloaded(), ChatUtils.PRIMARY));
 	}
 
 	private static int looseMaxAmmo(PewpewGunItem gun, ItemStack held) {

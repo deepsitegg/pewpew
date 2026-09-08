@@ -60,6 +60,10 @@
 #
 #     Leave aimModelSuffix and aimModelData out and nothing changes when aiming.
 #     See the commented example at the bottom of this file.
+#
+#   magazines:
+#     Optional list of magazine ids this gun accepts. Left out, any magazine of
+#     the same ammoType fits.
 
 glock_17:
   type: GUN
@@ -1110,6 +1114,9 @@ chicken_cannon:
 #  itemModel: "mypack:ak"
 #  aimModelSuffix: "_aim"
 #  aimModelData: 1
+#  magazines:
+#    - ak_mag30
+#    - ak_drum75
 #  baseDamage: 8.0
 #  fireRate: 3
 #  reloadTime: 50

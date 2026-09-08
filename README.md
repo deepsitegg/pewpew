@@ -74,6 +74,7 @@ per-weapon sounds and effects, all configurable.
 |------------------|----------------------------------------------|
 | Fire             | Right-click (hold for automatic)             |
 | Reload           | Swap-hands key (default `F`)                 |
+| Eject magazine   | Sneak + swap-hands (with `advanced.magazines`) |
 | Aim down sights  | Hold sneak with a scoped gun                 |
 | Edit attachments | Swap-hands on a gun with attachment slots    |
 | Equip dummy      | Shift-right-click a dummy with an empty hand |
@@ -108,8 +109,9 @@ The check covers shooting, throwing and opening the attachment bench, and the de
 
 ## Configuration
 
-Items live in `plugins/Pewpew/items/` (`guns.yml`, `ammo.yml`, `attachments.yml`, `throwables.yml`). Defaults are copied
-on first run. Edit, then `/pewpew reload`.
+Items live in `plugins/Pewpew/items/` (`guns.yml`, `ammo.yml`, `magazines.yml`, `attachments.yml`, `throwables.yml`).
+Defaults are copied on first run. Edit, then `/pewpew reload`. Server-wide options live in `config.yml`, documented in
+[configuration.md](assets/docs/configuration.md).
 
 A minimal gun:
 
@@ -142,8 +144,10 @@ defaults and descriptions:
 - [Common fields](assets/docs/common-fields.md) - shared by all items
 - [Guns](assets/docs/guns.md)
 - [Ammo](assets/docs/ammo.md)
+- [Magazines](assets/docs/magazines.md)
 - [Attachments](assets/docs/attachments.md)
 - [Throwables](assets/docs/throwables.md)
+- [Configuration](assets/docs/configuration.md) - `config.yml` options
 
 ---
 

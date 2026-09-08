@@ -12,6 +12,7 @@ import gg.deepsite.pewpew.api.objects.PewpewThrowableItem;
 import gg.deepsite.pewpew.api.objects.attachment.PewpewAttachment;
 import gg.deepsite.pewpew.configuration.ItemConfiguration;
 import gg.deepsite.pewpew.modules.items.resolvers.ItemsResolver;
+import gg.deepsite.pewpew.modules.weapons.magazine.MagazineUtil;
 import gg.deepsite.pewpew.utils.BukkitRegistry;
 import gg.deepsite.pewpew.utils.PersistentDataUtil;
 import gg.deepsite.pewpew.utils.WeaponDeserializer;
@@ -190,6 +191,7 @@ public class ItemsModule extends SpigotModule<PewpewPlugin> {
 					templates, allowExtends, allowAbstract);
 
 			for (PewPewItem item : items) {
+				if (item instanceof PewpewMagazineItem && !MagazineUtil.enabled()) continue;
 				if (isRegistered(item.getId())) {
 					log.warning("Duplicate item id '" + item.getId() + "' found in '"
 							+ fileEntry.getKey() + "', overwriting previous entry.");

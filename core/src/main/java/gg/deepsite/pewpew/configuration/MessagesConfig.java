@@ -19,6 +19,10 @@ public class MessagesConfig extends ConfigurateConfig {
 		return get("reloading", "<color>● <gray>Reloading...");
 	}
 
+	public String reloaded() {
+		return get("reloaded", "<success>● <gray>Reloaded.");
+	}
+
 	public String magazineFull() {
 		return get("magazine-full", "<warning>Magazine already full.");
 	}

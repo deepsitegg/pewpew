@@ -128,6 +128,16 @@ public class WeaponDeserializer {
 	}
 
 	@NotNull
+	private static List<String> stringList(ConfigurationNode node) {
+		List<String> values = new ArrayList<>();
+		for (ConfigurationNode child : node.childrenList()) {
+			String value = child.getString();
+			if (value != null) values.add(value);
+		}
+		return values;
+	}
+
+	@NotNull
 	private static ConfigurationNode asTemplate(ConfigurationNode node) {
 		ConfigurationNode copy = node.copy();
 		copy.removeChild(EXTENDS_KEY);
@@ -149,7 +159,7 @@ public class WeaponDeserializer {
 					"payload", "projectileModel", "projectileSpeed", "range", "recoil", "recoilProfile",
 					"reloadTime", "reloadType", "selfKnockback", "shieldDisableTime", "shooterEffects", "spread",
 					"spreadModifiers", "bloomPerShot", "bloomMax", "bloomDecay", "animations", "rig", "animationCooldown",
-					"aimModelSuffix", "aimModelData",
+					"aimModelSuffix", "aimModelData", "magazines",
 					"trailParticle", "trajectory", "victimEffects"),
 			ItemType.AMMO, Set.of(
 					"ammoType", "roundsPerItem", "damageMultiplier", "velocityMultiplier", "penetration"),
@@ -204,11 +214,7 @@ public class WeaponDeserializer {
 			return null;
 		}
 
-		List<String> lore = new ArrayList<>();
-		for (ConfigurationNode loreNode : node.node("lore").childrenList()) {
-			String line = loreNode.getString();
-			if (line != null) lore.add(line);
-		}
+		List<String> lore = stringList(node.node("lore"));
 
 		boolean hideItemFlags = node.node("hideItemFlags").getBoolean(false);
 		int customModelData = node.node("customModelData").getInt(0);
@@ -520,6 +526,7 @@ public class WeaponDeserializer {
 				.defaultAttachments(defaultAttachments)
 				.aimModelSuffix(node.node("aimModelSuffix").getString())
 				.aimModelData(node.node("aimModelData").getInt(0))
+				.magazines(stringList(node.node("magazines")))
 				.animations(parseAnimations(fileName, id, node.node("animations")))
 				.rigs(parseRigs(fileName, id, node.node("rig")))
 				.animationCooldown(node.node("animationCooldown").getBoolean(true))

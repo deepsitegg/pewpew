@@ -1,5 +1,6 @@
 messages:
   reloading: "<color>● <gray>Reloading..."
+  reloaded: "<success>● <gray>Reloaded."
   magazine-full: "<warning>Magazine already full."
   out-of-ammo: "<error>Out of ammo <dark_gray>┃ <gray>press <color><key:key.swapOffhand><gray> to reload"
   no-magazine: "<error>No loaded magazine in your inventory."

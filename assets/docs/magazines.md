@@ -9,8 +9,9 @@ advanced:
   magazines: true
 ```
 
-While off, `MAGAZINE` items are still loaded and can be given, but nothing uses them: ammo loads straight into the gun
-exactly as described in [ammo.md](ammo.md).
+While off, `MAGAZINE` items are skipped at load: they cannot be given and nothing uses them, so ammo loads straight
+into the gun exactly as described in [ammo.md](ammo.md). Their definitions stay in `items/magazines.yml` and come back
+as soon as the option is on again.
 
 ## What changes when it is on
 
@@ -25,6 +26,19 @@ A magazine is a real item that holds rounds of its own. For guns with `consumesA
 - **`reloadType` is ignored** while a swap is possible, because swapping a magazine is one action. A gun with no
   magazine available falls back to its `reloadType` and loads loose ammo into the chamber.
 
+A gun takes any magazine with a matching `ammoType`. To narrow that, list the ids it accepts on the gun:
+
+```yaml
+ak_74:
+  type: GUN
+  ammoType: rifle_762x39
+  magazines:
+    - ak_mag30
+    - ak_drum75
+```
+
+Magazines left off the list are ignored by that gun's reload, even with the right `ammoType`.
+
 The `MAGAZINE` **attachment** (`ammoBonus`, `reloadModifier`, see [attachments.md](attachments.md)) still applies on
 top: `ammoBonus` adds to the inserted magazine's capacity and both `reloadModifier`s multiply together.
 
@@ -35,6 +49,17 @@ top: `ammoBonus` adds to the inserted magazine's capacity and both `reloadModifi
 | `ammoType`       | string | -       | yes      | The type tag this magazine holds. Must match the gun's `ammoType` and the ammo's.       |
 | `capacity`       | int    | -       | yes      | How many rounds it holds. Replaces the gun's `maxAmmo` while inserted. Minimum `1`.    |
 | `reloadModifier` | double | `1.0`   | no       | Multiplies reload time while this magazine is being swapped in. `1.4` = 40% slower.    |
+| `modelSuffix`    | string | -       | no       | Appended to the gun's `itemModel` while this magazine is inserted, e.g. `_drum75`.      |
+| `gunModelData`   | int    | `0`      | no       | Added to the gun's `customModelData` while this magazine is inserted.                   |
+
+Both model fields let one gun render per magazine; see [state models](guns.md#state-models) for how the suffixes and
+offsets are combined with aiming and animation frames.
+
+## Ejecting by hand
+
+**Sneak + the reload key** (swap-hands, default `F`) drops the inserted magazine back into the inventory without
+reloading, keeping its remaining rounds and the chambered round in the gun. If the inventory is full the magazine falls
+on the ground. Nothing happens while the gun is reloading or has no magazine in it.
 
 ## Filling a magazine
 

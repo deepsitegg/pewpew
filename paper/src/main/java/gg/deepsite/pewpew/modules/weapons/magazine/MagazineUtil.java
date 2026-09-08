@@ -122,7 +122,8 @@ public class MagazineUtil {
 		ItemStack[] contents = inventory.getStorageContents();
 		for (int i = 0; i < contents.length; i++) {
 			PewpewMagazineItem def = defOf(contents[i]);
-			if (def == null || !def.getAmmoType().equals(gun.getAmmoType())) continue;
+			if (def == null || !def.getAmmoType().equals(gun.getAmmoType())
+					|| !gun.acceptsMagazine(def.getId())) continue;
 			int rounds = rounds(contents[i]);
 			if (rounds > bestRounds) {
 				bestRounds = rounds;

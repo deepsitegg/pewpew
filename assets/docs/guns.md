@@ -42,6 +42,7 @@ Add an `explosive:` block to a `PROJECTILE` gun to detonate on impact (rocket la
 | `reloadType`      | enum        | `MAGAZINE` | `MAGAZINE` refills in one timed action; `SINGLE` loads one round per `reloadTime` (shell-by-shell).  |
 | `actionOpenTime`  | int (ticks) | `0`        | Bolt/pump open delay added after each shot, with a sound. `0` disables the action cycle.             |
 | `actionCloseTime` | int (ticks) | `0`        | Bolt/pump close delay before the gun is ready again, with a sound.                                   |
+| `magazines`       | list        | -          | Magazine ids this gun accepts, when [magazines](magazines.md) are on. Left out, any magazine of the same `ammoType` fits. |
 
 ## Firing behavior
 
@@ -240,3 +241,111 @@ holds every other sound Pewpew plays (reloading, dry-firing, explosions, menus).
 | Field                    | Type         | Default | Description                                                                                                |
 |--------------------------|--------------|---------|------------------------------------------------------------------------------------------------------------|
 | `allowedAttachmentSlots` | list of enum | empty   | Which slots this gun accepts: `SCOPE`, `BARREL`, `GRIP`, `MAGAZINE`. See [attachments.md](attachments.md). |
+| `defaultAttachments`     | map          | empty   | Attachments the gun is given when it is created, keyed by slot. See below.                                 |
+
+`defaultAttachments` is a map of slot to attachment id. The long form adds `forced: true`, which makes the slot
+read-only in the bench: the attachment cannot be taken out or swapped.
+
+```yaml
+defaultAttachments:
+  BARREL: suppressor          # fitted, players may swap or remove it
+  SCOPE:
+    id: acog
+    forced: true              # welded on, the bench refuses to move it
+```
+
+A slot that is not in `allowedAttachmentSlots`, or an unknown slot name, is skipped with a console warning.
+
+## Models & animations
+
+| Field               | Type   | Default | Description                                                                                          |
+|---------------------|--------|---------|--------------------------------------------------------------------------------------------------------|
+| `holdPose`          | enum   | none    | `CROSSBOW` renders the gun with the vanilla charged-crossbow hold (two-handed, out front). Firing stays on right-click. |
+| `animations`        | map    | none    | Model swapped per event over time. See below.                                                        |
+| `animationCooldown` | bool   | `true`  | Lock the weapon (vanilla item cooldown) for as long as an animation runs. `false` lets the player fire through it. |
+| `aimModelSuffix`    | string | none    | Appended to the model while aiming down sights.                                                      |
+| `aimModelData`      | int    | `0`     | Added to `customModelData` while aiming down sights.                                                 |
+| `rig`               | map    | none    | Item-display rig played per event, for models the item slot cannot show. See below.                  |
+
+### `animations`
+
+Each key is an event, each value the models to show while it plays. Every model is a resource-pack item model
+(`namespace:key`), one per baked frame. Events: `fire`, `reload`, `reload-round` (per round on `SINGLE` reloads),
+`scope-in`, `scope-out`.
+
+```yaml
+animations:
+  fire:                            # explicit frames, each with its own duration
+    - model: "mypack:ak_fire_1"
+      ticks: 1
+    - model: "mypack:ak_fire_2"
+      ticks: 2
+      modelData: 3                 # optional, added to customModelData on this frame
+  reload:                          # shorthand for an evenly timed export
+    model: "mypack:ak_reload_"     # expands to ak_reload_1 .. ak_reload_12
+    frames: 12
+    ticks: 2
+```
+
+Reload animations are stretched to the gun's real reload time, so attachments that change `reloadTime` keep the
+animation in sync.
+
+**Stopping the hand bob.** Changing the model of a held item makes the client replay its equip animation, so the gun
+bobs on every frame. Set `"hand_animation_on_swap": false` in the item definition of every frame in your resource pack
+(`assets/<namespace>/items/<name>.json`), which needs a 1.21.4 or newer client:
+
+```json
+{
+  "model": { "type": "minecraft:model", "model": "mypack:item/ak_fire_1" },
+  "hand_animation_on_swap": false
+}
+```
+
+### State models
+
+The model in the hand is built from `itemModel` plus one suffix per active state, in this order:
+
+```
+itemModel + magazine modelSuffix + aimModelSuffix + frame
+```
+
+A frame that starts with `_` is such a suffix; a frame written as `namespace:key` is used as-is, so animations that name
+full models keep working. `customModelData` follows the same states by adding up the offsets:
+
+```
+customModelData + magazine gunModelData + aimModelData + frame modelData
+```
+
+Leave `aimModelSuffix` and `aimModelData` out and nothing changes when aiming. `items/guns.yml` ships a commented
+`ak_modelled` example that uses all of it.
+
+### `rig`
+
+A rig animates real `ItemDisplay` entities instead of the held item, so a weapon can be built from several moving parts.
+Keys are the same events as `animations`; a rig wins over an `animations` entry for the same event.
+
+```yaml
+rig:
+  reload:
+    viewmodel: true            # follow the player's eyes (first-person). false = ride the player
+    billboard: CENTER          # FIXED (default), CENTER, VERTICAL, HORIZONTAL
+    body:                      # any key that is not viewmodel/billboard is a part
+      itemModel: "mypack:ak_body"
+      keyframes:
+        - tick: 0
+          translation: [0.0, 0.0, 0.5]
+          rotation: [0.0, 90.0, 0.0]   # degrees, applied Y, X, Z
+          scale: [1.0, 1.0, 1.0]
+        - tick: 10
+          translation: [0.0, -0.2, 0.5]
+    magazine:
+      itemModel: "mypack:ak_mag"
+      keyframes:
+        - tick: 0
+          translation: [0.0, 0.0, 0.4]
+```
+
+Movement between keyframes is interpolated by the client. Every part needs at least one keyframe with a `tick`, and
+`translation`/`rotation`/`scale` default to `[0,0,0]`, `[0,0,0]` and `[1,1,1]`. The rig's length is its highest tick, and
+reload rigs are stretched to the real reload time like animations. Displays are temporary: they are never saved to disk
+and are removed when the animation ends, the player switches items, or the server stops.
