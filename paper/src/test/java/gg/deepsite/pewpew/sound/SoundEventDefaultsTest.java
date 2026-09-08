@@ -47,4 +47,13 @@ class SoundEventDefaultsTest {
 					"sounds.yml default for '" + event.getPath() + "' drifted from the code fallback");
 		}
 	}
+
+	@Test
+	void everyEventIsFoundByItsPath() {
+		for (SoundEvent event : SoundEvent.values()) {
+			assertEquals(event, SoundEvent.fromPath(event.getPath()));
+			assertEquals(event, SoundEvent.fromPath(event.getPath().toUpperCase()));
+		}
+		assertNull(SoundEvent.fromPath("gun.nope"));
+	}
 }

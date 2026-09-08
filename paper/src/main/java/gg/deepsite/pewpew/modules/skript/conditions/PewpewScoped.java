@@ -12,10 +12,10 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings({"unused", "deprecation", "removal"})
-public class CondPewpewScoped extends Condition {
+public class PewpewScoped extends Condition {
 
 	static {
-		Skript.registerCondition(CondPewpewScoped.class,
+		Skript.registerCondition(PewpewScoped.class,
 				"%players% (is|are) scoped [in]",
 				"%players% (is not|are not) scoped [in]",
 				"pewpew is scoping in",

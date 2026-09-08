@@ -10,10 +10,10 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings({"unused", "deprecation", "removal"})
-public class CondPewpewHeadshot extends Condition {
+public class PewpewHeadshot extends Condition {
 
 	static {
-		Skript.registerCondition(CondPewpewHeadshot.class,
+		Skript.registerCondition(PewpewHeadshot.class,
 				"[the] pewpew (hit|shot) (was|is) [a] (0:headshot|1:crit[ical])",
 				"[the] pewpew (hit|shot) (was not|is not) [a] (0:headshot|1:crit[ical])");
 	}

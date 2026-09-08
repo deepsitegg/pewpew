@@ -13,10 +13,10 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings({"unused", "deprecation", "removal"})
-public class ExprPewpewVictim extends SimpleExpression<LivingEntity> {
+public class PewpewVictim extends SimpleExpression<LivingEntity> {
 
 	static {
-		Skript.registerExpression(ExprPewpewVictim.class, LivingEntity.class, ExpressionType.SIMPLE,
+		Skript.registerExpression(PewpewVictim.class, LivingEntity.class, ExpressionType.SIMPLE,
 				"[the] pewpew (victim|target|hit entity)");
 	}
 

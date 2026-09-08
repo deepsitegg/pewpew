@@ -11,7 +11,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 @SuppressWarnings({"unused", "deprecation", "removal"})
-public final class EvtPewpew {
+public final class PewpewEvents {
 
 	static {
 		Skript.registerEvent("Pewpew Shoot", SimpleEvent.class, PewpewShootEvent.class, "pewpew shoot[ing]")
@@ -124,6 +124,6 @@ public final class EvtPewpew {
 				PewpewThrowableDetonateEvent::getLocation, EventValues.TIME_NOW);
 	}
 
-	private EvtPewpew() {
+	private PewpewEvents() {
 	}
 }

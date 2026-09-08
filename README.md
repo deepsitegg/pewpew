@@ -63,7 +63,7 @@ per-weapon sounds and effects, all configurable.
 ### Tooling
 
 - **Damage dummy** (`/dummy`) - shows your per-hit and total damage; shift-right-click it to fit armor and shields
-- **Skript support** - 11 events, 9 expressions and 6 conditions, no addon needed. See [skript.md](assets/docs/skript.md)
+- **Skript support** - 11 events, 12 expressions, 6 conditions and 5 effects, no addon needed. See [skript.md](assets/docs/skript.md)
 - **Developer API** - 11 Bukkit events covering shooting, hits, kills, reloads, scoping, attachments and explosions
 
 ---

@@ -1,24 +1,25 @@
-package gg.deepsite.pewpew.modules.skript.conditions;
+package gg.deepsite.pewpew.modules.skript.effects;
 
 import ch.njol.skript.Skript;
-import ch.njol.skript.lang.Condition;
+import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.util.Kleenean;
 import gg.deepsite.pewpew.PewpewPlugin;
+import gg.deepsite.pewpew.api.objects.PewpewGunItem;
+import gg.deepsite.pewpew.modules.skript.SkriptGuns;
 import gg.deepsite.pewpew.modules.weapons.WeaponsModule;
-import gg.deepsite.pewpew.modules.weapons.shooting.ShootingHandler;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings({"unused", "deprecation", "removal"})
-public class CondPewpewReloading extends Condition {
+public class EjectMagazine extends Effect {
 
 	static {
-		Skript.registerCondition(CondPewpewReloading.class,
-				"%players% (is|are) reloading [a] [pewpew] [gun]",
-				"%players% (is not|are not) reloading [a] [pewpew] [gun]");
+		Skript.registerEffect(EjectMagazine.class,
+				"eject [the] [pewpew] magazine (from|of) %players%");
 	}
 
 	private Expression<Player> players;
@@ -27,20 +28,23 @@ public class CondPewpewReloading extends Condition {
 	@SuppressWarnings("unchecked")
 	public boolean init(Expression<?>[] expressions, int matchedPattern, Kleenean isDelayed, ParseResult parseResult) {
 		players = (Expression<Player>) expressions[0];
-		setNegated(matchedPattern == 1);
 		return true;
 	}
 
 	@Override
-	public boolean check(Event event) {
+	protected void execute(Event event) {
 		WeaponsModule weapons = PewpewPlugin.getModuleManager().get(WeaponsModule.class);
-		ShootingHandler handler = weapons == null ? null : weapons.getShootingHandler();
-		if (handler == null) return isNegated();
-		return players.check(event, handler::isReloading, isNegated());
+		if (weapons == null || weapons.getShootingHandler() == null) return;
+
+		for (Player player : players.getArray(event)) {
+			ItemStack held = player.getInventory().getItemInMainHand();
+			PewpewGunItem gun = SkriptGuns.gunOf(held);
+			if (gun != null) weapons.getShootingHandler().ejectMagazine(player, gun, held);
+		}
 	}
 
 	@Override
 	public String toString(@Nullable Event event, boolean debug) {
-		return players + (isNegated() ? " is not" : " is") + " reloading";
+		return "eject the pewpew magazine from " + players.toString(event, debug);
 	}
 }

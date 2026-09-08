@@ -12,10 +12,10 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings({"unused", "deprecation", "removal"})
-public class EffGivePewpew extends Effect {
+public class GivePewpew extends Effect {
 
 	static {
-		Skript.registerEffect(EffGivePewpew.class,
+		Skript.registerEffect(GivePewpew.class,
 				"give [%-number% [of]] pewpew item[s] %string% to %players%");
 	}
 

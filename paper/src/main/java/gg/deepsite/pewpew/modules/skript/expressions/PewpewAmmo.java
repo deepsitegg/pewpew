@@ -21,10 +21,10 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings({"unused", "deprecation", "removal"})
-public class ExprPewpewAmmo extends SimpleExpression<Number> {
+public class PewpewAmmo extends SimpleExpression<Number> {
 
 	static {
-		Skript.registerExpression(ExprPewpewAmmo.class, Number.class, ExpressionType.COMBINED,
+		Skript.registerExpression(PewpewAmmo.class, Number.class, ExpressionType.COMBINED,
 				"[the] pewpew ammo [of %-players%]");
 	}
 

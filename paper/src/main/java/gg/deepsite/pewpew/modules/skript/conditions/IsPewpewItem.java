@@ -17,10 +17,10 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings({"unused", "deprecation", "removal"})
-public class CondIsPewpewItem extends Condition {
+public class IsPewpewItem extends Condition {
 
 	static {
-		Skript.registerCondition(CondIsPewpewItem.class,
+		Skript.registerCondition(IsPewpewItem.class,
 				"%itemstacks% (is|are) [a] pewpew (0:item|1:gun|2:throwable|3:attachment|4:ammo)",
 				"%itemstacks% (is not|are not) [a] pewpew (0:item|1:gun|2:throwable|3:attachment|4:ammo)");
 	}

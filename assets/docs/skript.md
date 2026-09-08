@@ -34,11 +34,18 @@ Standard event values work where they make sense: `event-player` is the shooter 
 | `pewpew attachment slot`     | text   | attachment                            | no                             |
 | `pewpew ammo`                | number | reload complete, or `of %players%`    | set / add / remove / reset     |
 | `pewpew bloom of %players%`  | number | anywhere                              | delete / reset                 |
+| `pewpew magazine of %players%` | text | anywhere (needs `advanced.magazines`) | no                           |
+| `pewpew magazine rounds of %players%` | number | anywhere                     | no                             |
+| `pewpew chamber of %players%` | number | anywhere                              | no                             |
 
 `pewpew ammo of %players%` reads and writes the magazine of the gun in a player's main hand, clamped to the weapon's
 effective capacity, and refreshes the item's lore. `reset pewpew ammo` fills the magazine.
 
 `pewpew bloom` is the accumulated spread from sustained fire. Deleting it instantly restores full accuracy.
+
+`pewpew magazine` is the id of the magazine item inserted in the gun in the player's main hand, or nothing when the gun
+is empty or [magazines](magazines.md) are off. `pewpew magazine rounds` is what that magazine still holds and
+`pewpew chamber` is `1` or `0` for the round on top of it; `pewpew ammo` is the two added together.
 
 ## Conditions
 
@@ -56,7 +63,24 @@ the pewpew hit was a critical
 ```
 give 2 pewpew items "ak47" to player
 force player to reload their pewpew gun
+eject the pewpew magazine from player
+play pewpew animation "reload" for player
+play pewpew animation "reload" for player over 40 ticks
+play pewpew sound "magazine.swap-start" to player
+play pewpew sound "explosion.blast" at location of player
 ```
+
+`eject the pewpew magazine` drops the inserted magazine back into the inventory with its rounds, exactly like sneak +
+the reload key. It does nothing while the player is reloading, holds no gun, or has no magazine inserted.
+
+Animation names are the [animation](guns.md#animations) events: `fire`, `reload`, `reload-round`, `scope-in`,
+`scope-out`. The gun in the main hand supplies the frames (or its [rig](guns.md#rig)), so a gun without that animation
+plays nothing. `over %number% ticks` stretches the animation to that length, the way a reload animation is stretched to
+the weapon's real reload time.
+
+Sound names are the keys in `sounds.yml` (`gun.fire`, `reload.magazine-start`, `magazine.swap-finish`, `hit.marker`,
+`explosion.blast`, ...), so scripts play whatever the server configured for that event rather than a hardcoded sound.
+See [integrations.md](integrations.md#sounds).
 
 ## Examples
 
@@ -98,4 +122,25 @@ Stop players removing a scope once it is fitted:
 on pewpew attachment:
     if pewpew attachment slot is "SCOPE":
         cancel event
+```
+
+Take a player's magazine away when they leave a safezone, with the sound the server configured for it:
+
+```
+on region leave:
+    if pewpew magazine of player is set:
+        eject the pewpew magazine from player
+        play pewpew sound "magazine.swap-start" to player
+        send action bar "<red>magazine confiscated" to player
+```
+
+Warn on a nearly empty magazine, and stretch the gun's own reload animation from a script:
+
+```
+on pewpew shoot:
+    if pewpew magazine rounds of player <= 3:
+        send action bar "<gold>%pewpew magazine rounds of player% left" to player
+
+on pewpew reload:
+    play pewpew animation "reload" for player over 40 ticks
 ```

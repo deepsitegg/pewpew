@@ -17,10 +17,10 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings({"unused", "deprecation", "removal"})
-public class ExprPewpewBloom extends SimpleExpression<Number> {
+public class PewpewBloom extends SimpleExpression<Number> {
 
 	static {
-		Skript.registerExpression(ExprPewpewBloom.class, Number.class, ExpressionType.COMBINED,
+		Skript.registerExpression(PewpewBloom.class, Number.class, ExpressionType.COMBINED,
 				"[the] pewpew bloom [of %players%]");
 	}
 

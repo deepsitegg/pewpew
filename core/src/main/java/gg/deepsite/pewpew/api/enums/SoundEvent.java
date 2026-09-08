@@ -3,6 +3,7 @@ package gg.deepsite.pewpew.api.enums;
 import gg.deepsite.pewpew.api.objects.PewpewSound;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 @Getter
 public enum SoundEvent {
@@ -44,5 +45,13 @@ public enum SoundEvent {
 	SoundEvent(@NotNull String path, @NotNull String key, float volume, float pitch) {
 		this.path = path;
 		this.fallback = PewpewSound.of(key, volume, pitch);
+	}
+
+	@Nullable
+	public static SoundEvent fromPath(@NotNull String path) {
+		for (SoundEvent event : values()) {
+			if (event.path.equalsIgnoreCase(path)) return event;
+		}
+		return null;
 	}
 }

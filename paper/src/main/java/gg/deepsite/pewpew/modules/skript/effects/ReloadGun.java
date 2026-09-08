@@ -16,10 +16,10 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings({"unused", "deprecation", "removal"})
-public class EffReloadGun extends Effect {
+public class ReloadGun extends Effect {
 
 	static {
-		Skript.registerEffect(EffReloadGun.class,
+		Skript.registerEffect(ReloadGun.class,
 				"(force|make) %players% [to] reload [their] [pewpew] gun");
 	}
 
