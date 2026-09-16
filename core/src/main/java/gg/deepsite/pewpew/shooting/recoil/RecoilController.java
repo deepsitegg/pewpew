@@ -89,7 +89,9 @@ public class RecoilController {
 		currentYaw = lerp(currentYaw, targetYaw, profile.getSmoothing());
 		currentPitch = lerp(currentPitch, targetPitch, profile.getSmoothing());
 
-		if (profile.getRecovery() > 0f) {
+		// Recover only once the kick has peaked, otherwise recovery cancels small kicks before they apply.
+		boolean returning = Math.abs(targetYaw) <= Math.abs(currentYaw) && Math.abs(targetPitch) <= Math.abs(currentPitch);
+		if (profile.getRecovery() > 0f && returning) {
 			currentYaw = moveTowards(currentYaw, 0f, profile.getRecovery());
 			currentPitch = moveTowards(currentPitch, 0f, profile.getRecovery());
 		}

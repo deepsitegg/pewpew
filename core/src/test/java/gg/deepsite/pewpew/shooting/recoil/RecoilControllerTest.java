@@ -70,6 +70,20 @@ class RecoilControllerTest {
 	}
 
 	@Test
+	void recoveryDoesNotSwallowASmallKick() {
+		FakeSink sink = new FakeSink();
+		RecoilProfile profile = RecoilProfile.builder().verticalVariance(0f).horizontalVariance(0f).recovery(0.9f).build();
+		RecoilController controller = new RecoilController(sink, profile);
+
+		controller.kick(0.55);
+		controller.tick();
+		assertTrue(sink.appliedPitch < 0, "a kick smaller than the recovery rate must still move the aim");
+
+		assertTrue(settle(controller) > 0, "recoil must settle");
+		assertEquals(0f, sink.appliedPitch, 0.05f, "the aim returns to where it started");
+	}
+
+	@Test
 	void fallsBackToAbsoluteRotationWhenRelativeIsUnavailable() {
 		FakeSink sink = new FakeSink();
 		sink.relativeSupported = false;

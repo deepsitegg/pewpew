@@ -263,7 +263,7 @@ A slot that is not in `allowedAttachmentSlots`, or an unknown slot name, is skip
 | `holdPose`          | enum   | none    | `CROSSBOW` renders the gun with the vanilla charged-crossbow hold (two-handed, out front). Firing stays on right-click. |
 | `animations`        | map    | none    | Model swapped per event over time. See below.                                                        |
 | `animationCooldown` | bool   | `true`  | Lock the weapon (vanilla item cooldown) for as long as an animation runs. `false` lets the player fire through it. |
-| `aimModelSuffix`    | string | none    | Appended to the model while aiming down sights.                                                      |
+| `aimModelSuffix`    | string | none    | A**ppended to the model while aiming down sights.**                                                      |
 | `aimModelData`      | int    | `0`     | Added to `customModelData` while aiming down sights.                                                 |
 | `rig`               | map    | none    | Item-display rig played per event, for models the item slot cannot show. See below.                  |
 
