@@ -12,7 +12,7 @@ val targetJavaVersion = 21
 
 allprojects {
     group = "gg.deepsite"
-    version = "26.1.4-dev"
+    version = "26.1.5-dev"
 }
 
 subprojects {
