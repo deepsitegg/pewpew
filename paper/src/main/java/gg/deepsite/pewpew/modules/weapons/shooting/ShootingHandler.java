@@ -400,6 +400,7 @@ public class ShootingHandler {
 				handleEmpty(player, gun, held, false);
 				return;
 			}
+			AmmoUtil.popRound(held);
 			AmmoUtil.set(held, ammo - 1);
 			GunLoreRenderer.apply(held, gun);
 			player.getInventory().setItemInMainHand(held);

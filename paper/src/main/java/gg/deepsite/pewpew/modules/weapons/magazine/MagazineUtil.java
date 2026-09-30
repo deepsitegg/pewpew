@@ -4,6 +4,7 @@ import gg.deepsite.pewpew.PewpewPlugin;
 import gg.deepsite.pewpew.api.objects.PewpewAmmoItem;
 import gg.deepsite.pewpew.api.objects.PewpewGunItem;
 import gg.deepsite.pewpew.api.objects.PewpewMagazineItem;
+import gg.deepsite.pewpew.magazine.AmmoStack;
 import gg.deepsite.pewpew.modules.items.ItemsModule;
 import gg.deepsite.pewpew.modules.weapons.ammo.AmmoUtil;
 import gg.deepsite.pewpew.modules.weapons.lore.MagazineLoreRenderer;
@@ -18,14 +19,18 @@ import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 @UtilityClass
 public class MagazineUtil {
 
 	public static final NamespacedKey ROUNDS_KEY = new NamespacedKey("pewpew", "mag_rounds");
 	public static final NamespacedKey MAG_AMMO_KEY = new NamespacedKey("pewpew", "mag_ammo");
 	public static final NamespacedKey GUN_MAG_KEY = new NamespacedKey("pewpew", "gun_mag");
-
-	public static final int MISMATCH = -1;
+	/** {@link AmmoStack} of the rounds in the magazine, kept in sync with {@link #ROUNDS_KEY}. */
+	public static final NamespacedKey MAG_STACK_KEY = new NamespacedKey("pewpew", "mag_stack");
 
 	public static boolean enabled() {
 		return PewpewPlugin.getDefaultConfiguration().isMagazinesEnabled();
@@ -55,14 +60,31 @@ public class MagazineUtil {
 		return meta.getPersistentDataContainer().get(MAG_AMMO_KEY, PersistentDataType.STRING);
 	}
 
+	/** The magazine's rounds, bottom first; the last one comes out next. Old single-ammo magazines read as one id. */
+	@NotNull
+	public static List<String> stack(@NotNull ItemStack magStack) {
+		ItemMeta meta = magStack.getItemMeta();
+		String encoded = meta == null ? null : meta.getPersistentDataContainer().get(MAG_STACK_KEY, PersistentDataType.STRING);
+		String next = ammoId(magStack);
+		List<String> ids = encoded == null ? AmmoStack.legacy(next, rounds(magStack)) : AmmoStack.decode(encoded);
+		return AmmoUtil.fit(ids, rounds(magStack), next);
+	}
+
 	public static void write(@NotNull ItemStack magStack, @NotNull PewpewMagazineItem def, int rounds,
-	                         @Nullable String ammoId) {
+	                         @NotNull List<String> ids) {
 		ItemMeta meta = magStack.getItemMeta();
 		if (meta == null) return;
 		int clamped = Math.max(0, Math.min(def.getCapacity(), rounds));
+		AmmoUtil.fit(ids, clamped, null);
+		String encoded = AmmoStack.encode(ids);
 		meta.getPersistentDataContainer().set(ROUNDS_KEY, PersistentDataType.INTEGER, clamped);
-		if (clamped <= 0 || ammoId == null) meta.getPersistentDataContainer().remove(MAG_AMMO_KEY);
-		else meta.getPersistentDataContainer().set(MAG_AMMO_KEY, PersistentDataType.STRING, ammoId);
+		if (encoded == null) {
+			meta.getPersistentDataContainer().remove(MAG_STACK_KEY);
+			meta.getPersistentDataContainer().remove(MAG_AMMO_KEY);
+		} else {
+			meta.getPersistentDataContainer().set(MAG_STACK_KEY, PersistentDataType.STRING, encoded);
+			meta.getPersistentDataContainer().set(MAG_AMMO_KEY, PersistentDataType.STRING, ids.get(ids.size() - 1));
+		}
 		magStack.setItemMeta(meta);
 		MagazineLoreRenderer.apply(magStack, def);
 	}
@@ -94,15 +116,15 @@ public class MagazineUtil {
 		int rounds = rounds(magStack);
 		if (rounds >= def.getCapacity()) return 0;
 
-		String held = ammoId(magStack);
-		if (rounds > 0 && held != null && !held.equals(ammo.getId())) return MISMATCH;
-
 		int perItem = ammo.getRoundsPerItem() <= 0 ? def.getCapacity() : ammo.getRoundsPerItem();
 		int consumed = itemsToFill(rounds, def.getCapacity(), perItem, ammoStack.getAmount());
 		if (consumed <= 0) return 0;
 
+		int filled = Math.min(def.getCapacity(), rounds + consumed * perItem);
+		List<String> ids = stack(magStack);
+		ids.addAll(Collections.nCopies(filled - rounds, ammo.getId()));
 		ammoStack.setAmount(ammoStack.getAmount() - consumed);
-		write(magStack, def, Math.min(def.getCapacity(), rounds + consumed * perItem), ammo.getId());
+		write(magStack, def, filled, ids);
 		return consumed;
 	}
 
@@ -151,9 +173,12 @@ public class MagazineUtil {
 
 		eject(player, gunStack);
 
+		List<String> loaded = stack(taken);
+		loaded.addAll(AmmoUtil.rounds(gunStack)); // the chambered round stays on top
 		setInserted(gunStack, incoming.getId());
-		AmmoUtil.setLoadedAmmo(gunStack, ammoId(taken));
+		if (ammoId(taken) != null) AmmoUtil.setLoadedAmmo(gunStack, ammoId(taken));
 		AmmoUtil.set(gunStack, rounds(taken) + AmmoUtil.chamber(gunStack));
+		AmmoUtil.setRounds(gunStack, loaded);
 		return true;
 	}
 
@@ -161,12 +186,18 @@ public class MagazineUtil {
 		PewpewMagazineItem old = inserted(gunStack);
 		if (old == null) return;
 
+		List<String> rounds = AmmoUtil.rounds(gunStack);
+		int chambered = Math.min(AmmoUtil.chamber(gunStack), rounds.size());
+		List<String> chamber = new ArrayList<>(rounds.subList(rounds.size() - chambered, rounds.size()));
+		rounds.subList(rounds.size() - chambered, rounds.size()).clear();
+
 		ItemStack ejected = ItemFactory.build(old);
-		write(ejected, old, AmmoUtil.pool(gunStack), AmmoUtil.loadedAmmo(gunStack));
+		write(ejected, old, AmmoUtil.pool(gunStack), rounds);
 		for (ItemStack leftover : player.getInventory().addItem(ejected).values()) {
 			player.getWorld().dropItemNaturally(player.getLocation(), leftover);
 		}
 		setInserted(gunStack, null);
 		AmmoUtil.set(gunStack, AmmoUtil.chamber(gunStack));
+		AmmoUtil.setRounds(gunStack, chamber);
 	}
 }

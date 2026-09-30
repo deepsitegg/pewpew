@@ -30,6 +30,7 @@ attachment modifiers stay in charge; ammo is the last layer on top.
 | `damageMultiplier`   | double | `1.0`   | Scales the gun's damage. `1.2` = hollow points, `0.8` = subsonic.                                                 |
 | `velocityMultiplier` | double | `1.0`   | Scales projectile speed. Only affects `PROJECTILE` guns.                                                          |
 | `penetration`        | int    | `0`     | How many entities a shot passes through before stopping. `0` = stops at the first target. Hitscan guns only.      |
+| `fireTicks`          | int    | `0`     | Incendiary rounds: sets the entity hit on fire for this many ticks.                                               |
 
 ```yaml
 ap_round:
@@ -40,6 +41,9 @@ ap_round:
   damageMultiplier: 1.15
   penetration: 2
 ```
+
+`payload` (a throwable id) makes the round launch that throwable instead of the gun's own `payload`, so one grenade
+launcher can fire tear gas and smoke rounds from the same magazine. Unlike the stats above it works with ammo-stats off.
 
 The gun remembers which ammo item was loaded into it, so two magazines of different ammo behave differently in the same
 weapon. Loading a different ammo type replaces what the gun remembers, and each pellet of a buckshot round penetrates

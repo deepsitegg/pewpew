@@ -13,6 +13,7 @@ import gg.deepsite.pewpew.modules.weapons.listeners.MagazineListener;
 import gg.deepsite.pewpew.modules.weapons.listeners.ScopeListener;
 import gg.deepsite.pewpew.modules.weapons.listeners.ShootingListener;
 import gg.deepsite.pewpew.modules.weapons.listeners.ThrowingListener;
+import gg.deepsite.pewpew.modules.weapons.shooting.BreakableGlass;
 import gg.deepsite.pewpew.modules.weapons.shooting.BulletImpacts;
 import gg.deepsite.pewpew.modules.weapons.shooting.ShootingHandler;
 import gg.deepsite.pewpew.modules.weapons.throwing.ThrowableHandler;
@@ -76,5 +77,6 @@ public class WeaponsModule extends SpigotModule<PewpewPlugin> {
 		if (bulletImpacts != null) {
 			bulletImpacts.clear();
 		}
+		BreakableGlass.restoreAll();
 	}
 }

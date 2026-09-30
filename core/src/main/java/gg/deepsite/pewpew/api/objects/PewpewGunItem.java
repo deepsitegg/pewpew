@@ -40,6 +40,9 @@ public class PewpewGunItem extends PewpewWeaponItem {
 	private double bloomMax;
 	private double bloomDecay;
 	private double recoil;
+	/** Recoil while aiming down sights. Negative means "same as recoil", 0 means none. */
+	@Builder.Default
+	private double scopedRecoil = -1;
 	private RecoilProfile recoilProfile;
 	private double knockback;
 	private double selfKnockback;
@@ -72,6 +75,10 @@ public class PewpewGunItem extends PewpewWeaponItem {
 	private List<String> magazines;
 	@Builder.Default
 	private boolean animationCooldown = true;
+
+	public double recoil(boolean scoped) {
+		return scoped && scopedRecoil >= 0 ? scopedRecoil : recoil;
+	}
 
 	public PewpewAnimation getAnimation(AnimationEvent event) {
 		return animations == null ? null : animations.get(event);

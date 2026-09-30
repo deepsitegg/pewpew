@@ -16,7 +16,11 @@ public class GunHitTracker {
 
 	private static final long EXPIRY_MS = 10_000L;
 
-	public record Hit(@NotNull String gunId, @NotNull UUID killerId, long time) {
+	/**
+	 * @param weaponId   the gun, or the throwable for grenade, gas and launcher-payload damage
+	 * @param launcherId the gun that launched the throwable, if any
+	 */
+	public record Hit(@NotNull String weaponId, @NotNull UUID killerId, long time, @Nullable String launcherId) {
 	}
 
 	private static final Map<UUID, Hit> HITS = new ConcurrentHashMap<>();
@@ -24,8 +28,13 @@ public class GunHitTracker {
 	private static final int EVICT_THRESHOLD = 128;
 
 	public static void record(@NotNull LivingEntity victim, @NotNull Player killer, @NotNull PewpewGunItem gun) {
+		record(victim, killer.getUniqueId(), gun.getId(), null);
+	}
+
+	public static void record(@NotNull LivingEntity victim, @NotNull UUID killerId, @NotNull String weaponId,
+	                          @Nullable String launcherId) {
 		if (HITS.size() > EVICT_THRESHOLD) evictExpired();
-		HITS.put(victim.getUniqueId(), new Hit(gun.getId(), killer.getUniqueId(), System.currentTimeMillis()));
+		HITS.put(victim.getUniqueId(), new Hit(weaponId, killerId, System.currentTimeMillis(), launcherId));
 	}
 
 	private static void evictExpired() {

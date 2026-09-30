@@ -26,6 +26,10 @@ A magazine is a real item that holds rounds of its own. For guns with `consumesA
 - **`reloadType` is ignored** while a swap is possible, because swapping a magazine is one action. A gun with no
   magazine available falls back to its `reloadType` and loads loose ammo into the chamber.
 
+A magazine can hold **mixed ammo**: pack any ammo items with its `ammoType` in any order (for example AP, then
+incendiary, then AP) and every round keeps its own type. Rounds come out last-in first-out like a real magazine,
+and each shot uses the stats of the round it fires. The lore lists the mix, e.g. `AP ×12, Incendiary ×8`.
+
 A gun takes any magazine with a matching `ammoType`. To narrow that, list the ids it accepts on the gun:
 
 ```yaml

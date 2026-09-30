@@ -14,7 +14,10 @@ import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.StringJoiner;
 
 @UtilityClass
 public class MagazineLoreRenderer {
@@ -45,9 +48,20 @@ public class MagazineLoreRenderer {
 		stack.setItemMeta(meta);
 	}
 
+	/** "AP ×12, Incendiary ×8", next round's ammo first. A single ammo type shows just its name. */
 	private static String loadedName(ItemStack stack) {
-		String ammoId = MagazineUtil.ammoId(stack);
-		if (ammoId == null) return null;
+		List<String> rounds = MagazineUtil.stack(stack);
+		if (rounds.isEmpty()) return null;
+		Map<String, Integer> counts = new LinkedHashMap<>();
+		for (int i = rounds.size() - 1; i >= 0; i--) counts.merge(rounds.get(i), 1, Integer::sum);
+		if (counts.size() == 1) return nameOf(rounds.get(0));
+
+		StringJoiner joined = new StringJoiner("<gray>, <reset>");
+		counts.forEach((id, count) -> joined.add(nameOf(id) + " <gray>×" + count));
+		return joined.toString();
+	}
+
+	private static String nameOf(String ammoId) {
 		PewPewItem ammo = PewpewPlugin.getModuleManager().get(ItemsModule.class).get(ammoId);
 		return ammo != null ? ammo.getName() : ammoId;
 	}

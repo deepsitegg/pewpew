@@ -156,18 +156,18 @@ public class WeaponDeserializer {
 					"critChance", "critMultiplier", "damageType", "deathMessage", "defaultAttachments", "explosive",
 					"falloffEnd", "falloffMinMultiplier", "falloffStart", "fireRate", "fireSound", "firingMode",
 					"headshotMultiplier", "hitMessage", "hitSound", "impactParticle", "knockback", "maxAmmo",
-					"payload", "projectileModel", "projectileSpeed", "range", "recoil", "recoilProfile",
+					"payload", "projectileModel", "projectileSpeed", "range", "recoil", "recoilProfile", "scopedRecoil",
 					"reloadTime", "reloadType", "selfKnockback", "shieldDisableTime", "shooterEffects", "spread",
 					"spreadModifiers", "bloomPerShot", "bloomMax", "bloomDecay", "animations", "rig", "animationCooldown",
 					"aimModelSuffix", "aimModelData", "magazines",
 					"trailParticle", "trajectory", "victimEffects"),
 			ItemType.AMMO, Set.of(
-					"ammoType", "roundsPerItem", "damageMultiplier", "velocityMultiplier", "penetration"),
+					"ammoType", "roundsPerItem", "damageMultiplier", "velocityMultiplier", "penetration", "fireTicks", "payload"),
 			ItemType.MAGAZINE, Set.of(
 					"ammoType", "capacity", "reloadModifier", "modelSuffix", "gunModelData"),
 			ItemType.THROWABLE, Set.of(
-					"blastRadius", "effect", "effectAmplifier", "effectDuration", "explosionDamage",
-					"explosionKnockback", "fireTicks", "fuseTime", "throwForce"),
+					"blastRadius", "deathMessage", "effect", "effectAmplifier", "effectDuration", "explosionDamage",
+					"explosionKnockback", "fireTicks", "fuseTime", "gasEffects", "throwForce"),
 			ItemType.ATTACHMENT, Set.of(
 					"adsSpeedModifier", "aimRecoilMultiplier", "aimSpreadMultiplier", "ammoBonus", "attachmentType",
 					"damageModifier", "rangeModifier", "recoilModifier", "reloadModifier", "zoom"));
@@ -295,6 +295,8 @@ public class WeaponDeserializer {
 				.damageMultiplier(damageMultiplier)
 				.velocityMultiplier(velocityMultiplier)
 				.penetration(penetration)
+				.fireTicks(Math.max(0, node.node("fireTicks").getInt(0)))
+				.payload(node.node("payload").getString())
 				.build();
 	}
 
@@ -494,6 +496,7 @@ public class WeaponDeserializer {
 				.reloadType(reloadType)
 				.spread(spread)
 				.recoil(recoil)
+				.scopedRecoil(node.node("scopedRecoil").getDouble(-1))
 				.recoilProfile(recoilProfile)
 				.knockback(knockback)
 				.selfKnockback(selfKnockback)
@@ -576,6 +579,8 @@ public class WeaponDeserializer {
 				.effectDuration(effectDuration)
 				.effectAmplifier(effectAmplifier)
 				.fireTicks(fireTicks)
+				.gasEffects(parseEffects(fileName, id, node.node("gasEffects")))
+				.deathMessage(node.node("deathMessage").getString())
 				.build();
 	}
 

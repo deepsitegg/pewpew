@@ -54,6 +54,7 @@ Add an `explosive:` block to a `PROJECTILE` gun to detonate on impact (rocket la
 | `bulletCount`   | int              | `1`     | Pellets/projectiles per shot, each independently spread (shotgun buckshot).                                                     |
 | `spread`        | double (degrees) | `1.5`   | Bullet cone half-angle. `0` = pinpoint. Scaled by grip and scope.                                                               |
 | `recoil`        | double (degrees) | `0.0`   | Camera kick strength per shot. Scaled by grip and scope, then shaped by `recoilProfile`.                                        |
+| `scopedRecoil`  | double (degrees) | `recoil` | Kick while aiming down sights, instead of `recoil`. `0` = no recoil when scoped. Leave it out to use `recoil` for both.       |
 | `knockback`     | double           | `0.0`   | Extra knockback pushed onto the victim on a landed hit, away from the shooter. `0` = vanilla only.                              |
 | `selfKnockback` | double           | `0.0`   | Recoil shove on the shooter (backward), for hand-cannon feel. `0` = none.                                                       |
 | `bulletDrop`    | double           | `0.0`   | For `HITSCAN`: vertical curve per block (ballistic arc). For `PROJECTILE`: any value `> 0` enables gravity. `0` flies straight. |
@@ -205,7 +206,7 @@ Example: `"POISON:60:1"` = Poison II for 3 seconds. Effect names are vanilla, e.
 | `fireSound`      | sound    | default           | Played positionally on each shot. See [sound format](#sound-format).                             |
 | `hitSound`       | sound    | default hitmarker | Played to the shooter on a landed hit.                                                           |
 | `hitMessage`     | text     | none              | Action-bar message to the shooter on hit. Placeholders `%victim%`, `%damage%`.                   |
-| `deathMessage`   | text     | vanilla           | Replaces the death message when this gun kills. Placeholders `%victim%`, `%killer%`, `%weapon%`. |
+| `deathMessage`   | text     | `gun-death`       | Replaces the death message when this gun kills. Placeholders `%victim%`, `%killer%`, `%weapon%`. Without one, `gun-death` from messages.yml is used. Only used when the fatal damage came from the gun. |
 
 Use simple particle names (e.g. `FLAME`, `SMOKE`, `CRIT`, `SOUL_FIRE_FLAME`, `LARGE_SMOKE`). Particles that need extra
 data (`DUST`, `BLOCK`, `ITEM`) are not supported.

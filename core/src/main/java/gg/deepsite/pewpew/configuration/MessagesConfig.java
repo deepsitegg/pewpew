@@ -35,12 +35,16 @@ public class MessagesConfig extends ConfigurateConfig {
 		return get("no-magazine", "<error>No loaded magazine in your inventory.");
 	}
 
-	public String magazineAmmoMismatch() {
-		return get("magazine-ammo-mismatch", "<error>That magazine already holds different ammo.");
-	}
-
 	public String noAmmoInInventory() {
 		return get("no-ammo-in-inventory", "<error>Out of <reset>%1<error> in your inventory.");
+	}
+
+	public String gunDeath() {
+		return get("gun-death", "<gray>%victim% <error>was shot by <gray>%killer% <dark_gray>(%weapon%<dark_gray>)");
+	}
+
+	public String throwableDeath() {
+		return get("throwable-death", "<gray>%victim% <error>was killed by <gray>%killer%<error>'s <reset>%weapon%");
 	}
 
 	public String noPermission() {

@@ -12,6 +12,8 @@ public enum SoundEvent {
 	GUN_DRY_FIRE("gun.dry-fire", "block.dispenser.fail", 0.8f, 1.2f),
 	GUN_ACTION_CLOSE("gun.action-close", "block.piston.contract", 0.7f, 0.8f),
 	GUN_ACTION_OPEN("gun.action-open", "block.piston.extend", 0.7f, 0.8f),
+	GUN_AIM_IN("gun.aim-in", "item.spyglass.use", 0.6f, 1.0f),
+	GUN_AIM_OUT("gun.aim-out", "item.spyglass.stop_using", 0.6f, 1.0f),
 
 	RELOAD_MAGAZINE_START("reload.magazine-start", "block.piston.contract", 0.8f, 1.2f),
 	RELOAD_MAGAZINE_FINISH("reload.magazine-finish", "block.piston.extend", 0.8f, 1.4f),
@@ -26,6 +28,7 @@ public enum SoundEvent {
 	HIT_MARKER_HEADSHOT("hit.marker-headshot", "block.note_block.pling", 1.0f, 1.8f),
 	HIT_CRIT("hit.crit", "entity.player.attack.crit", 1.0f, 1.2f),
 	HIT_SHIELD_BREAK("hit.shield-break", "item.shield.break", 1.0f, 1.0f),
+	HIT_GLASS_BREAK("hit.glass-break", "block.glass.break", 1.0f, 1.0f),
 
 	EXPLOSION_BLAST("explosion.blast", "entity.generic.explode", 2.0f, 1.0f),
 
@@ -35,6 +38,7 @@ public enum SoundEvent {
 	THROWABLE_FLASH("throwable.flash", "item.firecharge.use", 1.5f, 0.6f),
 	THROWABLE_POISON("throwable.poison", "entity.generic.splash", 1.0f, 1.0f),
 	THROWABLE_FIRE("throwable.fire", "item.firecharge.use", 1.2f, 1.0f),
+	THROWABLE_TEAR_GAS("throwable.tear-gas", "block.fire.extinguish", 1.0f, 0.6f),
 
 	MENU_EQUIP("menu.equip", "item.armor.equip_generic", 0.7f, 1.4f),
 	MENU_UNEQUIP("menu.unequip", "item.armor.equip_generic", 0.7f, 1.2f);

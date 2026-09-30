@@ -14,6 +14,9 @@ editing.
 | `advanced.magazines`        | bool | `false` | Magazines become real items that hold rounds. Off means `MAGAZINE` items are not registered at all. See [magazines.md](magazines.md). |
 | `impacts.enabled`           | bool | `true`  | A shot that lands on a block leaves a small dark square where it hit.                            |
 | `impacts.max-per-gun`       | int  | `8`     | Newest impacts kept per gun; firing past this removes that gun's oldest. Each one also disappears after 30 seconds. Minimum `1`. |
+| `glass.breakable`           | bool | `true`  | Bullets break glass blocks and panes of every colour and keep flying.                            |
+| `glass.restore-after-seconds` | int | `300`  | Broken glass comes back after this long, and always when the plugin shuts down, so the saved world keeps its glass. |
+| `tear-gas.gas-masks`        | list | `[vibe:gas_mask]` | Head-slot items that protect from `TEAR_GAS`, matched by item model or item id.          |
 | `auto-reload`               | bool | `false` | Firing a gun that just ran dry starts a reload on its own instead of only dry-firing. Held automatic fire never auto-reloads: the trigger has to be pressed again. |
 | `lore.stat-display`         | bool | `true`  | Append generated stat lines to gun and attachment lore. `false` leaves only your own `lore`.     |
 | `integrations.*`            | -    | -       | WorldGuard, CombatTagPlus and OpenMinetopia hooks. See [integrations.md](integrations.md).        |

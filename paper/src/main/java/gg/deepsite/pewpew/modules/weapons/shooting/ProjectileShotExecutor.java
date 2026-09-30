@@ -31,6 +31,7 @@ public class ProjectileShotExecutor implements ShotExecutor {
 
 	public static final NamespacedKey PROJECTILE_WEAPON_KEY = new NamespacedKey("pewpew", "weapon_id");
 	public static final NamespacedKey PROJECTILE_DAMAGE_KEY = new NamespacedKey("pewpew", "weapon_damage");
+	public static final NamespacedKey PROJECTILE_FIRE_KEY = new NamespacedKey("pewpew", "weapon_fire_ticks");
 
 	private final RecoilManager recoilManager;
 
@@ -51,11 +52,13 @@ public class ProjectileShotExecutor implements ShotExecutor {
 				: gun.getBulletDrop() > 0;
 		Vector aim = shooter.getEyeLocation().getDirection();
 		int pellets = Math.max(1, gun.getBulletCount());
+		String payload = payloadOf(gun, weapon);
+		int fireTicks = AmmoUtil.fireTicks(ammo);
 
 		for (int pellet = 0; pellet < pellets; pellet++) {
 			Vector velocity = Ballistics.applySpread(aim, spread).multiply(projectileSpeed);
-			if (gun.getPayload() != null) {
-				launchPayload(shooter, gun, velocity, gravity);
+			if (payload != null) {
+				launchPayload(shooter, gun, payload, velocity, gravity);
 				continue;
 			}
 			Snowball projectile = shooter.launchProjectile(Snowball.class, velocity);
@@ -66,20 +69,34 @@ public class ProjectileShotExecutor implements ShotExecutor {
 					.set(PROJECTILE_WEAPON_KEY, PersistentDataType.STRING, gun.getId());
 			projectile.getPersistentDataContainer()
 					.set(PROJECTILE_DAMAGE_KEY, PersistentDataType.DOUBLE, damage);
+			if (fireTicks > 0) projectile.getPersistentDataContainer()
+					.set(PROJECTILE_FIRE_KEY, PersistentDataType.INTEGER, fireTicks);
 			if (gun.getTrailParticle() != null) trail(projectile, gun.getTrailParticle());
 		}
 
 		Spread.addShot(shooter, gun);
 
-		double recoil = gun.getRecoil() * recoilMultiplier;
+		double recoil = gun.recoil(scoped) * recoilMultiplier;
 		if (scoped) recoil *= AttachmentUtil.aimRecoilMultiplier(weapon);
 		recoilManager.kick(shooter, gun.getRecoilProfile(), recoil);
 		Ballistics.applySelfKnockback(shooter, gun.getSelfKnockback());
 	}
 
-	private void launchPayload(@NotNull Player shooter, @NotNull PewpewGunItem gun, @NotNull Vector velocity, boolean gravity) {
+	/** The loaded round's own payload wins over the gun's, so one launcher can fire mixed grenades. */
+	@Nullable
+	private static String payloadOf(@NotNull PewpewGunItem gun, @NotNull ItemStack weapon) {
+		String loaded = AmmoUtil.loadedAmmo(weapon);
+		if (loaded != null && PewpewPlugin.getModuleManager().get(ItemsModule.class).get(loaded) instanceof PewpewAmmoItem round
+				&& round.getPayload() != null) {
+			return round.getPayload();
+		}
+		return gun.getPayload();
+	}
+
+	private void launchPayload(@NotNull Player shooter, @NotNull PewpewGunItem gun, @NotNull String payload,
+	                           @NotNull Vector velocity, boolean gravity) {
 		ItemsModule items = PewpewPlugin.getModuleManager().get(ItemsModule.class);
-		if (!(items.get(gun.getPayload()) instanceof PewpewThrowableItem throwable)) return;
+		if (!(items.get(payload) instanceof PewpewThrowableItem throwable)) return;
 		ItemStack display = ItemFactory.build(throwable);
 		display.setAmount(1);
 		Item grenade = shooter.getWorld().dropItem(shooter.getEyeLocation(), display);
@@ -87,6 +104,7 @@ public class ProjectileShotExecutor implements ShotExecutor {
 		grenade.setPickupDelay(Integer.MAX_VALUE);
 		grenade.setWillAge(false);
 		grenade.setGravity(gravity);
+		grenade.setThrower(shooter.getUniqueId());
 		if (gun.getTrailParticle() != null) trail(grenade, gun.getTrailParticle());
 
 		ThrowableHandler handler = PewpewPlugin.getModuleManager().get(WeaponsModule.class).getThrowableHandler();
@@ -97,7 +115,8 @@ public class ProjectileShotExecutor implements ShotExecutor {
 			Location loc = grenade.getLocation();
 			boolean detonate = new PewpewThrowableDetonateEvent(grenade, throwable, loc).callEvent();
 			grenade.remove();
-			if (detonate && handler != null) handler.applyEffect(world, loc, throwable);
+			if (detonate && handler != null)
+				handler.applyEffect(world, loc, throwable, shooter.getUniqueId(), gun.getId());
 		}, fuse);
 	}
 
@@ -132,7 +151,7 @@ public class ProjectileShotExecutor implements ShotExecutor {
 				ExplosiveConfig applied = new ExplosiveConfig(
 						explodeEvent.getBlastRadius(), explodeEvent.getExplosionDamage(), cfg.explosionKnockback(),
 						cfg.damageBlocks(), cfg.rebuildEnabled(), cfg.rebuildDelay(), cfg.blocksPerTick());
-				Explosions.detonate(projectile.getWorld(), impact, applied, detonator);
+				Explosions.detonate(projectile.getWorld(), impact, applied, detonator, gun);
 			}
 		}
 		if (target == null) return;
@@ -166,6 +185,8 @@ public class ProjectileShotExecutor implements ShotExecutor {
 		}
 		Ballistics.disableShield(target, gun.getShieldDisableTime());
 		Ballistics.applyEffects(target, gun.getVictimEffects());
+		Integer fireTicks = projectile.getPersistentDataContainer().get(PROJECTILE_FIRE_KEY, PersistentDataType.INTEGER);
+		if (fireTicks != null) target.setFireTicks(Math.max(target.getFireTicks(), fireTicks));
 		if (shooterPlayer != null) {
 			Ballistics.applyEffects(shooterPlayer, gun.getShooterEffects());
 			Ballistics.hitFeedback(shooterPlayer, gun, target, damage, headshot);

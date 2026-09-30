@@ -43,6 +43,13 @@ sounds:
       key: "block.piston.extend"
       volume: 0.7
       pitch: 0.8
+    # Sneaking to aim down sights, and letting go again.
+    aim-in:
+      key: "item.spyglass.use"
+      volume: 0.6
+    aim-out:
+      key: "item.spyglass.stop_using"
+      volume: 0.6
 
   reload:
     # reloadType MAGAZINE: one sound at the start, one when it completes.
@@ -81,6 +88,9 @@ sounds:
 
   # Played to the shooter, not positionally.
   hit:
+    # A bullet shattering glass.
+    glass-break:
+      key: "block.glass.break"
     # Fallback hitmarker, used by guns that define no 'hitSound'.
     marker: "block.note_block.pling"
     marker-headshot:
@@ -115,6 +125,10 @@ sounds:
     fire:
       key: "item.firecharge.use"
       volume: 1.2
+    # A tear gas cloud bursting open.
+    tear-gas:
+      key: "block.fire.extinguish"
+      pitch: 0.6
 
   menu:
     equip:

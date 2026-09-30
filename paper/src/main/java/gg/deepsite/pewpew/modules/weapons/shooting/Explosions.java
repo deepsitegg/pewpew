@@ -4,6 +4,7 @@ import gg.deepsite.pewpew.api.enums.SoundEvent;
 import gg.deepsite.pewpew.utils.Sounds;
 import gg.deepsite.pewpew.PewpewPlugin;
 import gg.deepsite.pewpew.api.objects.ExplosiveConfig;
+import gg.deepsite.pewpew.api.objects.PewpewGunItem;
 import gg.deepsite.pewpew.shooting.DamageMath;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -25,7 +26,7 @@ public final class Explosions {
 	}
 
 	public static void detonate(@NotNull World world, @NotNull Location center, @NotNull ExplosiveConfig cfg,
-	                            @Nullable Player source) {
+	                            @Nullable Player source, @Nullable PewpewGunItem gun) {
 		double radius = cfg.blastRadius();
 		world.spawnParticle(Particle.EXPLOSION_EMITTER, center, 1);
 		Sounds.at(world, center, SoundEvent.EXPLOSION_BLAST);
@@ -34,6 +35,7 @@ public final class Explosions {
 			double factor = DamageMath.blastFactor(living.getLocation().distance(center), radius);
 			if (factor <= 0.0) continue;
 			double damage = cfg.explosionDamage() * factor;
+			if (source != null && gun != null) GunHitTracker.record(living, source, gun);
 			if (source != null) living.damage(damage, source);
 			else living.damage(damage);
 			Vector away = living.getLocation().toVector().subtract(center.toVector());

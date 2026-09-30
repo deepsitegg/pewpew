@@ -508,6 +508,9 @@ awm:
   range: 250.0
   spread: 0.0
   recoil: 6.0
+  # Recoil while aiming down the scope, instead of 'recoil'. 0 = none,
+  # leave it out to use 'recoil' for both.
+  #scopedRecoil: 3.0
   recoilProfile:
     verticalVariance: 0.05
     horizontalVariance: 0.0
@@ -811,6 +814,35 @@ m32_mgl:
   payload: frag_grenade
   fireSound: "minecraft:entity.arrow.shoot"
   deathMessage: "<gray>%victim% <error>was airburst by <gray>%killer%"
+
+grenade_launcher:
+  type: GUN
+  maxStack: 1
+  hideItemFlags: true
+  name: "<white>Riot Launcher"
+  lore:
+    - "<dark_gray>40x46mm · single shot"
+    - "<dark_gray>Crowd control at range."
+  customModelData: 1063
+  itemModel: "minecraft:diamond_horse_armor"
+  baseDamage: 2.0
+  fireRate: 20
+  reloadTime: 40
+  ammoType: grenade_40mm
+  maxAmmo: 1
+  consumesAmmo: true
+  firingMode: PROJECTILE
+  trajectory: ARC
+  projectileSpeed: 1.3
+  range: 40.0
+  spread: 1.0
+  recoil: 2.0
+  # The throwable it fires. A round with its own 'payload' (see
+  # grenade_40mm_smoke in ammo.yml) overrides this per shot, so tear gas and
+  # smoke rounds can share one launcher. For a smoke-only launcher:
+  #   payload: smoke_grenade
+  payload: tear_gas_grenade
+  fireSound: "minecraft:entity.arrow.shoot"
 
 incinerator:
   type: GUN

@@ -32,12 +32,15 @@ public class ItemFactory {
 		if (item.getMaxStack() > 0) builder.setMaxStackSize(item.getMaxStack());
 
 		ItemStack stack = ItemsModule.stamp(builder.toItemStack(), item);
-		if (crossbow) {
-			stack.setData(DataComponentTypes.CHARGED_PROJECTILES,
-					ChargedProjectiles.chargedProjectiles(List.of(ItemStack.of(Material.AIR))));
-		}
+		if (crossbow) charge(stack);
 		if (item instanceof PewpewAttachment attachment) AttachmentLoreRenderer.apply(stack, attachment);
 		if (item instanceof PewpewMagazineItem magazine) MagazineLoreRenderer.apply(stack, magazine);
 		return stack;
+	}
+
+	/** Loads the crossbow so the client shows the aiming pose. Vanilla drops AIR entries, so it has to be a real arrow. */
+	public static void charge(@NotNull ItemStack crossbow) {
+		crossbow.setData(DataComponentTypes.CHARGED_PROJECTILES,
+				ChargedProjectiles.chargedProjectiles(List.of(ItemStack.of(Material.ARROW))));
 	}
 }

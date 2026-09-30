@@ -57,3 +57,26 @@ incendiary_grenade:
   blastRadius: 4.0
   throwForce: 1.6
   effect: FIRE
+
+tear_gas_grenade:
+  type: THROWABLE
+  name: "<#d8d8a0>Tear Gas Grenade"
+  lore:
+    - "<dark_gray>Clears a room. Bring a mask."
+  customModelData: 2006
+  itemModel: "minecraft:iron_nugget"
+  fuseTime: 40
+  # Cloud radius in blocks and how long it lingers, in ticks.
+  blastRadius: 5.0
+  effectDuration: 240
+  throwForce: 1.6
+  effect: TEAR_GAS
+  # Reapplied every half second to anyone in the cloud without a gas mask
+  # (see tear-gas.gas-masks in config.yml). "EFFECT:ticks:amplifier".
+  gasEffects:
+    - "NAUSEA:100:0"
+    - "BLINDNESS:60:0"
+    - "SLOWNESS:60:1"
+  # Optional, like a gun's. Falls back to 'throwable-death' in messages.yml.
+  #deathMessage: "<gray>%victim% <error>choked on <gray>%killer%<error>'s gas"
+

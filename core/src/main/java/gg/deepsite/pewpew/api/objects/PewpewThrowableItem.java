@@ -7,6 +7,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import java.util.List;
+
 @Data
 @SuperBuilder
 @NoArgsConstructor
@@ -24,5 +26,7 @@ public class PewpewThrowableItem extends PewPewItem {
 	private int effectDuration;
 	private int effectAmplifier;
 	private int fireTicks;
+	private List<PewpewEffect> gasEffects;
+	private String deathMessage;
 }
 

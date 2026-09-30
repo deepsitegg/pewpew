@@ -52,6 +52,19 @@ auto-reload: false
 lore:
   stat-display: true
 
+# Bullets break glass blocks and panes of every colour and fly on. The glass
+# comes back on its own after 'restore-after-seconds' (0 = only on shutdown).
+# Nothing is saved, so a restart always shows the world's original glass.
+glass:
+  breakable: true
+  restore-after-seconds: 300
+
+# Players in a tear gas cloud get the grenade's gasEffects unless their head
+# slot holds one of these items, matched by item model or pewpew item id.
+tear-gas:
+  gas-masks:
+    - "vibe:gas_mask"
+
 # Optional integrations. Each is a no-op unless the matching plugin is installed,
 # so these are safe to leave on. Set enabled to false to hard-disable the hook.
 integrations:

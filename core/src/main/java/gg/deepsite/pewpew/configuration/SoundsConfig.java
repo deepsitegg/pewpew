@@ -17,6 +17,11 @@ public class SoundsConfig extends ConfigurateConfig {
 		super(file, "sounds.yml", "sounds.yml", true);
 	}
 
+	/** For hosts that ship their own default sounds.yml and copy it into place themselves. */
+	public SoundsConfig(File file, boolean copyDefault) {
+		super(file, "sounds.yml", copyDefault ? "sounds.yml" : "", copyDefault);
+	}
+
 	@Nullable
 	public List<PewpewSound> get(@NotNull SoundEvent event) {
 		if (getRootNode() == null) return List.of(event.getFallback());

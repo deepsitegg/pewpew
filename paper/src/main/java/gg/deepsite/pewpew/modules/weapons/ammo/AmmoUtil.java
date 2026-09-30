@@ -3,6 +3,7 @@ package gg.deepsite.pewpew.modules.weapons.ammo;
 import gg.deepsite.pewpew.PewpewPlugin;
 import gg.deepsite.pewpew.api.objects.PewpewAmmoItem;
 import gg.deepsite.pewpew.api.objects.PewpewGunItem;
+import gg.deepsite.pewpew.magazine.AmmoStack;
 import gg.deepsite.pewpew.modules.items.ItemsModule;
 import gg.deepsite.pewpew.utils.PersistentDataUtil;
 import gg.deepsite.pewpew.modules.weapons.attachment.AttachmentUtil;
@@ -16,6 +17,9 @@ import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
+import java.util.List;
+
 @UtilityClass
 public class AmmoUtil {
 
@@ -24,6 +28,8 @@ public class AmmoUtil {
 	public static final NamespacedKey AMMO_ROUNDS_KEY = new NamespacedKey("pewpew", "ammo_rounds");
 	public static final NamespacedKey LOADED_AMMO_KEY = new NamespacedKey("pewpew", "loaded_ammo");
 	public static final NamespacedKey CHAMBER_KEY = new NamespacedKey("pewpew", "chamber");
+	/** {@link AmmoStack} of every round in the gun, chamber on top, so mixed magazines fire round by round. */
+	public static final NamespacedKey GUN_STACK_KEY = new NamespacedKey("pewpew", "gun_stack");
 
 	public static boolean usesAmmo(@NotNull PewpewGunItem gun) {
 		return gun.getMaxAmmo() > 0;
@@ -103,6 +109,59 @@ public class AmmoUtil {
 		return ammo == null ? 0 : Math.max(0, ammo.getPenetration());
 	}
 
+	public static int fireTicks(@Nullable PewpewAmmoItem ammo) {
+		return ammo == null ? 0 : Math.max(0, ammo.getFireTicks());
+	}
+
+	/**
+	 * Trims or pads a round list to {@code count}, working from the bottom so the next rounds stay intact. Padding
+	 * uses {@code fallback}, which is how guns and magazines from before mixed ammo read: all one id.
+	 */
+	@NotNull
+	public static List<String> fit(@NotNull List<String> rounds, int count, @Nullable String fallback) {
+		while (rounds.size() > count) rounds.remove(0);
+		if (fallback != null && rounds.size() < count) rounds.addAll(0, Collections.nCopies(count - rounds.size(), fallback));
+		return rounds;
+	}
+
+	/** Every round in the gun, bottom first; the last one is chambered and fires next. */
+	@NotNull
+	public static List<String> rounds(@NotNull ItemStack gunStack) {
+		return rounds(gunStack, get(gunStack));
+	}
+
+	@NotNull
+	private static List<String> rounds(@NotNull ItemStack gunStack, int count) {
+		ItemMeta meta = gunStack.getItemMeta();
+		String encoded = meta == null ? null : meta.getPersistentDataContainer().get(GUN_STACK_KEY, PersistentDataType.STRING);
+		return fit(AmmoStack.decode(encoded), count, loadedAmmo(gunStack));
+	}
+
+	public static void setRounds(@NotNull ItemStack gunStack, @NotNull List<String> rounds) {
+		ItemMeta meta = gunStack.getItemMeta();
+		if (meta == null) return;
+		String encoded = AmmoStack.encode(rounds);
+		if (encoded == null) meta.getPersistentDataContainer().remove(GUN_STACK_KEY);
+		else meta.getPersistentDataContainer().set(GUN_STACK_KEY, PersistentDataType.STRING, encoded);
+		gunStack.setItemMeta(meta);
+	}
+
+	/** Takes the next round off the gun's stack and makes it the loaded ammo, so the shot uses that round's stats. */
+	public static void popRound(@NotNull ItemStack gunStack) {
+		List<String> rounds = rounds(gunStack);
+		if (rounds.isEmpty()) return;
+		String next = rounds.remove(rounds.size() - 1);
+		setRounds(gunStack, rounds);
+		setLoadedAmmo(gunStack, next);
+	}
+
+	private static void pushRounds(@Nullable ItemStack gunStack, @Nullable String ammoId, int before, int after) {
+		if (gunStack == null || ammoId == null || after <= before) return;
+		List<String> rounds = rounds(gunStack, before);
+		rounds.addAll(Collections.nCopies(after - before, ammoId));
+		setRounds(gunStack, rounds);
+	}
+
 	@Nullable
 	public static String loadedAmmo(@NotNull ItemStack gunStack) {
 		ItemMeta meta = gunStack.getItemMeta();
@@ -150,11 +209,14 @@ public class AmmoUtil {
 			if (stack == null || !ammoType.equals(ammoTypeOf(stack))) continue;
 
 			int perItem = roundsPerItem(stack, maxAmmo);
-			if (gunStack != null && ammo < maxAmmo) setLoadedAmmo(gunStack, ammoIdOf(stack));
+			String id = ammoIdOf(stack);
+			int before = ammo;
 			while (stack.getAmount() > 0 && ammo < maxAmmo) {
 				ammo = Math.min(maxAmmo, ammo + perItem);
 				stack.setAmount(stack.getAmount() - 1);
 			}
+			pushRounds(gunStack, id, before, ammo);
+			if (gunStack != null && ammo > before) setLoadedAmmo(gunStack, id);
 			if (stack.getAmount() <= 0) contents[i] = null;
 		}
 		inventory.setStorageContents(contents);
@@ -169,7 +231,9 @@ public class AmmoUtil {
 			if (stack == null || !ammoType.equals(ammoTypeOf(stack))) continue;
 
 			int gained = Math.min(maxAmmo, current + roundsPerItem(stack, maxAmmo));
-			if (gunStack != null) setLoadedAmmo(gunStack, ammoIdOf(stack));
+			String id = ammoIdOf(stack);
+			pushRounds(gunStack, id, current, gained);
+			if (gunStack != null) setLoadedAmmo(gunStack, id);
 			stack.setAmount(stack.getAmount() - 1);
 			if (stack.getAmount() <= 0) contents[i] = null;
 			inventory.setStorageContents(contents);

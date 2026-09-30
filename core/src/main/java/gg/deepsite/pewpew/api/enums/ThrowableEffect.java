@@ -5,6 +5,7 @@ public enum ThrowableEffect {
 	SMOKE,
 	FLASH,
 	POISON,
-	FIRE
+	FIRE,
+	TEAR_GAS
 }
 

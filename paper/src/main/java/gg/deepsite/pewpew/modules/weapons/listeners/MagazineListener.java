@@ -34,10 +34,6 @@ public class MagazineListener implements Listener {
 
 		event.setCancelled(true);
 		int consumed = MagazineUtil.load(clicked, magazine, cursor, ammo);
-		if (consumed == MagazineUtil.MISMATCH) {
-			player.sendActionBar(ChatUtils.format(PewpewPlugin.getMessagesConfig().magazineAmmoMismatch()));
-			return;
-		}
 		if (consumed <= 0) {
 			player.sendActionBar(ChatUtils.format(PewpewPlugin.getMessagesConfig().magazineFull()));
 			return;

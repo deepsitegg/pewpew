@@ -218,3 +218,45 @@ energy_cell:
   maxStack: 16
   ammoType: energy_cell
   roundsPerItem: 1
+
+# Incendiary rounds set whoever they hit on fire for 'fireTicks' (needs
+# advanced.ammo-stats). They share rifle_556's ammoType, so they can be packed
+# into the same magazine as plain rounds and fire in the order they went in.
+rifle_556_incendiary:
+  type: AMMO
+  name: "<#e0762c>5.56x45mm Incendiary"
+  lore:
+    - "<dark_gray>Tracer-tipped, burns on hit"
+  customModelData: 4016
+  itemModel: "minecraft:iron_nugget"
+  maxStack: 64
+  ammoType: rifle_556
+  roundsPerItem: 1
+  damageMultiplier: 0.9
+  fireTicks: 60
+
+# Launcher rounds. 'payload' is the throwable the round becomes, so one
+# grenade_launcher fires whichever round is loaded next.
+grenade_40mm_tear_gas:
+  type: AMMO
+  name: "<#d8d8a0>40mm Tear Gas"
+  lore:
+    - "<dark_gray>Non-lethal · gas masks protect"
+  customModelData: 4033
+  itemModel: "minecraft:firework_star"
+  maxStack: 16
+  ammoType: grenade_40mm
+  roundsPerItem: 1
+  payload: tear_gas_grenade
+
+grenade_40mm_smoke:
+  type: AMMO
+  name: "<gray>40mm Smoke"
+  lore:
+    - "<dark_gray>Non-lethal · blocks sight"
+  customModelData: 4034
+  itemModel: "minecraft:firework_star"
+  maxStack: 16
+  ammoType: grenade_40mm
+  roundsPerItem: 1
+  payload: smoke_grenade

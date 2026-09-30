@@ -4,8 +4,10 @@ messages:
   magazine-full: "<warning>Magazine already full."
   out-of-ammo: "<error>Out of ammo <dark_gray>┃ <gray>press <color><key:key.swapOffhand><gray> to reload"
   no-magazine: "<error>No loaded magazine in your inventory."
-  magazine-ammo-mismatch: "<error>That magazine already holds different ammo."
   no-ammo-in-inventory: "<error>Out of <reset>%1<error> in your inventory."
+  # Used for pewpew kills when the gun or throwable has no 'deathMessage' of its own.
+  gun-death: "<gray>%victim% <error>was shot by <gray>%killer% <dark_gray>(%weapon%<dark_gray>)"
+  throwable-death: "<gray>%victim% <error>was killed by <gray>%killer%<error>'s <reset>%weapon%"
   no-permission: "<error>You are not allowed to use this weapon."
   worldguard-deny: "<error>You cannot use weapons here."
   openminetopia-handcuffed-deny: "<error>You cannot use weapons while handcuffed."

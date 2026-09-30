@@ -3,6 +3,7 @@ package gg.deepsite.pewpew.modules.weapons.listeners;
 import gg.deepsite.pewpew.PewpewPlugin;
 import gg.deepsite.pewpew.api.enums.AnimationEvent;
 import gg.deepsite.pewpew.api.enums.AttachmentType;
+import gg.deepsite.pewpew.api.enums.SoundEvent;
 import gg.deepsite.pewpew.api.events.PewpewScopeEvent;
 import gg.deepsite.pewpew.api.objects.PewPewItem;
 import gg.deepsite.pewpew.api.objects.PewpewGunItem;
@@ -12,6 +13,7 @@ import gg.deepsite.pewpew.modules.weapons.animation.GunModels;
 import gg.deepsite.pewpew.modules.weapons.attachment.AttachmentUtil;
 import gg.deepsite.pewpew.modules.weapons.shooting.ScopeState;
 import gg.deepsite.pewpew.utils.Animations;
+import gg.deepsite.pewpew.utils.Sounds;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -61,6 +63,7 @@ public class ScopeListener implements Listener {
 		player.addPotionEffect(new PotionEffect(
 				PotionEffectType.SLOWNESS, PotionEffect.INFINITE_DURATION, amplifier, false, false, false));
 		ScopeState.setScoped(player, true);
+		Sounds.at(player, SoundEvent.GUN_AIM_IN);
 		PewpewGunItem gun = gunOf(player);
 		if (gun != null) Animations.play(player, gun, AnimationEvent.SCOPE_IN);
 		GunModels.refresh(player);
@@ -71,6 +74,7 @@ public class ScopeListener implements Listener {
 			if (!new PewpewScopeEvent(player, gunOf(player), null, false).callEvent()) return;
 			ScopeState.setScoped(player, false);
 			player.removePotionEffect(PotionEffectType.SLOWNESS);
+			Sounds.at(player, SoundEvent.GUN_AIM_OUT);
 			PewpewGunItem gun = gunOf(player);
 			if (gun != null) Animations.play(player, gun, AnimationEvent.SCOPE_OUT);
 			GunModels.refresh(player);
