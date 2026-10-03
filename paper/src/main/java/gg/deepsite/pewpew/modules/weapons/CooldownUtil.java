@@ -1,6 +1,7 @@
 package gg.deepsite.pewpew.modules.weapons;
 
 import gg.deepsite.pewpew.api.objects.PewpewGunItem;
+import gg.deepsite.pewpew.api.objects.PewpewThrowableItem;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.UseCooldown;
 import lombok.experimental.UtilityClass;
@@ -22,5 +23,10 @@ public class CooldownUtil {
 		float seconds = (float) Math.floor(Math.max(1.0, gun.getFireRate())) / 20.0f;
 		stack.setData(DataComponentTypes.USE_COOLDOWN,
 				UseCooldown.useCooldown(seconds).cooldownGroup(group(gun)));
+	}
+
+	public static void stamp(@NotNull ItemStack stack, @NotNull PewpewThrowableItem throwable) {
+		stack.setData(DataComponentTypes.USE_COOLDOWN, UseCooldown.useCooldown(Math.max(1, throwable.getCooldown()) / 20.0f)
+				.cooldownGroup(Key.key("pewpew", "throwable_" + throwable.getId().toLowerCase(Locale.ROOT))));
 	}
 }

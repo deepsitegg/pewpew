@@ -837,12 +837,43 @@ grenade_launcher:
   range: 40.0
   spread: 1.0
   recoil: 2.0
-  # The throwable it fires. A round with its own 'payload' (see
-  # grenade_40mm_smoke in ammo.yml) overrides this per shot, so tear gas and
-  # smoke rounds can share one launcher. For a smoke-only launcher:
-  #   payload: smoke_grenade
-  payload: tear_gas_grenade
+  # What a plain 40mm round fires. Rounds with their own 'payload' (see
+  # grenade_40mm_tear_gas / grenade_40mm_smoke in ammo.yml) fire as themselves,
+  # so all three can share one launcher.
+  payload: frag_grenade
   fireSound: "minecraft:entity.arrow.shoot"
+
+m79:
+  type: GUN
+  maxStack: 1
+  hideItemFlags: true
+  name: "<white>M79"
+  lore:
+    - "<dark_gray>40x46mm · single shot · break action"
+    - "<dark_gray>One round, make it count."
+  customModelData: 1064
+  itemModel: "minecraft:diamond_horse_armor"
+  baseDamage: 4.0
+  fireRate: 20
+  reloadTime: 40
+  ammoType: grenade_40mm
+  maxAmmo: 1
+  consumesAmmo: true
+  firingMode: PROJECTILE
+  trajectory: ARC
+  projectileSpeed: 1.5
+  range: 48.0
+  spread: 0.8
+  recoil: 2.5
+  recoilProfile:
+    verticalVariance: 0.2
+    horizontalVariance: 0.2
+    recovery: 0.55
+  # Plain 40mm rounds become frag grenades. Rounds with their own 'payload'
+  # (tear gas, smoke) still fire as themselves.
+  payload: frag_grenade
+  fireSound: "minecraft:entity.arrow.shoot"
+  deathMessage: "<gray>%victim% <error>caught <gray>%killer%<error>'s 40mm"
 
 incinerator:
   type: GUN

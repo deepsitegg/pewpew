@@ -12,6 +12,7 @@ These fields apply to every item type (`GUN`, `AMMO`, `MAGAZINE`, `ATTACHMENT`, 
 | `hideItemFlags`   | bool         | `false` | no       | When true, hides all vanilla item flags (attributes, enchants, etc.).                                                                   |
 | `maxStack`        | int          | `0`     | no       | Override the max stack size (1–99). `0` keeps the material default (64).                                                                |
 | `holdPose`        | enum         | none    | no       | `CROSSBOW` renders the item with the vanilla charged-crossbow hold instead of the flat paper hold. `NONE`/omit keeps the default.       |
+| `color`           | text         | none    | no       | Dye color as `"#RRGGBB"` or `"R, G, B"`. Tints models that use a dye tint, e.g. `minecraft:leather_chestplate`.                       |
 | `extends`         | item id      | -       | no       | Copy every field from another item, then apply this entry's own fields on top. Needs `advanced.extends`.                                |
 | `abstract`        | bool         | `false` | no       | Make this entry a template only: never registered, never given. Needs `advanced.abstract`.                                             |
 
@@ -78,6 +79,21 @@ guns extending an abstract template are normal, registered items.
 
 If `extends` names an item that does not exist, or two entries extend each other in a loop, Pewpew logs a warning and
 loads the item without inheritance rather than failing.
+
+## Dyeing an item
+
+`color` tints any model that takes a dye color, like vanilla leather armor, leather horse armor or wolf armor. A
+resource-pack model needs a `minecraft:dye` tint in its item definition, otherwise the color does nothing.
+
+```yaml
+tactical_vest:
+  type: ATTACHMENT
+  name: "<dark_green>Tactical Vest"
+  itemModel: "minecraft:leather_chestplate"
+  color: "#3B5323"
+```
+
+`"59, 83, 35"` works the same as `"#3B5323"`.
 
 ## Example
 

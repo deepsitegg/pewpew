@@ -146,7 +146,7 @@ public class WeaponDeserializer {
 	}
 
 	private static final Set<String> COMMON_KEYS = Set.of(
-			"type", "name", "lore", "itemModel", "hideItemFlags", "customModelData", "maxStack", "holdPose",
+			"type", "name", "lore", "itemModel", "hideItemFlags", "customModelData", "maxStack", "holdPose", "color",
 			EXTENDS_KEY, ABSTRACT_KEY);
 
 	private static final Map<ItemType, Set<String>> TYPE_KEYS = Map.of(
@@ -166,7 +166,7 @@ public class WeaponDeserializer {
 			ItemType.MAGAZINE, Set.of(
 					"ammoType", "capacity", "reloadModifier", "modelSuffix", "gunModelData"),
 			ItemType.THROWABLE, Set.of(
-					"blastRadius", "deathMessage", "effect", "effectAmplifier", "effectDuration", "explosionDamage",
+					"blastRadius", "cooldown", "deathMessage", "effect", "effectAmplifier", "effectDuration", "explosionDamage",
 					"explosionKnockback", "fireTicks", "fuseTime", "gasEffects", "throwForce"),
 			ItemType.ATTACHMENT, Set.of(
 					"adsSpeedModifier", "aimRecoilMultiplier", "aimSpreadMultiplier", "ammoBonus", "attachmentType",
@@ -233,6 +233,7 @@ public class WeaponDeserializer {
 		if (item != null) {
 			item.setMaxStack(maxStack);
 			item.setHoldPose(parseHoldPose(fileName, id, node));
+			item.setColor(parseColor(fileName, id, node));
 		}
 		return item;
 	}
@@ -543,6 +544,7 @@ public class WeaponDeserializer {
 		int fuseTime = node.node("fuseTime").getInt(0);
 		double blastRadius = node.node("blastRadius").getDouble(0.0);
 		double throwForce = node.node("throwForce").getDouble(0.0);
+		int cooldown = Math.max(0, node.node("cooldown").getInt(10));
 
 		String effectRaw = node.node("effect").getString();
 		if (effectRaw == null) {
@@ -573,6 +575,7 @@ public class WeaponDeserializer {
 				.fuseTime(fuseTime)
 				.blastRadius(blastRadius)
 				.throwForce(throwForce)
+				.cooldown(cooldown)
 				.effect(effect)
 				.explosionDamage(explosionDamage)
 				.explosionKnockback(explosionKnockback)
@@ -843,6 +846,26 @@ public class WeaponDeserializer {
 			return HoldPose.valueOf(raw.toUpperCase());
 		} catch (IllegalArgumentException e) {
 			warnField(fileName, id, "unknown holdPose '" + raw + "', ignoring");
+			return null;
+		}
+	}
+
+	@Nullable
+	public static Integer parseColor(String fileName, String id, ConfigurationNode node) {
+		String raw = node.node("color").getString();
+		if (raw == null) return null;
+		try {
+			String[] rgb = raw.split(",");
+			if (rgb.length == 3) {
+				int r = Integer.parseInt(rgb[0].trim()), g = Integer.parseInt(rgb[1].trim()), b = Integer.parseInt(rgb[2].trim());
+				if ((r | g | b) >>> 8 != 0) throw new NumberFormatException();
+				return r << 16 | g << 8 | b;
+			}
+			String hex = raw.startsWith("#") ? raw.substring(1) : raw;
+			if (hex.length() != 6) throw new NumberFormatException();
+			return Integer.parseInt(hex, 16);
+		} catch (NumberFormatException e) {
+			warnField(fileName, id, "invalid color '" + raw + "', use '#RRGGBB' or 'R, G, B', ignoring");
 			return null;
 		}
 	}

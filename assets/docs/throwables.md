@@ -8,6 +8,7 @@ Plus the [common fields](common-fields.md). Thrown with right-click; detonate af
 | `fuseTime`    | int (ticks)     | `0`     | no       | Delay between throw and detonation (20 ticks = 1 second).                           |
 | `blastRadius` | double (blocks) | `0.0`   | no       | Effect radius at the point of detonation.                                           |
 | `throwForce`  | double          | `0.0`   | no       | Launch velocity when thrown.                                                        |
+| `cooldown`    | int (ticks)     | `10`    | no       | Time before the player can throw this throwable again. Other throwables are not blocked. |
 
 ### Effect tuning (all optional)
 
@@ -46,4 +47,5 @@ frag_grenade:
   fuseTime: 60
   blastRadius: 5.0
   throwForce: 1.8
+  cooldown: 100
 ```

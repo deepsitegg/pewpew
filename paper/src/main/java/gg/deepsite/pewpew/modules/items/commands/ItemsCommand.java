@@ -73,6 +73,7 @@ public final class ItemsCommand {
 			AttachmentUtil.applyDefaults(stack, gun);
 			GunLoreRenderer.apply(stack, gun);
 		}
+		if (item instanceof PewpewThrowableItem throwable) CooldownUtil.stamp(stack, throwable);
 		if (item instanceof PewpewAmmoItem ammo) AmmoUtil.stampAmmo(stack, ammo.getAmmoType(), ammo.getRoundsPerItem());
 		stack.setAmount(Math.max(1, amount));
 		return stack;

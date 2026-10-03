@@ -9,7 +9,9 @@ import gg.deepsite.pewpew.modules.weapons.lore.AttachmentLoreRenderer;
 import gg.deepsite.pewpew.modules.weapons.lore.MagazineLoreRenderer;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.ChargedProjectiles;
+import io.papermc.paper.datacomponent.item.DyedItemColor;
 import lombok.experimental.UtilityClass;
+import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -33,6 +35,7 @@ public class ItemFactory {
 
 		ItemStack stack = ItemsModule.stamp(builder.toItemStack(), item);
 		if (crossbow) charge(stack);
+		if (item.getColor() != null) stack.setData(DataComponentTypes.DYED_COLOR, DyedItemColor.dyedItemColor(Color.fromRGB(item.getColor())));
 		if (item instanceof PewpewAttachment attachment) AttachmentLoreRenderer.apply(stack, attachment);
 		if (item instanceof PewpewMagazineItem magazine) MagazineLoreRenderer.apply(stack, magazine);
 		return stack;

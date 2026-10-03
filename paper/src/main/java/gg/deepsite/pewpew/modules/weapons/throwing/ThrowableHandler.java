@@ -36,8 +36,6 @@ import java.util.function.Consumer;
 
 public class ThrowableHandler {
 
-	private static final long THROW_COOLDOWN_MILLIS = 500L;
-
 	private static final int SMOKE_DURATION_TICKS = 200;
 	private static final int SMOKE_BLIND_AMPLIFIER = 0;
 	private static final int POISON_DURATION_TICKS = 140;
@@ -53,7 +51,7 @@ public class ThrowableHandler {
 			new PotionEffect(PotionEffectType.SLOWNESS, 60, 1));
 
 	private final Plugin plugin;
-	private final Map<UUID, Long> nextThrowAt = new ConcurrentHashMap<>();
+	private final Map<String, Long> nextThrowAt = new ConcurrentHashMap<>();
 
 	public ThrowableHandler(@NotNull Plugin plugin) {
 		this.plugin = plugin;
@@ -62,10 +60,12 @@ public class ThrowableHandler {
 	public void tryThrow(@NotNull Player player, @NotNull PewpewThrowableItem throwable, @NotNull ItemStack held) {
 		UUID id = player.getUniqueId();
 		long now = System.currentTimeMillis();
-		if (now < nextThrowAt.getOrDefault(id, 0L)) return;
+		String key = id + ":" + throwable.getId();
+		if (now < nextThrowAt.getOrDefault(key, 0L)) return;
 
 		if (!new PewpewThrowEvent(player, throwable, held).callEvent()) return;
-		nextThrowAt.put(id, now + THROW_COOLDOWN_MILLIS);
+		nextThrowAt.put(key, now + throwable.getCooldown() * 50L);
+		if (throwable.getCooldown() > 0) player.setCooldown(held, throwable.getCooldown());
 
 		consumeOne(player, held);
 

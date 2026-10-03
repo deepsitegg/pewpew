@@ -22,4 +22,5 @@ public class PewPewItem {
 	private String itemModel;
 	private int maxStack;
 	private HoldPose holdPose;
+	private Integer color;
 }
