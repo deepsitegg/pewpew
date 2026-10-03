@@ -71,17 +71,17 @@ Pick up an ammo item in your inventory and click it onto a magazine. The magazin
 for; a box of ammo (`roundsPerItem: N`) is consumed whole, so topping up a nearly-full magazine wastes the remainder of
 the last box, the same as a tactical reload.
 
-A magazine holds one kind of ammo at a time. Loading different ammo into a magazine that still has rounds in it is
-refused; empty it first by firing it dry.
+Any ammo with the magazine's `ammoType` can go on top of what is already in it, so different rounds can be mixed in
+one magazine (see above). Clicking ammo onto a full magazine does nothing.
 
 Magazines given with `/pewpew give` come out **empty**. Set `maxStack: 1` so partially-filled magazines stay distinct
 items rather than trying to stack.
 
 ## Ammo stats
 
-With [ammo stats](ammo.md#ammo-stats) on, a magazine remembers which ammo went into it and hands that to the gun when
-it is inserted. Two magazines loaded with different rounds therefore behave differently in the same weapon, and
-swapping magazines swaps the gun's ballistics with them.
+With [ammo stats](ammo.md#ammo-stats) on, every round in a magazine remembers which ammo it came from and fires with
+that ammo's stats. Two magazines loaded with different rounds therefore behave differently in the same weapon, and a
+mixed magazine changes ballistics from shot to shot.
 
 ## Example
 
