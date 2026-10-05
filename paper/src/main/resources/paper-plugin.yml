@@ -7,6 +7,9 @@ authors: [ ThebigTijn ]
 website: https://deepsite.gg
 dependencies:
   server:
+    AxiomPaper:
+      load: BEFORE
+      required: false
     Skript:
       load: BEFORE
       required: false

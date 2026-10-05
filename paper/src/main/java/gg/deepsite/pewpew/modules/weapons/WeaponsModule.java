@@ -4,6 +4,7 @@ import com.jazzkuh.inventorylib.objects.Menu;
 import com.jazzkuh.modulemanager.spigot.SpigotModule;
 import com.jazzkuh.modulemanager.spigot.SpigotModuleManager;
 import gg.deepsite.pewpew.PewpewPlugin;
+import gg.deepsite.pewpew.integrations.AxiomIntegration;
 import gg.deepsite.pewpew.integrations.CombatTagIntegration;
 import gg.deepsite.pewpew.integrations.OpenMinetopiaIntegration;
 import gg.deepsite.pewpew.modules.weapons.animation.AnimationManager;
@@ -46,6 +47,7 @@ public class WeaponsModule extends SpigotModule<PewpewPlugin> {
 		Menu.init(getPlugin());
 		CombatTagIntegration.init();
 		OpenMinetopiaIntegration.init();
+		AxiomIntegration.init();
 		animationManager = new AnimationManager(getPlugin());
 		animationManager.start();
 		rigAnimator = new RigAnimator(getPlugin());
