@@ -19,7 +19,7 @@ editing.
 | `tear-gas.gas-masks`        | list | `[vibe:gas_mask]` | Head-slot items that protect from `TEAR_GAS`, matched by item model or item id.          |
 | `auto-reload`               | bool | `false` | Firing a gun that just ran dry starts a reload on its own instead of only dry-firing. Held automatic fire never auto-reloads: the trigger has to be pressed again. |
 | `lore.stat-display`         | bool | `true`  | Append generated stat lines to gun and attachment lore. `false` leaves only your own `lore`.     |
-| `integrations.*`            | -    | -       | WorldGuard, CombatTagPlus and OpenMinetopia hooks. See [integrations.md](integrations.md).        |
+| `integrations.*`            | -    | -       | WorldGuard, CombatTagPlus, OpenMinetopia and AxiomPaper hooks. See [integrations.md](integrations.md). |
 
 While an `advanced` feature is off, an item using it loads as if the field were not there and Pewpew logs a warning
 naming the option to enable, rather than silently doing nothing.

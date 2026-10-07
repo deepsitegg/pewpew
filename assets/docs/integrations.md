@@ -13,6 +13,8 @@ integrations:
     enabled: true
     block-handcuffed: true
     banned-places: [ ]
+  axiom:
+    enabled: true
 ```
 
 ## WorldGuard
@@ -55,6 +57,12 @@ Detection gates (weapon scanners) need no configuration here - list the gun's ma
 OpenMinetopia's own config and it will be flagged like any other item.
 
 If OpenMinetopia is absent nothing is checked.
+
+## AxiomPaper
+
+Requires [AxiomPaper](https://github.com/Moulberry/AxiomPaperPlugin). Hides Axiom's editing gizmos for bullet impacts.
+
+Set `integrations.axiom.enabled: false` and run `/pewpew reload` to disable the hook for new impacts.
 
 ## Messages
 

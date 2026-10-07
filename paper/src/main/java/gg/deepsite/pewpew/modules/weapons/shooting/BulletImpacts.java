@@ -2,6 +2,7 @@ package gg.deepsite.pewpew.modules.weapons.shooting;
 
 import gg.deepsite.pewpew.PewpewPlugin;
 import gg.deepsite.pewpew.api.objects.PewpewGunItem;
+import gg.deepsite.pewpew.integrations.AxiomIntegration;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -71,6 +72,7 @@ public class BulletImpacts {
 			entity.setViewRange(VIEW_RANGE);
 			entity.setPersistent(false);
 		});
+		AxiomIntegration.hideDisplayGizmo(display);
 		track(gun.getId(), display);
 	}
 

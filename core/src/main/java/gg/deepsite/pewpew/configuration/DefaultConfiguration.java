@@ -73,4 +73,8 @@ public class DefaultConfiguration extends ConfigurateConfig {
 		}
 	}
 
+	public boolean isAxiomEnabled() {
+		return getRootNode().node("integrations", "axiom", "enabled").getBoolean(true);
+	}
+
 }

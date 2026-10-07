@@ -1,7 +1,7 @@
 # Config format version. Bumped once per Pewpew release that changes this file.
 # Pewpew migrates it automatically on startup and keeps a .bak of the previous
 # version next to it. Do not edit by hand.
-config-version: 2
+config-version: 3
 
 # Behaviour that changed in a Pewpew update, so you can keep the old behaviour.
 # Servers upgrading from an older version get the old behaviour switched on here;
@@ -83,3 +83,5 @@ integrations:
     enabled: true
     block-handcuffed: true
     banned-places: []
+  axiom:
+    enabled: true
