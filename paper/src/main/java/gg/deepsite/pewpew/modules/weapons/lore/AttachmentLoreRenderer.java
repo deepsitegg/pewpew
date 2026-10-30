@@ -1,6 +1,7 @@
 package gg.deepsite.pewpew.modules.weapons.lore;
 
 import gg.deepsite.pewpew.api.objects.attachment.*;
+import gg.deepsite.pewpew.modules.weapons.magazine.MagazineUtil;
 import gg.deepsite.pewpew.utils.ChatUtils;
 import lombok.experimental.UtilityClass;
 import net.kyori.adventure.text.Component;
@@ -50,7 +51,7 @@ public class AttachmentLoreRenderer {
 		} else if (attachment instanceof PewpewMagazineAttachment magazine) {
 			if (magazine.getAmmoBonus() != 0) {
 				String sign = magazine.getAmmoBonus() > 0 ? "<success>+" : "<error>";
-				lines.add(stat("Ammo", sign + magazine.getAmmoBonus()));
+				lines.add(stat(MagazineUtil.enabled() ? "Ammo (no-mag guns)" : "Ammo", sign + magazine.getAmmoBonus()));
 			}
 			if (magazine.getReloadModifier() != 1.0) modifier(lines, "Reload", magazine.getReloadModifier(), false);
 		}

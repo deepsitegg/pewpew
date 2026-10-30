@@ -31,6 +31,20 @@ class MagazineFillTest {
 	}
 
 	@Test
+	void magazineFedGunsIgnoreTheAmmoBonus() {
+		assertEquals(7, MagazineUtil.maxAmmo(true, 6, 1, 3));
+		assertEquals(7, MagazineUtil.maxAmmo(true, 6, 1, -3));
+		assertEquals(1, MagazineUtil.maxAmmo(true, 0, 1, 3));
+	}
+
+	@Test
+	void gunsWithoutMagazinesUseMaxAmmoPlusTheBonus() {
+		assertEquals(4, MagazineUtil.maxAmmo(false, 0, 1, 3));
+		assertEquals(3, MagazineUtil.maxAmmo(false, 0, 6, -3));
+		assertEquals(1, MagazineUtil.maxAmmo(false, 0, 2, -3));
+	}
+
+	@Test
 	void fitKeepsTheNextRoundsAndPadsLegacyRoundsUnderneath() {
 		assertEquals(List.of("ap", "inc"), AmmoUtil.fit(new ArrayList<>(List.of("fmj", "ap", "inc")), 2, null));
 		assertEquals(List.of("fmj", "fmj", "inc"), AmmoUtil.fit(new ArrayList<>(List.of("inc")), 3, "fmj"));

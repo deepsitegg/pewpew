@@ -36,6 +36,14 @@ public class MagazineUtil {
 		return PewpewPlugin.getDefaultConfiguration().isMagazinesEnabled();
 	}
 
+	public static boolean fed(@NotNull PewpewGunItem gun) {
+		return enabled() && gun.isConsumesAmmo() && gun.isUsesMagazines();
+	}
+
+	public static int maxAmmo(boolean fed, int capacity, int gunMaxAmmo, int bonus) {
+		return fed ? capacity + 1 : Math.max(1, gunMaxAmmo + bonus);
+	}
+
 	private static ItemsModule items() {
 		return PewpewPlugin.getModuleManager().get(ItemsModule.class);
 	}

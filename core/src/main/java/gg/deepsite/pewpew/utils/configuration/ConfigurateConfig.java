@@ -12,6 +12,7 @@ import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
 import java.io.*;
 import java.util.List;
+import java.util.logging.Level;
 
 @Getter
 public abstract class ConfigurateConfig {
@@ -33,7 +34,7 @@ public abstract class ConfigurateConfig {
 		try {
 			rootNode = loader.load();
 		} catch (IOException e) {
-			PewpewLog.get().warning("An error occurred while loading this configuration: " + e.getMessage());
+			PewpewLog.get().log(Level.WARNING, "An error occurred while loading " + configFile.getPath() + ": " + e.getMessage(), e);
 		}
 	}
 

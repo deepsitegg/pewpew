@@ -39,7 +39,7 @@ Aim-down-sights optics. ADS is triggered by holding sneak.
 
 | Field            | Type   | Default | Description                                                     |
 |------------------|--------|---------|-----------------------------------------------------------------|
-| `ammoBonus`      | int    | `0`     | Rounds added to the gun's `maxAmmo`. Can be negative.           |
+| `ammoBonus`      | int    | `0`     | Rounds added to the gun's `maxAmmo`. Can be negative. Ignored on magazine-fed guns while [magazines](magazines.md) are on. |
 | `reloadModifier` | double | `1.0`   | Multiplies reload time. `0.6` = 40% faster, `1.4` = 40% slower. |
 
 ## Example

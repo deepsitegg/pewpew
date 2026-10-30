@@ -74,6 +74,8 @@ public class PewpewGunItem extends PewpewWeaponItem {
 	private int aimModelData;
 	private List<String> magazines;
 	@Builder.Default
+	private boolean usesMagazines = true;
+	@Builder.Default
 	private boolean animationCooldown = true;
 
 	public double recoil(boolean scoped) {

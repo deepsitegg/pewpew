@@ -88,11 +88,9 @@ public class AttachmentUtil {
 	public static int effectiveMaxAmmo(@NotNull PewpewGunItem gun, @NotNull ItemStack stack) {
 		int bonus = get(stack, AttachmentType.MAGAZINE) instanceof PewpewMagazineAttachment magazine
 				? magazine.getAmmoBonus() : 0;
-		if (MagazineUtil.enabled() && gun.isConsumesAmmo()) {
-			PewpewMagazineItem inserted = MagazineUtil.inserted(stack);
-			return Math.max(1, (inserted == null ? 0 : inserted.getCapacity() + bonus) + 1);
-		}
-		return Math.max(1, gun.getMaxAmmo() + bonus);
+		boolean fed = MagazineUtil.fed(gun);
+		PewpewMagazineItem inserted = fed ? MagazineUtil.inserted(stack) : null;
+		return MagazineUtil.maxAmmo(fed, inserted == null ? 0 : inserted.getCapacity(), gun.getMaxAmmo(), bonus);
 	}
 
 	public static int effectiveReloadTime(@NotNull PewpewGunItem gun, @NotNull ItemStack stack) {
@@ -101,7 +99,7 @@ public class AttachmentUtil {
 				&& magazine.getReloadModifier() > 0) {
 			time *= magazine.getReloadModifier();
 		}
-		PewpewMagazineItem inserted = MagazineUtil.enabled() ? MagazineUtil.inserted(stack) : null;
+		PewpewMagazineItem inserted = MagazineUtil.fed(gun) ? MagazineUtil.inserted(stack) : null;
 		if (inserted != null && inserted.getReloadModifier() > 0) time *= inserted.getReloadModifier();
 		return Math.max(1, (int) Math.round(time));
 	}

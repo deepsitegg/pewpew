@@ -43,6 +43,7 @@ Add an `explosive:` block to a `PROJECTILE` gun to detonate on impact (rocket la
 | `actionOpenTime`  | int (ticks) | `0`        | Bolt/pump open delay added after each shot, with a sound. `0` disables the action cycle.             |
 | `actionCloseTime` | int (ticks) | `0`        | Bolt/pump close delay before the gun is ready again, with a sound.                                   |
 | `magazines`       | list        | -          | Magazine ids this gun accepts, when [magazines](magazines.md) are on. Left out, any magazine of the same `ammoType` fits. |
+| `usesMagazines`   | bool        | `true`     | Set to `false` for guns that load directly, like revolvers or double barrels. While [magazines](magazines.md) are on, the gun keeps `maxAmmo`, `ammoBonus` and `reloadType` and still draws loose ammo from the inventory. |
 
 ## Firing behavior
 

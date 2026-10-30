@@ -15,7 +15,8 @@ as soon as the option is on again.
 
 ## What changes when it is on
 
-A magazine is a real item that holds rounds of its own. For guns with `consumesAmmo: true`:
+A magazine is a real item that holds rounds of its own. For guns with `consumesAmmo: true`, unless they set
+`usesMagazines: false`:
 
 - **`capacity` replaces the gun's `maxAmmo`** while a magazine is inserted. A gun with no magazine in it holds nothing.
 - **Reloading swaps magazines.** Pewpew takes the fullest matching magazine from the inventory, inserts it, and ejects
@@ -43,8 +44,25 @@ ak_74:
 
 Magazines left off the list are ignored by that gun's reload, even with the right `ammoType`.
 
-The `MAGAZINE` **attachment** (`ammoBonus`, `reloadModifier`, see [attachments.md](attachments.md)) still applies on
-top: `ammoBonus` adds to the inserted magazine's capacity and both `reloadModifier`s multiply together.
+The `MAGAZINE` **attachment** (see [attachments.md](attachments.md)) only partly applies here: both `reloadModifier`s
+multiply together, but `ammoBonus` is ignored because the inserted magazine sets the capacity.
+
+## Guns without magazines
+
+Set `usesMagazines: false` on guns that load directly, like revolvers or double barrels:
+
+```yaml
+double_barrel:
+  type: GUN
+  maxAmmo: 2
+  consumesAmmo: true
+  usesMagazines: false
+  reloadType: SINGLE
+```
+
+The gun ignores everything above: it holds `maxAmmo` plus any attachment `ammoBonus`, loads loose ammo using its
+`reloadType`, and has no separate chamber. It still starts empty and draws ammo from the inventory. A magazine already
+inside a gun when this is set can be ejected by hand, and the gun then has no way to take it back.
 
 ## Fields
 

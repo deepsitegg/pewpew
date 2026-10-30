@@ -83,7 +83,7 @@ public class GunLoreRenderer {
 
 		lore.add(Component.empty());
 		lore.add(ammoLine(stack, gun));
-		if (MagazineUtil.enabled() && AmmoUtil.usesAmmo(gun) && gun.isConsumesAmmo()) {
+		if (MagazineUtil.fed(gun) && AmmoUtil.usesAmmo(gun)) {
 			PewpewMagazineItem inserted = MagazineUtil.inserted(stack);
 			lore.add(line("<gray>Magazine <dark_gray>┃ " + (inserted != null ? inserted.getName() : "<dark_gray>None")));
 		}

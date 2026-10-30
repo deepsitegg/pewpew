@@ -159,7 +159,7 @@ public class WeaponDeserializer {
 					"payload", "projectileModel", "projectileSpeed", "range", "recoil", "recoilProfile", "scopedRecoil",
 					"reloadTime", "reloadType", "selfKnockback", "shieldDisableTime", "shooterEffects", "spread",
 					"spreadModifiers", "bloomPerShot", "bloomMax", "bloomDecay", "animations", "rig", "animationCooldown",
-					"aimModelSuffix", "aimModelData", "magazines",
+					"aimModelSuffix", "aimModelData", "magazines", "usesMagazines",
 					"trailParticle", "trajectory", "victimEffects"),
 			ItemType.AMMO, Set.of(
 					"ammoType", "roundsPerItem", "damageMultiplier", "velocityMultiplier", "penetration", "fireTicks", "payload"),
@@ -531,6 +531,7 @@ public class WeaponDeserializer {
 				.aimModelSuffix(node.node("aimModelSuffix").getString())
 				.aimModelData(node.node("aimModelData").getInt(0))
 				.magazines(stringList(node.node("magazines")))
+				.usesMagazines(node.node("usesMagazines").getBoolean(true))
 				.animations(parseAnimations(fileName, id, node.node("animations")))
 				.rigs(parseRigs(fileName, id, node.node("rig")))
 				.animationCooldown(node.node("animationCooldown").getBoolean(true))

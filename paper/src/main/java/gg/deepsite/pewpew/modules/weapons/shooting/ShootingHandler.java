@@ -196,8 +196,7 @@ public class ShootingHandler {
 		UUID id = player.getUniqueId();
 		if (reloading.contains(id)) return false;
 
-		boolean swap = MagazineUtil.enabled() && gun.isConsumesAmmo()
-				&& MagazineUtil.findBetter(player.getInventory(), gun, weapon) >= 0;
+		boolean swap = MagazineUtil.fed(gun) && MagazineUtil.findBetter(player.getInventory(), gun, weapon) >= 0;
 
 		if (!swap && AmmoUtil.get(weapon) >= AttachmentUtil.effectiveMaxAmmo(gun, weapon)) {
 			player.sendActionBar(ChatUtils.format(PewpewPlugin.getMessagesConfig().magazineFull()));
@@ -206,7 +205,7 @@ public class ShootingHandler {
 
 		if (!swap && gun.isConsumesAmmo()
 				&& AmmoUtil.countInInventory(player.getInventory(), gun.getAmmoType()) <= 0) {
-			player.sendActionBar(MagazineUtil.enabled()
+			player.sendActionBar(MagazineUtil.fed(gun)
 					? ChatUtils.format(PewpewPlugin.getMessagesConfig().noMagazine())
 					: noAmmoMessage(gun));
 			return false;
@@ -375,7 +374,7 @@ public class ShootingHandler {
 
 	private static int looseMaxAmmo(PewpewGunItem gun, ItemStack held) {
 		int max = AttachmentUtil.effectiveMaxAmmo(gun, held);
-		if (!MagazineUtil.enabled() || !gun.isConsumesAmmo()) return max;
+		if (!MagazineUtil.fed(gun)) return max;
 		return Math.min(max, AmmoUtil.pool(held) + 1);
 	}
 
